@@ -412,6 +412,9 @@
       let month = hours < 6 && constDate.getDate() == 1 ? constDate.getMonth() : constDate.getMonth() + 1;
       let day = hours < 6 ? constDate.getDate() - 1 : constDate.getDate();
       
+      day = day.toString().padStart(2, '0');
+      month = month.toString().padStart(2, '0');
+
       let ticketNumber = document.getElementById("generalUrl_ticketNumber").value;
       let date = `${year}.${month}.${day}`;
       let summary = document.getElementById("ticketSummary").value;
