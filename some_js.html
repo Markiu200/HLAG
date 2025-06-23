@@ -95,6 +95,14 @@
       <option value="vendor">vendor</option>
     </select>
 
+    <select name="source" id="ticketSourceDropdown">
+      <option value="MemoReg queue">MemoReg queue</option>
+      <option value="Email">Email</option>
+      <option value="Backdesk queue">Backdesk queue</option>
+      <option value="Hardware queue">Hardware queue</option>
+      <option value="transferred to Backdesk">transferred to Backdesk</option>
+    </select>
+
   </section>
 
   <section class="section">
@@ -391,6 +399,7 @@
       let summary = document.getElementById("ticketSummary").value;
       let status = document.getElementById("ticketStatusDropdown").value;
       if (status == "hold") {status = "waiting";}
+      if (status == "vendor") {status = "waiting";}
       let comment = document.getElementById("excelComment").value;
       navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
       showSnackbar();
@@ -399,14 +408,14 @@
     function copypasta_copyToTheirExcel() {
       // Generate date
       let hours = constDate.getHours();
-      let adjustedDate = hours < 6 ? new Date(constDate.getDate() - 1) : constDate;
-      let year = adjustedDate.getFullYear();
-      let month = adjustedDate.getMonth() + 1;
-      let day = adjustedDate.getDate();
+      let year = constDate.getFullYear();
+      let month = hours < 6 && constDate.getDate() == 1 ? constDate.getMonth() : constDate.getMonth() + 1;
+      let day = hours < 6 ? constDate.getDate() - 1 : constDate.getDate();
       
       let ticketNumber = document.getElementById("generalUrl_ticketNumber").value;
       let date = `${year}.${month}.${day}`;
       let summary = document.getElementById("ticketSummary").value;
+      let source = document.getElementById("ticketSourceDropdown").value;
       let status = document.getElementById("ticketStatusDropdown").value;
       if (status == "resolved") {status = "Resolved.";}
       if (status == "waiting") {status = "Waiting for customer";}
@@ -417,7 +426,7 @@
       if (status == "hold") {status = "Hold";}
       if (status == "vendor") {status = "Pending on Vendor";}
       let comment = document.getElementById("excelComment").value;
-      navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${status}\t${comment}`);
+      navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${source}\t${status}\t${comment}`);
       showSnackbar();
     }
   </script>
