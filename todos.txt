@@ -29,8 +29,9 @@ done// input for user list
 done// - show parsed users
 	// multiselect for privileges modified
 	// dropdown for action taken (privileges granted / revoked)
-	// copypasta - for ticket resolution
+done// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version
+	// windows to see actual commands
 
  -- // AD groups
 	// field for group name
@@ -39,8 +40,3 @@ done// - show parsed users
 	// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version	
  
- -- // Powershell commands - mailboxes
-	// field for mailbox alias
-	// input for user list
-	// multiselect for privileges modified
-	// dropdown for action to take (privileges granted / revoked)

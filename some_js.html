@@ -10,7 +10,6 @@
     .buttonDiv {
       width: 80px; 
       height: 40px; 
-      text-align: center;
       border-radius: 10px;
       margin: 5px;
       font-size: x-small;
@@ -123,8 +122,17 @@
     <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
     <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
     
-    <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping()">Grant Full Access w/o Automapping</button>
-    <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping()">Grant Full Access with Automapping</button>
+    <div style="display: flex;">
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping()">Grant Full Access w/o Automapping</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping()">Grant Full Access with Automapping</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeFullAccess()">Revoke Full Access</button>
+    </div>
+
+    <div>
+      <textarea id="mailboxesCopypasta_commandResultViewWindow"
+        rows="12" placeholder="commands will appear here..." style="width: 90%; resize: vertical;"></textarea>
+    </div>
+
   </section>
 
 
@@ -151,10 +159,12 @@
       textarea: document.getElementById("mailboxesCopypasta_users"),
       foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
       alias: document.getElementById("mailboxesCopypasta_alias"),
+      viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       filteredUsersArray: [],
       readableList: "",
       grantFullAccessNoAutomapping: "",
       grantFullAccessWithAutomapping: "",
+      revokeFullAccess: "",
 
       getUsersArray: function getUsersArray() {
         users = this.textarea.value.trim();
@@ -211,6 +221,7 @@
         this.filteredUsersArray.forEach((element) => {
           this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
         })
+        this.viewWindow.value = this.grantFullAccessNoAutomapping;
         navigator.clipboard.writeText(this.grantFullAccessNoAutomapping);
         showSnackbar();
       },
@@ -219,8 +230,19 @@
         this.grantFullAccessWithAutomapping = "";
         this.filteredUsersArray.forEach((element) => {
           this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
-        })
+        });
+        this.viewWindow.value = this.grantFullAccessWithAutomapping;
         navigator.clipboard.writeText(this.grantFullAccessWithAutomapping);
+        showSnackbar();
+      },
+
+      getCopyPasta_revokeFullAccess() {
+        this.revokeFullAccess = "";
+        this.filteredUsersArray.forEach((element) => {
+          this.revokeFullAccess += `Remove-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.revokeFullAccess;
+        navigator.clipboard.writeText(this.revokeFullAccess);
         showSnackbar();
       }
     }
