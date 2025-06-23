@@ -122,6 +122,9 @@
       onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
     <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
     <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
+    
+    <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping()">Grant Full Access w/o Automapping</button>
+    <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping()">Grant Full Access with Automapping</button>
   </section>
 
 
@@ -150,6 +153,8 @@
       alias: document.getElementById("mailboxesCopypasta_alias"),
       filteredUsersArray: [],
       readableList: "",
+      grantFullAccessNoAutomapping: "",
+      grantFullAccessWithAutomapping: "",
 
       getUsersArray: function getUsersArray() {
         users = this.textarea.value.trim();
@@ -198,6 +203,24 @@
         console.log(generatedText);
         
         navigator.clipboard.writeText(generatedText);
+        showSnackbar();
+      },
+
+      getCopypasta_grantFullAccessNoAutomapping() {
+        this.grantFullAccessNoAutomapping = "";
+        this.filteredUsersArray.forEach((element) => {
+          this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
+        })
+        navigator.clipboard.writeText(this.grantFullAccessNoAutomapping);
+        showSnackbar();
+      },
+
+      getCopypasta_grantFullAccessWithAutomapping() {
+        this.grantFullAccessWithAutomapping = "";
+        this.filteredUsersArray.forEach((element) => {
+          this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
+        })
+        navigator.clipboard.writeText(this.grantFullAccessWithAutomapping);
         showSnackbar();
       }
     }
