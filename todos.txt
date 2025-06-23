@@ -13,6 +13,7 @@ done// have it bordered into a general link info section
 done// ticket summary field
 done// ticket comment field
 done// ticket status dropdown
+	// ticket source dropdown
 done// button to get Excel row for my excel
 done// button to get Excel row for their excel
 
@@ -31,7 +32,7 @@ done// - show parsed users
 	// dropdown for action taken (privileges granted / revoked)
 done// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version
-	// windows to see actual commands
+done// windows to see actual commands
 
  -- // AD groups
 	// field for group name

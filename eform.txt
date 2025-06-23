@@ -21,3 +21,19 @@ Kind regards
 Marcin Kazmierczak
 ITSD Hapag Lloyd
 -------------------------
+
+Sources:
+MemoReg queue
+Email
+Backdesk queue
+Hardware queue
+transferred to Backdesk
+
+Stati:
+In progres
+Open
+Pending on Vendor
+Transferred
+Hold
+Waiting for Customer
+Resolved.
