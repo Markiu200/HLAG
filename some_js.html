@@ -158,13 +158,19 @@
     let mailboxesCopypasta = {
       textarea: document.getElementById("mailboxesCopypasta_users"),
       foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
-      alias: document.getElementById("mailboxesCopypasta_alias"),
+      aliasInput: document.getElementById("mailboxesCopypasta_alias"),
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       filteredUsersArray: [],
       readableList: "",
       grantFullAccessNoAutomapping: "",
       grantFullAccessWithAutomapping: "",
       revokeFullAccess: "",
+      grandSendAsOnprem: "",
+      grandSendAsCloud: "",
+      revokeSendAsOnprem: "",
+      revokeSendAsCloud: "",
+      grantSendOnBehalf: "",
+      revokeSendOnBehalf: "",
 
       getUsersArray: function getUsersArray() {
         users = this.textarea.value.trim();
@@ -199,6 +205,7 @@
 
       getCopyPasta: function getCopyPasta() {
         let generatedText;
+        let alias = this.aliasInput.value.trim();
         
         if (this.filteredUsersArray.length > 1) {
           generatedText = "Users ";
@@ -206,9 +213,9 @@
             generatedText += element + ", ";
           })
           generatedText = generatedText.slice(0, generatedText.length - 2);
-          generatedText += " were added to the " + this.alias.value + " mailbox.";
+          generatedText += " were added to the " + alias + " mailbox.";
         } else {
-          generatedText = "User " + this.filteredUsersArray[0] + " was added to the " + this.alias.value + " mailbox.";
+          generatedText = "User " + this.filteredUsersArray[0] + " was added to the " + alias + " mailbox.";
         }
         console.log(generatedText);
         
@@ -217,9 +224,10 @@
       },
 
       getCopypasta_grantFullAccessNoAutomapping() {
+        let alias = this.aliasInput.value.trim();
         this.grantFullAccessNoAutomapping = "";
-        this.filteredUsersArray.forEach((element) => {
-          this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
+        this.filteredUsersArray.forEach((user) => {
+          this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
         })
         this.viewWindow.value = this.grantFullAccessNoAutomapping;
         navigator.clipboard.writeText(this.grantFullAccessNoAutomapping);
@@ -227,9 +235,10 @@
       },
 
       getCopypasta_grantFullAccessWithAutomapping() {
+        let alias = this.aliasInput.value.trim();
         this.grantFullAccessWithAutomapping = "";
-        this.filteredUsersArray.forEach((element) => {
-          this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
+        this.filteredUsersArray.forEach((user) => {
+          this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
         });
         this.viewWindow.value = this.grantFullAccessWithAutomapping;
         navigator.clipboard.writeText(this.grantFullAccessWithAutomapping);
@@ -237,14 +246,81 @@
       },
 
       getCopyPasta_revokeFullAccess() {
+        let alias = this.aliasInput.value.trim();
         this.revokeFullAccess = "";
-        this.filteredUsersArray.forEach((element) => {
-          this.revokeFullAccess += `Remove-MailboxPermission -Identity '${this.alias.value}' -User '${element}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
+        this.filteredUsersArray.forEach((user) => {
+          this.revokeFullAccess += `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
         });
         this.viewWindow.value = this.revokeFullAccess;
         navigator.clipboard.writeText(this.revokeFullAccess);
         showSnackbar();
-      }
+      },
+
+      getCopyPasta_grandSendAsOnprem() {
+        let alias = this.aliasInput.value.trim();
+        this.grandSendAsOnprem = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.grandSendAsOnprem += `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.grandSendAsOnprem;
+        navigator.clipboard.writeText(this.grandSendAsOnprem);
+        showSnackbar();
+      },
+
+      getCopyPasta_grandSendAsCloud() {
+        let alias = this.aliasInput.value.trim();
+        this.grandSendAsCloud = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.grandSendAsCloud += `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.grandSendAsCloud;
+        navigator.clipboard.writeText(this.grandSendAsCloud);
+        showSnackbar();
+      },
+
+      getCopyPasta_revokeSendAsOnprem() {
+        let alias = this.aliasInput.value.trim();
+        this.revokeSendAsOnprem = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.revokeSendAsOnprem += `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.revokeSendAsOnprem;
+        navigator.clipboard.writeText(this.revokeSendAsOnprem);
+        showSnackbar();
+      },
+
+      getCopyPasta_revokeSendAsCloud() {
+        let alias = this.aliasInput.value.trim();
+        this.revokeSendAsCloud = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.revokeSendAsCloud += `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.revokeSendAsCloud;
+        navigator.clipboard.writeText(this.revokeSendAsCloud);
+        showSnackbar();
+      },
+
+      getCopyPasta_grantSendOnBehalf() {
+        let alias = this.aliasInput.value.trim();
+        this.grantSendOnBehalf = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.grantSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.grantSendOnBehalf;
+        navigator.clipboard.writeText(this.grantSendOnBehalf);
+        showSnackbar();
+      },
+
+      getCopyPasta_revokeSendOnBehalf() {
+        let alias = this.aliasInput.value.trim();
+        this.revokeSendOnBehalf = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.revokeSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
+        });
+        this.viewWindow.value = this.revokeSendOnBehalf;
+        navigator.clipboard.writeText(this.revokeSendOnBehalf);
+        showSnackbar();
+      },
     }
 
     //
