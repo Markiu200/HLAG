@@ -15,6 +15,9 @@
       margin: 5px;
       font-size: x-small;
     }
+    p {
+      font-family: Arial, Helvetica, sans-serif;
+    }
     #snackbar {
       visibility: hidden; /* Hidden by default. Visible on click */
       min-width: 250px; /* Set a default minimum width */
@@ -114,8 +117,11 @@
   <section class="section">
     <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
     <input type="text" placeholder="alias" id="mailboxesCopypasta_alias">
-    <textarea style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users"></textarea>
-    <button onclick="getUsersArray(document.getElementById('mailboxesCopypasta_users').value)">Craft & copy</button>
+    <textarea 
+      style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
+      onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
+    <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
+    <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
   </section>
 
 
@@ -127,15 +133,78 @@
 
 
   <script>
-    function evenfulFunction(evt) {
-      console.log(evt);
+    //
+    //  GLOBALS AND FUNCTIONS
+    //
+    const constDate = new Date();
+    let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
+    generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select());
+
+    //
+    //  OBJECTS SECTION
+    //
+    /* mailboxesCopypasta */
+    let mailboxesCopypasta = {
+      textarea: document.getElementById("mailboxesCopypasta_users"),
+      foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
+      alias: document.getElementById("mailboxesCopypasta_alias"),
+      filteredUsersArray: [],
+      readableList: "",
+
+      getUsersArray: function getUsersArray() {
+        users = this.textarea.value.trim();
+        users = users.replaceAll(",", "");
+        users = users.replaceAll(".", "");
+        let usersArray = users.split(" ");
+        this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
+        usersArray.forEach(element => {
+          if (element && element.length > 0) {
+            this.filteredUsersArray.push(element);
+          }
+        });
+      },
+
+      getUsersAsReadableList: function getUsersAsReadableList() {
+        this.readableList = "";
+        this.filteredUsersArray.forEach(element => {
+          this.readableList += "\"" + element + "\" ";
+        });
+        this.readableList.trim();
+      },
+
+      writeFilteredUsers: function writeFilteredUsers() {
+        this.foundUsers.innerHTML = this.readableList;
+      },
+
+      textareaOnchange: function textareaOnchange() {
+        this.getUsersArray();
+        this.getUsersAsReadableList();
+        this.writeFilteredUsers();
+      },
+
+      getCopyPasta: function getCopyPasta() {
+        let generatedText;
+        
+        if (this.filteredUsersArray.length > 1) {
+          generatedText = "Users ";
+          this.filteredUsersArray.forEach(element => {  
+            generatedText += element + ", ";
+          })
+          generatedText = generatedText.slice(0, generatedText.length - 2);
+          generatedText += " were added to the " + this.alias.value + " mailbox.";
+        } else {
+          generatedText = "User " + this.filteredUsersArray[0] + " was added to the " + this.alias.value + " mailbox.";
+        }
+        console.log(generatedText);
+        
+        navigator.clipboard.writeText(generatedText);
+        showSnackbar();
+      }
     }
 
-    const constDate = new Date();
-
-    let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
-    generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select())
-
+    //
+    //  FUNCTIONS
+    //
     function showSnackbar() {
       var x = document.getElementById("snackbar");
       x.className = "show";
@@ -196,6 +265,7 @@
       navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
       showSnackbar();
     }
+
     function copypasta_copyToTheirExcel() {
       // Generate date
       let hours = constDate.getHours();
@@ -212,24 +282,6 @@
       navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${status}\t${comment}`);
       showSnackbar();
     }
-
-    function getUsersArray(users) {
-      users = users.trim();
-      users = users.replaceAll(",", "");
-      users = users.replaceAll(".", "");
-      let usersArray = users.split(" ");
-      let filteredArray = [];
-      usersArray.forEach(element => {
-        if (element && element.length > 0) {
-          filteredArray.push(element);
-        }
-      });
-      console.log(filteredArray);
-      return filteredArray;
-    }
-
-    
-
   </script>
 </body>
 </html>
