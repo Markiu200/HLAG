@@ -1,0 +1,46 @@
+Grand Full Access:
+Add-MailboxPermission -Identity <alias> -User <user> -AccessRights FullAccess -AutoMapping:$false -Confirm:$false
+
+Remove Full Access:
+Remove-MailboxPermission -Identity <alias> -User '<user>' -AccessRights 'FullAccess' -Confirm:$false
+
+Grand Send on Behalf:
+Set-Mailbox '<alias>' -Grantsendonbehalfto @{add="<user>"}
+
+Remove Send on Behalf:
+Set-Mailbox '<alias>' -Grantsendonbehalfto @{remove="<user>"} -Confirm:$false
+
+Grand Send As (onprem):
+Get-Mailbox "<alias>" | Add-ADPermission -User "<user>" -ExtendedRights "Send As"
+
+Grand Send As (O365):
+Add-RecipientPermission <alias> -Trustee <user> -AccessRights "SendAs" -confirm:$false
+
+Remove Send As (onprem):
+Get-Mailbox "<alias>" | Remove-ADPermission -User "<user>" -ExtendedRights "Send As"
+
+Remove Send As (O365):
+Remove-RecipientPermission <alias> -Trustee <user> -AccessRights "SendAs" -confirm:$false
+
+Add member to Distribution List:
+Add-DistributionGroupMember -Identity <alias> -Member  "<user>" -confirm:$false
+
+Remove member from Distribution List:
+Remove-DistributionGroupMember -Identity <alias> -Member  "<user>" -confirm:$false
+
+Add AD group:
+Add-ADGroupMember -Identity <group> -Members  "<user>" -confirm:$false
+
+Remove AD group:
+Remove-ADGroupMember -Identity <group> -Member  "<user>" -confirm:$false
+
+Create room:
+Enable-RemoteMailbox "gotcornerroom" -RemoteRoutingAddress "gotcornerroom@hlag.mail.onmicrosoft.com" -Alias "gotcornerroom" -Room
+
+ID to UPN:
+get-aduser <id> -properties * | Select-Object UserPrincipalName -ExpandProperty UserPrincipalName >> results.txt
+
+UPN to ID:
+Get-ADUser -Filter "UserPrincipalName -eq '<upn>'" -Properties SamAccountNAme | Select-Object -ExpandProperty SamAccountName >> results.txt
+
+

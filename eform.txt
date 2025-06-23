@@ -1,0 +1,23 @@
+-------------------------
+Request has been handled
+
+Kind regards
+Marcin Kazmierczak
+ITSD Hapag Lloyd
+-------------------------
+
+-------------------------
+Request has been forwarded to SITA in ticket. SITA will proceed with request.
+
+Kind regards
+Marcin Kazmierczak
+ITSD Hapag Lloyd
+-------------------------
+
+-------------------------
+Request has been forwarded to changemanagement team. Progress will be tracked via email / created Jira ticket.
+
+Kind regards
+Marcin Kazmierczak
+ITSD Hapag Lloyd
+-------------------------

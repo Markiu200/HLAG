@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    * {box-sizing: border-box;}
+    .buttonDiv {
+      width: 80px; 
+      height: 40px; 
+      text-align: center;
+      border-radius: 10px;
+      margin: 5px;
+      font-size: x-small;
+    }
+    #snackbar {
+      visibility: hidden; /* Hidden by default. Visible on click */
+      min-width: 250px; /* Set a default minimum width */
+      margin-left: -125px; /* Divide value of min-width by 2 */
+      background-color: #333; /* Black background color */
+      color: #fff; /* White text color */
+      text-align: center; /* Centered text */
+      border-radius: 2px; /* Rounded borders */
+      padding: 16px; /* Padding */
+      position: fixed; /* Sit on top of the screen */
+      z-index: 1; /* Add a z-index if needed */
+      left: 50%; /* Center the snackbar */
+      bottom: 30px; /* 30px from the bottom */
+    }
+    /* Show the snackbar when clicking on a button (class added with JavaScript) */
+    #snackbar.show {
+      visibility: visible; /* Show the snackbar */
+    }
+    .inputWithCopyWrapper {
+      position: relative;
+      display: inline;
+    }
+    .inputWithCopyWrapper input {
+      height: 22px;
+    }
+    .inputWithCopyWrapper button {
+      position: absolute;
+      top: -2px;
+      right: -16px;
+      width: 40px;
+      height: 22px;
+    }
+    .section {
+      padding: 30px; 
+      border-style: solid; 
+      border-width: 1px;
+      border-color: gray;
+      margin-bottom: 8px;
+      position: relative;
+    }
+  </style>
+
+</head>
+<body>
+  <!-- The copypasta snackbar -->
+  <div id="snackbar">Copied</div>
+
+  <!-- General URL input -->
+  <section class="section">
+    <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="generalUrl_oninput()">
+    <div class="inputWithCopyWrapper">
+      <input type="text" readonly id="generalUrl_ticketNumber">
+      <button onclick="inputCopy('generalUrl_ticketNumber')">&#x2398;</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80">
+    </div>
+    <div style="margin-top: 8px;">
+      <textarea rows="2" cols="83" style="resize: none;" id="excelComment"></textarea>
+    </div>
+
+    <!-- Copy to my / their excel -->
+    <div>
+      <button class="buttonDiv" onclick="copypasta_copyToMyExcel()">Copy to my Excel</button>
+      <button class="buttonDiv" onclick="copypasta_copyToTheirExcel()">Copy to their Excel</button>
+    </div>
+
+    <select name="status" id="ticketStatusDropdown">
+      <option value="resolved">resolved</option>
+      <option value="waiting">waiting</option>
+      <option value="hold">hold</option>
+      <option value="transferred">transferred</option>
+      <option value="inprog">inprog</option>
+    </select>
+
+  </section>
+
+  <section class="section">
+    <!-- Generic E-form copypasta -->
+    <div>
+      <button class="buttonDiv" onclick="eformHandledCopypasta()">E-form handled</button>
+    </div>
+
+    <!-- SITA E-form copypasta -->
+    <div>
+      <input type="text" id="siteEformCopypasta_hlinput" placeholder="HLSUPPORT">
+      <button class="buttonDiv" onclick="sitaEformHandledCopypasta()">SITA E-form handled</button>
+    </div>
+
+    <!-- Generic E-form with ticket number copypasta -->
+    <div>
+      <input type="text" id="eformWithNumberCopypasta_hlinput" placeholder="HLSUPPORT">
+      <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
+    <input type="text" placeholder="alias" id="mailboxesCopypasta_alias">
+    <textarea style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users"></textarea>
+    <button>Craft & copy</button>
+  </section>
+
+
+
+  <script>
+    function evenfulFunction(evt) {
+      console.log(evt);
+    }
+
+    const constDate = new Date();
+
+    let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
+    generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select())
+
+    function showSnackbar() {
+      var x = document.getElementById("snackbar");
+      x.className = "show";
+      // After 3 seconds, remove the show class from DIV
+      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 400);
+    } 
+
+    function inputCopy(inputId) {
+      let x = document.getElementById(inputId).value;
+      navigator.clipboard.writeText(x);
+      showSnackbar();
+    }
+
+    function generalUrl_oninput() {
+      let x = document.getElementById("generalUrl").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      if (matches.length) {
+        document.getElementById("generalUrl_ticketNumber").value = matches[0];
+        document.getElementById("siteEformCopypasta_hlinput").value = matches[0];
+        document.getElementById("eformWithNumberCopypasta_hlinput").value = matches[0];
+      }
+    }
+    
+    function eformHandledCopypasta() {
+      navigator.clipboard.writeText(
+        "--------------------\r\nEform has been handled.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+      );
+      showSnackbar();
+    }
+
+    function sitaEformHandledCopypasta() {
+      let x = document.getElementById("siteEformCopypasta_hlinput").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      navigator.clipboard.writeText(
+        "--------------------\r\nEform will be handled in "+matches[0].toUpperCase()+" by SITA.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+      );
+      showSnackbar();
+    }
+
+    function eformWithNumberHandledCopypasta() {
+      let x = document.getElementById("eformWithNumberCopypasta_hlinput").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      navigator.clipboard.writeText(
+        "--------------------\r\nEform has been handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+      );
+      showSnackbar();
+    }
+    
+    function copypasta_copyToMyExcel() {
+      let url = document.getElementById("generalUrl").value;
+      let summary = document.getElementById("ticketSummary").value;
+      let status = document.getElementById("ticketStatusDropdown").value;
+      if (status == "hold") {status = "waiting";}
+      let comment = document.getElementById("excelComment").value;
+      navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
+      showSnackbar();
+    }
+    function copypasta_copyToTheirExcel() {
+      // Generate date
+      let hours = constDate.getHours();
+      let adjustedDate = hours < 6 ? new Date(constDate.getDate() - 1) : constDate;
+      let month = adjustedDate.getMonth() + 1;
+      let day = adjustedDate.getDate();
+      
+      let ticketNumber = document.getElementById("generalUrl_ticketNumber").value;
+      let date = `${day}\/${month}`;
+      let summary = document.getElementById("ticketSummary").value;
+      let status = document.getElementById("ticketStatusDropdown").value;
+      if (status == "waiting") {status = "Waiting for customer";}
+      let comment = document.getElementById("excelComment").value;
+      navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${status}\t${comment}`);
+      showSnackbar();
+    }
+  </script>
+</body>
+</html>
