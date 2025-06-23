@@ -126,6 +126,12 @@
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping()">Grant Full Access w/o Automapping</button>
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping()">Grant Full Access with Automapping</button>
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeFullAccess()">Revoke Full Access</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsOnprem()">Grant Send As on-prem</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsCloud()">Grant Send As cloud</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsOnprem()">Revoke Send As on-prem</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsCloud()">Revoke Send As cloud</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grantSendOnBehalf()">Grant Send On Behalf</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendOnBehalf()">Revoke Send On Behalf</button>
     </div>
 
     <div>
@@ -352,7 +358,7 @@
     
     function eformHandledCopypasta() {
       navigator.clipboard.writeText(
-        "--------------------\r\nEform has been handled.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+        "-------------------------\r\nRequest has been handled.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
       );
       showSnackbar();
     }
@@ -362,7 +368,7 @@
       let reg = /HLSUPPORT-\d*/i;
       var matches = x.match(reg);
       navigator.clipboard.writeText(
-        "--------------------\r\nEform will be handled in "+matches[0].toUpperCase()+" by SITA.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+        "-------------------------\r\nRequest has been forwarded to SITA in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
       );
       showSnackbar();
     }
@@ -372,7 +378,7 @@
       let reg = /HLSUPPORT-\d*/i;
       var matches = x.match(reg);
       navigator.clipboard.writeText(
-        "--------------------\r\nEform has been handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n--------------------"
+        "-------------------------\r\nRequest has been handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
       );
       showSnackbar();
     }
