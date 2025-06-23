@@ -1,0 +1,45 @@
+Wymagania funkcjonalne:
+ -- // Global
+done// feedback snackbar after successful copy to clipboard
+	// sections have their own pages
+
+ -- // URL handling
+done// input field to paste in URL
+done// get ticket number field
+done//	- split field with "copy" button
+done// prefill copypastas with ticket number
+done// have it bordered into a general link info section
+	// clear button (also clears copypastas)
+done// ticket summary field
+done// ticket comment field
+done// ticket status dropdown
+done// button to get Excel row for my excel
+done// button to get Excel row for their excel
+
+ -- // Eforms
+done// copypasta - generic
+done// copypasta - generic with number
+done// copypasta - e-form
+done// have it bordered into a copypasta section
+
+ -- // Mailbox copypastas
+	// field for mailbox alias
+	// - optional one for mailbox display name
+	// input for user list
+	// multiselect for privileges modified
+	// dropdown for action taken (privileges granted / revoked)
+	// copypasta - for ticket resolution
+	//  - also with "wait 90 min" version
+
+ -- // AD groups
+	// field for group name
+	// input for user list
+	// dropdown for action taken (membership added / removed)
+	// copypasta - for ticket resolution
+	//  - also with "wait 90 min" version	
+ 
+ -- // Powershell commands - mailboxes
+	// field for mailbox alias
+	// input for user list
+	// multiselect for privileges modified
+	// dropdown for action to take (privileges granted / revoked)
