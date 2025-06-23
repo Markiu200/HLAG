@@ -23,9 +23,10 @@ done// copypasta - e-form
 done// have it bordered into a copypasta section
 
  -- // Mailbox copypastas
-	// field for mailbox alias
+done// field for mailbox alias
 	// - optional one for mailbox display name
-	// input for user list
+done// input for user list
+	// - show parsed users
 	// multiselect for privileges modified
 	// dropdown for action taken (privileges granted / revoked)
 	// copypasta - for ticket resolution

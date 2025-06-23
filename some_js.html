@@ -115,8 +115,14 @@
     <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
     <input type="text" placeholder="alias" id="mailboxesCopypasta_alias">
     <textarea style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users"></textarea>
-    <button>Craft & copy</button>
+    <button onclick="getUsersArray(document.getElementById('mailboxesCopypasta_users').value)">Craft & copy</button>
   </section>
+
+
+
+
+
+
 
 
 
@@ -206,6 +212,24 @@
       navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${status}\t${comment}`);
       showSnackbar();
     }
+
+    function getUsersArray(users) {
+      users = users.trim();
+      users = users.replaceAll(",", "");
+      users = users.replaceAll(".", "");
+      let usersArray = users.split(" ");
+      let filteredArray = [];
+      usersArray.forEach(element => {
+        if (element && element.length > 0) {
+          filteredArray.push(element);
+        }
+      });
+      console.log(filteredArray);
+      return filteredArray;
+    }
+
+    
+
   </script>
 </body>
 </html>
