@@ -66,16 +66,16 @@
 
   <!-- General URL input -->
   <section class="section">
-    <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="ticketCopypasta.parseLink()">
+    <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="ticketCopypasta.parseLink()" tabindex="1">
     <div class="inputWithCopyWrapper">
       <input type="text" readonly id="generalUrl_ticketNumber">
-      <button onclick="ticketCopypasta.saveTicketNumber()">&#x2398;</button>
+      <button onclick="ticketCopypasta.saveTicketNumber()" tabindex="-1">&#x2398;</button>
     </div>
     <div style="margin-top: 8px;">
-      <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80">
+      <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80" tabindex="2">
     </div>
     <div style="margin-top: 8px;">
-      <textarea rows="2" cols="83" style="resize: none;" id="excelComment"></textarea>
+      <textarea rows="2" cols="83" style="resize: none;" id="excelComment" tabindex="3"></textarea>
     </div>
 
     <!-- Copy to my / their excel -->
@@ -85,7 +85,7 @@
       <button class="buttonDiv" onclick="ticketCopypasta.clear()">Clear</button>
     </div>
 
-    <select name="status" id="ticketStatusDropdown">
+    <select name="status" id="ticketStatusDropdown" tabindex="4">
       <option value="resolved">resolved</option>
       <option value="waiting">waiting</option>
       <option value="transferred">transferred</option>
@@ -96,7 +96,7 @@
       <option value="vendor">vendor</option>
     </select>
 
-    <select name="source" id="ticketSourceDropdown">
+    <select name="source" id="ticketSourceDropdown" tabindex="5">
       <option value="MemoReg queue">MemoReg queue</option>
       <option value="Email">Email</option>
       <option value="Backdesk queue">Backdesk queue</option>

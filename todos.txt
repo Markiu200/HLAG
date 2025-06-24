@@ -9,11 +9,11 @@ done// get ticket number field
 done//	- split field with "copy" button
 done// prefill copypastas with ticket number
 done// have it bordered into a general link info section
-	// clear button (also clears copypastas)
+done// clear button (also clears copypastas)
 done// ticket summary field
 done// ticket comment field
 done// ticket status dropdown
-	// ticket source dropdown
+done// ticket source dropdown
 done// button to get Excel row for my excel
 done// button to get Excel row for their excel
 
@@ -32,7 +32,7 @@ done// - show parsed users
 	// dropdown for action taken (privileges granted / revoked)
 done// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version
-done// windows to see actual commands
+done// window to see actual commands
 
  -- // AD groups
 	// field for group name
