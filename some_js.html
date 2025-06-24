@@ -82,6 +82,7 @@
     <div>
       <button class="buttonDiv" onclick="copypasta_copyToMyExcel()">Copy to my Excel</button>
       <button class="buttonDiv" onclick="copypasta_copyToTheirExcel()">Copy to their Excel</button>
+      <button class="buttonDiv" onclick="copypasta_clear()">Clear</button>
     </div>
 
     <select name="status" id="ticketStatusDropdown">
@@ -194,6 +195,9 @@
         users = this.textarea.value.trim();
         users = users.replaceAll(",", "");
         users = users.replaceAll(".", "");
+        users = users.replaceAll("\t", " ");
+        users = users.replaceAll("\r", "");
+        users = users.replaceAll("\n", " ");
         let usersArray = users.split(" ");
         this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
         usersArray.forEach(element => {
@@ -428,6 +432,10 @@
         "-------------------------\r\nRequest has been forwarded to SITA in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
       );
       showSnackbar();
+    }
+
+    function copypasta_clear() {
+      
     }
 
     function eformWithNumberHandledCopypasta() {
