@@ -103,26 +103,19 @@
       <option value="Hardware queue">Hardware queue</option>
       <option value="transferred to Backdesk">transferred to Backdesk</option>
     </select>
-
   </section>
 
+  <!-- E-form copypasta section -->
   <section class="section">
-    <!-- Generic E-form copypasta -->
-    <div>
+    <div style="display: flex;">
       <button class="buttonDiv" onclick="eformHandledCopypasta()">E-form handled</button>
-    </div>
-
-    <!-- SITA E-form copypasta -->
-    <div>
-      <input type="text" id="siteEformCopypasta_hlinput" placeholder="HLSUPPORT">
+      <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
       <button class="buttonDiv" onclick="sitaEformHandledCopypasta()">SITA E-form handled</button>
     </div>
-
-    <!-- Generic E-form with ticket number copypasta -->
     <div>
-      <input type="text" id="eformWithNumberCopypasta_hlinput" placeholder="HLSUPPORT">
-      <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
+      <input type="text" id="eformCopypastaInput" placeholder="HLSUPPORT">
     </div>
+
   </section>
 
   <section class="section">
@@ -311,8 +304,7 @@
         var matches = this.urlInput.value.match(reg);
         if (matches.length) {
           document.getElementById("generalUrl_ticketNumber").value = matches[0];
-          document.getElementById("siteEformCopypasta_hlinput").value = matches[0];
-          document.getElementById("eformWithNumberCopypasta_hlinput").value = matches[0];
+          document.getElementById("eformCopypastaInput").value = matches[0];
         }
       },
 
@@ -356,7 +348,11 @@
       },
 
       clear() {
-
+        this.urlInput.value = "";
+        this.ticketField.value = "";
+        this.summaryInput.value = "";
+        this.commentInput.value = "";
+        document.getElementById("eformCopypastaInput").value = "";
       }
     }
 
@@ -378,7 +374,7 @@
     }
 
     function sitaEformHandledCopypasta() {
-      let x = document.getElementById("siteEformCopypasta_hlinput").value;
+      let x = document.getElementById("eformCopypastaInput").value;
       let reg = /HLSUPPORT-\d*/i;
       var matches = x.match(reg);
       navigator.clipboard.writeText(
@@ -388,7 +384,7 @@
     }
 
     function eformWithNumberHandledCopypasta() {
-      let x = document.getElementById("eformWithNumberCopypasta_hlinput").value;
+      let x = document.getElementById("eformCopypastaInput").value;
       let reg = /HLSUPPORT-\d*/i;
       var matches = x.match(reg);
       navigator.clipboard.writeText(
