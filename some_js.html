@@ -247,7 +247,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.grantFullAccessNoAutomapping;
         } else {
           this.commandList = this.grantFullAccessNoAutomapping;
@@ -263,7 +263,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.grantFullAccessWithAutomapping;
         } else {
           this.commandList = this.grantFullAccessWithAutomapping;
@@ -279,7 +279,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.revokeFullAccess += `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.revokeFullAccess;
         } else {
           this.commandList = this.revokeFullAccess;
@@ -295,7 +295,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.grandSendAsOnprem += `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.grandSendAsOnprem;
         } else {
           this.commandList = this.grandSendAsOnprem;
@@ -311,7 +311,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.grandSendAsCloud += `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.grandSendAsCloud;
         } else {
           this.commandList = this.grandSendAsCloud;
@@ -327,7 +327,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendAsOnprem += `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.revokeSendAsOnprem;
         } else {
           this.commandList = this.revokeSendAsOnprem;
@@ -343,7 +343,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendAsCloud += `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.revokeSendAsCloud;
         } else {
           this.commandList = this.revokeSendAsCloud;
@@ -359,7 +359,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.grantSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.grantSendOnBehalf;
         } else {
           this.commandList = this.grantSendOnBehalf;
@@ -375,7 +375,7 @@
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
         });
-        if (evt.ctrlKey) {
+        if (evt.shiftKey) {
           this.commandList += this.revokeSendOnBehalf;
         } else {
           this.commandList = this.revokeSendOnBehalf;
