@@ -134,15 +134,15 @@
     <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
     
     <div style="display: flex;">
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping()">Grant Full Access w/o Automapping</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping()">Grant Full Access with Automapping</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeFullAccess()">Revoke Full Access</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsOnprem()">Grant Send As on-prem</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsCloud()">Grant Send As cloud</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsOnprem()">Revoke Send As on-prem</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsCloud()">Revoke Send As cloud</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grantSendOnBehalf()">Grant Send On Behalf</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendOnBehalf()">Revoke Send On Behalf</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessNoAutomapping(event)">Grant Full Access w/o Automapping</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_grantFullAccessWithAutomapping(event)">Grant Full Access with Automapping</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeFullAccess(event)">Revoke Full Access</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsOnprem(event)">Grant Send As on-prem</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grandSendAsCloud(event)">Grant Send As cloud</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsOnprem(event)">Revoke Send As on-prem</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendAsCloud(event)">Revoke Send As cloud</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_grantSendOnBehalf(event)">Grant Send On Behalf</button>
+      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopyPasta_revokeSendOnBehalf(event)">Revoke Send On Behalf</button>
     </div>
 
     <div>
@@ -179,6 +179,7 @@
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       filteredUsersArray: [],
       readableList: "",
+      commandList: "",
       grantFullAccessNoAutomapping: "",
       grantFullAccessWithAutomapping: "",
       revokeFullAccess: "",
@@ -240,102 +241,147 @@
         showSnackbar();
       },
 
-      getCopypasta_grantFullAccessNoAutomapping() {
+      getCopypasta_grantFullAccessNoAutomapping(evt) {
         let alias = this.aliasInput.value.trim();
         this.grantFullAccessNoAutomapping = "";
         this.filteredUsersArray.forEach((user) => {
           this.grantFullAccessNoAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
-        })
-        this.viewWindow.value = this.grantFullAccessNoAutomapping;
-        navigator.clipboard.writeText(this.grantFullAccessNoAutomapping);
+        });
+        if (evt.ctrlKey) {
+          this.commandList += this.grantFullAccessNoAutomapping;
+        } else {
+          this.commandList = this.grantFullAccessNoAutomapping;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopypasta_grantFullAccessWithAutomapping() {
+      getCopypasta_grantFullAccessWithAutomapping(evt) {
         let alias = this.aliasInput.value.trim();
         this.grantFullAccessWithAutomapping = "";
         this.filteredUsersArray.forEach((user) => {
           this.grantFullAccessWithAutomapping += `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.grantFullAccessWithAutomapping;
-        navigator.clipboard.writeText(this.grantFullAccessWithAutomapping);
+        if (evt.ctrlKey) {
+          this.commandList += this.grantFullAccessWithAutomapping;
+        } else {
+          this.commandList = this.grantFullAccessWithAutomapping;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_revokeFullAccess() {
+      getCopyPasta_revokeFullAccess(evt) {
         let alias = this.aliasInput.value.trim();
         this.revokeFullAccess = "";
         this.filteredUsersArray.forEach((user) => {
           this.revokeFullAccess += `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.revokeFullAccess;
-        navigator.clipboard.writeText(this.revokeFullAccess);
+        if (evt.ctrlKey) {
+          this.commandList += this.revokeFullAccess;
+        } else {
+          this.commandList = this.revokeFullAccess;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_grandSendAsOnprem() {
+      getCopyPasta_grandSendAsOnprem(evt) {
         let alias = this.aliasInput.value.trim();
         this.grandSendAsOnprem = "";
         this.filteredUsersArray.forEach((user) => {
           this.grandSendAsOnprem += `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.grandSendAsOnprem;
-        navigator.clipboard.writeText(this.grandSendAsOnprem);
+        if (evt.ctrlKey) {
+          this.commandList += this.grandSendAsOnprem;
+        } else {
+          this.commandList = this.grandSendAsOnprem;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_grandSendAsCloud() {
+      getCopyPasta_grandSendAsCloud(evt) {
         let alias = this.aliasInput.value.trim();
         this.grandSendAsCloud = "";
         this.filteredUsersArray.forEach((user) => {
           this.grandSendAsCloud += `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.grandSendAsCloud;
-        navigator.clipboard.writeText(this.grandSendAsCloud);
+        if (evt.ctrlKey) {
+          this.commandList += this.grandSendAsCloud;
+        } else {
+          this.commandList = this.grandSendAsCloud;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_revokeSendAsOnprem() {
+      getCopyPasta_revokeSendAsOnprem(evt) {
         let alias = this.aliasInput.value.trim();
         this.revokeSendAsOnprem = "";
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendAsOnprem += `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.revokeSendAsOnprem;
-        navigator.clipboard.writeText(this.revokeSendAsOnprem);
+        if (evt.ctrlKey) {
+          this.commandList += this.revokeSendAsOnprem;
+        } else {
+          this.commandList = this.revokeSendAsOnprem;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_revokeSendAsCloud() {
+      getCopyPasta_revokeSendAsCloud(evt) {
         let alias = this.aliasInput.value.trim();
         this.revokeSendAsCloud = "";
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendAsCloud += `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.revokeSendAsCloud;
-        navigator.clipboard.writeText(this.revokeSendAsCloud);
+        if (evt.ctrlKey) {
+          this.commandList += this.revokeSendAsCloud;
+        } else {
+          this.commandList = this.revokeSendAsCloud;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_grantSendOnBehalf() {
+      getCopyPasta_grantSendOnBehalf(evt) {
         let alias = this.aliasInput.value.trim();
         this.grantSendOnBehalf = "";
         this.filteredUsersArray.forEach((user) => {
           this.grantSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.grantSendOnBehalf;
-        navigator.clipboard.writeText(this.grantSendOnBehalf);
+        if (evt.ctrlKey) {
+          this.commandList += this.grantSendOnBehalf;
+        } else {
+          this.commandList = this.grantSendOnBehalf;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
 
-      getCopyPasta_revokeSendOnBehalf() {
+      getCopyPasta_revokeSendOnBehalf(evt) {
         let alias = this.aliasInput.value.trim();
         this.revokeSendOnBehalf = "";
         this.filteredUsersArray.forEach((user) => {
           this.revokeSendOnBehalf += `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
         });
-        this.viewWindow.value = this.revokeSendOnBehalf;
-        navigator.clipboard.writeText(this.revokeSendOnBehalf);
+        if (evt.ctrlKey) {
+          this.commandList += this.revokeSendOnBehalf;
+        } else {
+          this.commandList = this.revokeSendOnBehalf;
+        }
+        this.viewWindow.value = this.commandList;
+        navigator.clipboard.writeText(this.commandList);
         showSnackbar();
       },
     }
