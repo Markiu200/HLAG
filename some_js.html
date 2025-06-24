@@ -191,7 +191,7 @@
       grantSendOnBehalf: "",
       revokeSendOnBehalf: "",
 
-      getUsersArray: function getUsersArray() {
+      getUsersArray() {
         users = this.textarea.value.trim();
         users = users.replaceAll(",", "");
         users = users.replaceAll(".", "");
@@ -207,7 +207,7 @@
         });
       },
 
-      getUsersAsReadableList: function getUsersAsReadableList() {
+      getUsersAsReadableList() {
         this.readableList = "";
         this.filteredUsersArray.forEach(element => {
           this.readableList += "\"" + element + "\" ";
@@ -215,17 +215,17 @@
         this.readableList.trim();
       },
 
-      writeFilteredUsers: function writeFilteredUsers() {
+      writeFilteredUsers() {
         this.foundUsers.innerHTML = this.readableList;
       },
 
-      textareaOnchange: function textareaOnchange() {
+      textareaOnchange() {
         this.getUsersArray();
         this.getUsersAsReadableList();
         this.writeFilteredUsers();
       },
 
-      getCopyPasta: function getCopyPasta() {
+      getCopyPasta() {
         let generatedText;
         let alias = this.aliasInput.value.trim();
         
