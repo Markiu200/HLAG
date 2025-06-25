@@ -68,7 +68,6 @@ class Page:
         </head>
     <body>""" + self.navigation + all_sections + """</body>
 </html>"""
-        
 
 
 class NavigationItem:
@@ -78,7 +77,7 @@ class NavigationItem:
         self.parent = parent
 
 
-class WebpageBuilder:
+class FileStructureReader:
     def __init__(self, webpage_path):
         self.webpage_path = webpage_path
         self.directory_structure = self.get_directory_structure(self.webpage_path)
@@ -97,7 +96,7 @@ class WebpageBuilder:
         pass
 
 
-webpage_builder = WebpageBuilder(os.path.join(os.getcwd(), "webpage"))
+webpage_builder = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
 
 test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html)
 
