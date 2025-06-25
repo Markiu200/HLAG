@@ -2,19 +2,13 @@ import os
 from enum import Enum
 
 
-class FileType(Enum):
-    html = 1
-    xml = 2
-    css = 3
-
-
 class WebpageFile:
-    def __init__(self, path: str, file_type: FileType):
+    def __init__(self, path: str, file_type: str):
         self.path = path
         self.file_type = file_type
     
     def create_div(self) -> str:
-        if self.file_type == FileType.html:
+        if self.file_type == ".html":
             return self.__create_div_from_html()
         else:
             raise Exception
@@ -104,11 +98,11 @@ webpage_builder = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
 root_files = webpage_builder.root_files
 all_sections = webpage_builder.all_sections
 
-test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html)
+test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", ".html")
 
 test_section = Section([
-    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html),
-    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\015_some_appendix.html", FileType.html)],
+    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", ".html"),
+    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\015_some_appendix.html", ".html")],
     "home",
 )
 #print(test_section.create_section())
