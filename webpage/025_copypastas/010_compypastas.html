@@ -3,62 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-
-  <style>
-    * {box-sizing: border-box;}
-    .buttonDiv {
-      width: 80px; 
-      height: 40px; 
-      border-radius: 10px;
-      margin: 5px;
-      font-size: x-small;
-    }
-    p {
-      font-family: Arial, Helvetica, sans-serif;
-    }
-    #snackbar {
-      visibility: hidden; /* Hidden by default. Visible on click */
-      min-width: 250px; /* Set a default minimum width */
-      margin-left: -125px; /* Divide value of min-width by 2 */
-      background-color: #333; /* Black background color */
-      color: #fff; /* White text color */
-      text-align: center; /* Centered text */
-      border-radius: 2px; /* Rounded borders */
-      padding: 16px; /* Padding */
-      position: fixed; /* Sit on top of the screen */
-      z-index: 1; /* Add a z-index if needed */
-      left: 50%; /* Center the snackbar */
-      bottom: 30px; /* 30px from the bottom */
-    }
-    /* Show the snackbar when clicking on a button (class added with JavaScript) */
-    #snackbar.show {
-      visibility: visible; /* Show the snackbar */
-    }
-    .inputWithCopyWrapper {
-      position: relative;
-      display: inline;
-    }
-    .inputWithCopyWrapper input {
-      height: 22px;
-    }
-    .inputWithCopyWrapper button {
-      position: absolute;
-      top: -2px;
-      right: -16px;
-      width: 40px;
-      height: 22px;
-    }
-    .section {
-      padding: 30px; 
-      border-style: solid; 
-      border-width: 1px;
-      border-color: gray;
-      margin-bottom: 8px;
-      position: relative;
-    }
-  </style>
-
+  <title>Newfluence - Copypastas</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <!-- The copypasta snackbar -->
@@ -145,6 +91,15 @@
     </div>
 
   </section>
+
+  <div id="nav"></div>
+
+  <div id="view1"><p>view1</p></div>
+  <div id="view2"><p>view2</p></div>
+  <div id="view3"><p>view3</p></div>
+  <div id="view4"><p>view4</p></div>
+  <div id="view5"><p>view5</p></div>
+
 
 
 
@@ -392,6 +347,8 @@
       );
       showSnackbar();
     }
+    mailboxesCopypasta.textareaOnchange()
+    // window.onload = (event) => {mailboxesCopypasta.textareaOnchange()};
   </script>
 </body>
 </html>
