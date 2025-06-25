@@ -55,27 +55,6 @@ class Section:
         return result
 
 
-class Page:
-    def __init__(self, sections: list[Section], css: str, navigation: str):
-        self.css = css
-        self.sections = sections
-        self.navigation = navigation
-
-    def create_page(self):
-        all_sections = ""
-        for section in self.sections:
-            all_sections += section.create_section()
-        return """<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Newfluence</title>""" + self.css + """
-        </head>
-    <body>""" + self.navigation + all_sections + """</body>
-</html>"""
-
-
 class NavigationItem:
     def __init__(self, title: str, section: list[Section], parent: Section):
         self.title = title
@@ -151,7 +130,6 @@ navigation = Navigation(structure_reader.all_sections)
 page_builder = PageBuilder(navigation, structure_reader)
 
 #print(navigation.get_navigation_html_as_string())
-print(page_builder.build())
 with open("newfluence.html", "w") as file:
     file.write(page_builder.build())
 
