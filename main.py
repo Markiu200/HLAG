@@ -20,7 +20,7 @@ class WebpageFile:
             raise Exception
 
     def __create_div_from_html(self) -> str:
-        """For HTML files, only return contents of \<body\> as is."""
+        """For HTML files, only return contents of &lt;body&gt; as is."""
         result = ""
         save_flag = False
         with open(self.path) as f:
@@ -37,8 +37,37 @@ class WebpageFile:
 
 
 class Section:
-    def __init__(self, webpage_files: list[WebpageFile]):
+    def __init__(self, webpage_files: list[WebpageFile], id: str):
         self.webpage_files = webpage_files
+        self.id = id
+    
+    def create_section(self) -> str:
+        result = f"<section id=\"{self.id}\">"
+        for file in self.webpage_files:
+            result += file.create_div()
+        result += "</section>"
+        return result
+
+
+class Page:
+    def __init__(self, sections: list[Section]):
+        self.css = "<css lol>"
+        self.sections = sections
+
+    def create_page(self):
+        all_sections = ""
+        for section in self.sections:
+            all_sections += section.create_section()
+        return """<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Newfluence</title>""" + self.css + """
+        </head>
+    <body>""" + all_sections + """</body>
+</html>"""
+        
 
 
 class NavigationItem:
@@ -70,15 +99,16 @@ class WebpageBuilder:
 webpage_builder = WebpageBuilder(os.path.join(os.getcwd(), "webpage"))
 
 test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html)
-print(test_webpage_file.create_div())
 
 test_section = Section([
     WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html),
-    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\015_some_appendix.html", FileType.html),
-])
+    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\015_some_appendix.html", FileType.html)],
+    "home",
+)
+#print(test_section.create_section())
 
-
-
+test_page = Page([test_section])
+print(test_page.create_page())
 
 
 
