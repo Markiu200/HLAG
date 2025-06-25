@@ -74,10 +74,20 @@ class NavigationItem:
         self.children = None
 
 
+class Navigation:
+    def __init__(self, section_list: list[Section]):
+        self.section_list = section_list
+    
+    def get_navigation_html_as_string(self) -> str:
+        result = "<nav>"
+        for section in self.section_list:
+            result += f"<button>${section.id}</button>"
+        return result
+
+
 class FileStructureReader:
     def __init__(self, webpage_path):
         self.webpage_path = webpage_path
-        self.root_files: list[WebpageFile] = []
         self.all_sections: list[Section] = []
         self.root_section = Section([], "root")
         self.__get_root_files_and_sections(self.webpage_path, self.root_section)
@@ -94,9 +104,18 @@ class FileStructureReader:
         self.all_sections.append(section)
 
 
-webpage_builder = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
-root_files = webpage_builder.root_files
-all_sections = webpage_builder.all_sections
+class PageBuilder:
+    def __init__(self, navigation: Navigation, dir_structure: FileStructureReader):
+        self.navigation = navigation
+        self.dir_structure = dir_structure
+
+
+structure_reader = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
+navigation = Navigation(structure_reader.all_sections)
+page_builder = PageBuilder(navigation, structure_reader)
+
+print(navigation.get_navigation_html_as_string())
+
 
 test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", ".html")
 
@@ -141,11 +160,13 @@ W tej sytuacji FileStructureReader musialby:
  * udostepniac cale sekcje jako sekcje
  * jakos zbierac informacje o tym jak sekcje sa zagniezdzone zeby odzwierciedlac to w nawigacji
 
-Wiec co do zbierania - algorytm moglby akceptowac jakis Section - root bylby specjalnym Section na ta okazje. Sekcje beda zapisywane na liste
-sekcji, ale wraz z utworzeniem kazdej z nich, pole parent w sekcji bedzie zaludniane parentem wlasnie
+Wiec co do zbierania - algorytm moglby akceptowac jakis Section - root bylby specjalnym Section na ta okazje. 
+Sekcje beda zapisywane na liste sekcji, ale wraz z utworzeniem kazdej z nich, pole parent w sekcji bedzie zaludniane parentem wlasnie
 
 Osobna metoda moglaby przejsc liste sekcji i zczytywac jaki jest parent - to odroznie pliki z roota od faktycznych sekcji
 
-Pole children dla sekcji?
+Pole children dla sekcji? Tak jest
+
+
 
 """
