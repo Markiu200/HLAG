@@ -40,6 +40,8 @@ class Section:
     def __init__(self, webpage_files: list[WebpageFile], id: str):
         self.webpage_files = webpage_files
         self.id = id
+        self.parent = None
+        self.children = None
     
     def create_section(self) -> str:
         result = f"<section id=\"{self.id}\">"
@@ -75,6 +77,7 @@ class NavigationItem:
         self.title = title
         self.section = section
         self.parent = parent
+        self.children = None
 
 
 class FileStructureReader:
@@ -128,5 +131,24 @@ strona glowna tez jako katalog - pierwszy w numeracji
 
 mozliwy mix miedzy xml i html - kazdy "kawalek" strony to swoj wlasny div, beda nakladane jeden na drugi w kolejnosci numeracji
 
+PageBuilder bylby tworzyl calosc strony - przyjmowalby Navigator i PageContents, oraz zawartosc katalogu root.
+Tworzylby wtedy cala otoczke HTML, i head, wklejalby CSS w head
+
+PageContents w zasadzie tylko udostepni wszystkie sekcje jako tekst
+
+Navigator udostepni nawigacje jako tekst, ale JS musialby byc osobno zeby moc go dodac na sam dol strony (tak zeby cala strona 
+wraz z sekcjami juz byla zaladowana, zeby getElementById zalapywal wszystko)
+
+W tej sytuacji FileStructureReader musialby:
+ * udostepniac pliki tylko w root
+ * udostepniac cale sekcje jako sekcje
+ * jakos zbierac informacje o tym jak sekcje sa zagniezdzone zeby odzwierciedlac to w nawigacji
+
+Wiec co do zbierania - algorytm moglby akceptowac jakis Section - root bylby specjalnym Section na ta okazje. Sekcje beda zapisywane na liste
+sekcji, ale wraz z utworzeniem kazdej z nich, pole parent w sekcji bedzie zaludniane parentem wlasnie
+
+Osobna metoda moglaby przejsc liste sekcji i zczytywac jaki jest parent - to odroznie pliki z roota od faktycznych sekcji
+
+Pole children dla sekcji?
 
 """
