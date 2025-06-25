@@ -50,9 +50,10 @@ class Section:
 
 
 class Page:
-    def __init__(self, sections: list[Section]):
-        self.css = "<css lol>"
+    def __init__(self, sections: list[Section], css: str, navigation: str):
+        self.css = css
         self.sections = sections
+        self.navigation = navigation
 
     def create_page(self):
         all_sections = ""
@@ -65,7 +66,7 @@ class Page:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Newfluence</title>""" + self.css + """
         </head>
-    <body>""" + all_sections + """</body>
+    <body>""" + self.navigation + all_sections + """</body>
 </html>"""
         
 
@@ -107,7 +108,7 @@ test_section = Section([
 )
 #print(test_section.create_section())
 
-test_page = Page([test_section])
+test_page = Page([test_section], "<css lol>", "<div>navigation</div>")
 print(test_page.create_page())
 
 
