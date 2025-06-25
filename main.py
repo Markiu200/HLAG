@@ -83,23 +83,26 @@ class NavigationItem:
 class FileStructureReader:
     def __init__(self, webpage_path):
         self.webpage_path = webpage_path
-        self.directory_structure = self.get_directory_structure(self.webpage_path)
+        self.root_files: list[WebpageFile] = []
+        self.all_sections: list[Section] = []
+        self.root_section = Section([], "root")
+        self.__get_root_files_and_sections(self.webpage_path, self.root_section)
 
-    def get_directory_structure(self, path: str) -> list:
-        local_array = []
+    def __get_root_files_and_sections(self, path: str, section: Section, parent: Section = None) -> Section:
+        section.parent = parent
         for file in os.listdir(path):
             full_path = os.path.join(path, file)
             if os.path.isfile(full_path):
-                local_array.append(full_path)
+                _, ext = os.path.splitext(full_path)
+                section.webpage_files.append(WebpageFile(full_path, ext))
             else:
-                local_array.append(self.get_directory_structure(full_path))
-        return local_array
-
-    def create_navigation_structure(self):
-        pass
+                section.children = self.__get_root_files_and_sections(full_path, Section([], file), section)
+        self.all_sections.append(section)
 
 
 webpage_builder = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
+root_files = webpage_builder.root_files
+all_sections = webpage_builder.all_sections
 
 test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", FileType.html)
 
@@ -111,7 +114,7 @@ test_section = Section([
 #print(test_section.create_section())
 
 test_page = Page([test_section], "<css lol>", "<div>navigation</div>")
-print(test_page.create_page())
+#print(test_page.create_page())
 
 
 
