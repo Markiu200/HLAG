@@ -2,6 +2,8 @@ Wymagania funkcjonalne:
  -- // Global
 done// feedback snackbar after successful copy to clipboard
 	// sections have their own pages
+INPR// Python HTML code generator
+INPR//  - generate navigation
 
  -- // URL handling
 done// input field to paste in URL

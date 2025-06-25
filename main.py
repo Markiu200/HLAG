@@ -67,9 +67,12 @@ class Navigation:
         self.section_list = section_list
     
     def get_navigation_html_as_string(self) -> str:
-        result = "<nav>"
+        result = "<nav>\r\n"
         for section in self.section_list:
-            result += f"<button>${section.id}</button>"
+            if section.id == "root":
+                continue
+            result += f"<button>{section.id}</button>"
+        result += "</nav>\r\n"
         return result
 
 
@@ -104,12 +107,13 @@ class PageBuilder:
             if file.file_type == ".css":
                 css = file
         # get page contents
-        page_contents = ""
+        page_contents = "<main>\r\n"
         for sections in self.dir_structure.all_sections:
             if sections.id == "root":
                 continue
             for file in sections.webpage_files:
                 page_contents += file.get_file_string()
+        page_contents += "</main>\r\n"
         # generate
         result = """<!DOCTYPE html>
 <html lang="en">
@@ -118,7 +122,8 @@ class PageBuilder:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Newfluence</title>""" + css.get_file_string() + """
         </head>
-    <body>""" + page_contents + """</body>
+    <body>""" + self.navigation.get_navigation_html_as_string() + \
+        "<div style=\"float: left; width: 220px; height: 100%;\"></div>" + page_contents + """</body>
 </html>"""
         return result
         
