@@ -7,11 +7,12 @@ class WebpageFile:
         self.path = path
         self.file_type = file_type
     
-    def create_div(self) -> str:
+    def get_file_string(self) -> str:
         if self.file_type == ".html":
             return self.__create_div_from_html()
-        else:
-            raise Exception
+        if self.file_type == ".css":
+            return self.__create_style_from_css()
+        raise Exception
 
     def __create_div_from_html(self) -> str:
         """For HTML files, only return contents of &lt;body&gt; as is."""
@@ -28,6 +29,15 @@ class WebpageFile:
                     result += line
         result = f"<div>{result}</div>"
         return result
+    
+    def __create_style_from_css(self) -> str:
+        """For CSS files, return whole file but encase it in &lt;style&gt; tags"""
+        result = "<style>\r\n"
+        with open(self.path) as f:
+            for line in f:
+                result += line
+        result += "</style>\r\n"
+        return result
 
 
 class Section:
@@ -40,7 +50,7 @@ class Section:
     def create_section(self) -> str:
         result = f"<section id=\"{self.id}\">"
         for file in self.webpage_files:
-            result += file.create_div()
+            result += file.get_file_string()
         result += "</section>"
         return result
 
@@ -109,13 +119,41 @@ class PageBuilder:
         self.navigation = navigation
         self.dir_structure = dir_structure
 
+    def build(self):
+        # get root files - css
+        css = None
+        for file in self.dir_structure.root_section.webpage_files:
+            if file.file_type == ".css":
+                css = file
+        # get page contents
+        page_contents = ""
+        for sections in self.dir_structure.all_sections:
+            if sections.id == "root":
+                continue
+            for file in sections.webpage_files:
+                page_contents += file.get_file_string()
+        # generate
+        result = """<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Newfluence</title>""" + css.get_file_string() + """
+        </head>
+    <body>""" + page_contents + """</body>
+</html>"""
+        return result
+        
+
 
 structure_reader = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
 navigation = Navigation(structure_reader.all_sections)
 page_builder = PageBuilder(navigation, structure_reader)
 
-print(navigation.get_navigation_html_as_string())
-
+#print(navigation.get_navigation_html_as_string())
+print(page_builder.build())
+with open("newfluence.html", "w") as file:
+    file.write(page_builder.build())
 
 
 
