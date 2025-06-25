@@ -108,11 +108,10 @@ class PageBuilder:
                 css = file
         # get page contents
         page_contents = "<main>\r\n"
-        for sections in self.dir_structure.all_sections:
-            if sections.id == "root":
+        for section in self.dir_structure.all_sections:
+            if section.id == "root":
                 continue
-            for file in sections.webpage_files:
-                page_contents += file.get_file_string()
+            page_contents += section.create_section()
         page_contents += "</main>\r\n"
         # generate
         result = """<!DOCTYPE html>
