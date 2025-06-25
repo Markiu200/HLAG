@@ -117,17 +117,6 @@ page_builder = PageBuilder(navigation, structure_reader)
 print(navigation.get_navigation_html_as_string())
 
 
-test_webpage_file = WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", ".html")
-
-test_section = Section([
-    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\010_home.html", ".html"),
-    WebpageFile("D:\\Dane_Gits\\HLAG\\webpage\\020_home\\015_some_appendix.html", ".html")],
-    "home",
-)
-#print(test_section.create_section())
-
-test_page = Page([test_section], "<css lol>", "<div>navigation</div>")
-#print(test_page.create_page())
 
 
 
