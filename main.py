@@ -147,7 +147,8 @@ class PageBuilder:
         <title>Newfluence</title>""" + css.get_file_string() + """
         </head>
     <body>""" + self.navigation.get_navigation_html_as_string() + \
-        "<div style=\"float: left; width: 220px; height: 100%;\"></div>" + page_contents + """</body>
+        "<div style=\"float: left; width: 220px; height: 100%;\"></div>" + page_contents + \
+            self.navigation.get_navigation_js_as_string() + """</body>
 </html>"""
         return result
         
