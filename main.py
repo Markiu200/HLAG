@@ -81,7 +81,7 @@ class Navigation:
         for section in self.section_list:
             if section.id == "root":
                 continue
-            js_map += f"[\"{section.id}\"], document.getElementById(\"{section.id}\")],\r\n"
+            js_map += f"[\"{section.id}\", document.getElementById(\"{section.id}\")],\r\n"
         # generate result
         result = """<script>
   const navigation = {
