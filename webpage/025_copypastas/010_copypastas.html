@@ -135,7 +135,6 @@
       getUsersArray() {
         users = this.textarea.value.trim();
         users = users.replaceAll(",", "");
-        users = users.replaceAll(".", "");
         users = users.replaceAll("\t", " ");
         users = users.replaceAll("\r", "");
         users = users.replaceAll("\n", " ");
@@ -260,7 +259,7 @@
         let url = this.urlInput.value;
         let summary = this.summaryInput.value;
         let status = this.statusDropdown.value;
-        if (url == "hold") {status = "waiting";}
+        if (status == "hold") {status = "waiting";}
         if (status == "vendor") {status = "waiting";}
         let comment = this.commentInput.value;
         navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
@@ -283,7 +282,7 @@
         let source = this.sourceDropdown.value;
         let status = this.statusDropdown.value;
         if (status == "resolved") {status = "Resolved.";}
-        if (status == "waiting") {status = "Waiting for customer";}
+        if (status == "waiting") {status = "Waiting for Customer";}
         if (status == "transferred") {status = "Transferred";}
         if (status == "inprog") {status = "In progres";}
         if (status == "queued") {status = "Open";}

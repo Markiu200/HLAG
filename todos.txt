@@ -43,3 +43,7 @@ done// window to see actual commands
 	// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version	
  
+ -- // Bugs
+DONE// Typo in Waiting for customer
+DONE// Own version of "hold" status translation
+DONE// Remove removing dots in user list
