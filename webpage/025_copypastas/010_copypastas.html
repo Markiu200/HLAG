@@ -75,12 +75,12 @@
     
     <div style="display: flex;">
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantFullAccessNoAutomapping')">Grant Full Access w/o Automapping</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantFullAccessWithAutomapping')">Grant Full Access with Automapping</button>
+      <!--button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantFullAccessWithAutomapping')">Grant Full Access with Automapping</button-->
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeFullAccess')">Revoke Full Access</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsOnprem')">Grant Send As on-prem</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsCloud')">Grant Send As cloud</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsOnprem')">Revoke Send As on-prem</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsCloud')">Revoke Send As cloud</button>
+      <button class="buttonDiv" style="background-color: coral;" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsOnprem')"><span style="color: green;">Grant</span> Send As on-prem</button>
+      <button class="buttonDiv" style="background-color: aqua;"onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsCloud')">Grant Send As cloud</button>
+      <button class="buttonDiv" style="background-color: coral;"onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsOnprem')"><span style="color: rgb(138, 0, 0);">Revoke</span> Send As on-prem</button>
+      <button class="buttonDiv" style="background-color: aqua;" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsCloud')">Revoke Send As cloud</button>
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantSendOnBehalf')">Grant Send On Behalf</button>
       <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendOnBehalf')">Revoke Send On Behalf</button>
     </div>
@@ -122,15 +122,6 @@
       filteredUsersArray: [],
       readableList: "",
       commandList: "",
-      grantFullAccessNoAutomapping: "",
-      grantFullAccessWithAutomapping: "",
-      revokeFullAccess: "",
-      grandSendAsOnprem: "",
-      grandSendAsCloud: "",
-      revokeSendAsOnprem: "",
-      revokeSendAsCloud: "",
-      grantSendOnBehalf: "",
-      revokeSendOnBehalf: "",
 
       getUsersArray() {
         users = this.textarea.value.trim();
