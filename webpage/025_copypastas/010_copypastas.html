@@ -29,6 +29,7 @@
       <button class="buttonDiv" onclick="ticketCopypasta.copyToMyExcel()">Copy to my Excel</button>
       <button class="buttonDiv" onclick="ticketCopypasta.copyToTheirExcel()">Copy to their Excel</button>
       <button class="buttonDiv" onclick="ticketCopypasta.clear()">Clear</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.clearAll()">Clear All</button>
     </div>
 
     <select name="status" id="ticketStatusDropdown" tabindex="4">
@@ -71,6 +72,7 @@
       style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
       onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
     <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
+    <button onclick="mailboxesCopypasta.clear()">Clear</button>
     <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
     
     <div style="display: flex;">
@@ -220,6 +222,16 @@
         if (privilege == "revokeSendOnBehalf") {
           return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
         }
+      },
+
+      clear() {
+        this.textarea.value = "";
+        this.foundUsers.innerHTML = "";
+        this.aliasInput.value = "";
+        this.viewWindow.value = "";
+        this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
+        this.readableList = "";
+        this.commandList = "";
       }
     }
 
@@ -291,6 +303,11 @@
         this.summaryInput.value = "";
         this.commentInput.value = "";
         document.getElementById("eformCopypastaInput").value = "";
+      },
+
+      clearAll() {
+        this.clear();
+        mailboxesCopypasta.clear();
       }
     }
 
