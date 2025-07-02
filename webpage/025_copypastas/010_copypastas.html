@@ -240,7 +240,7 @@
       parseLink() {
         let reg = /HLSUPPORT-\d*/i;
         var matches = this.urlInput.value.match(reg);
-        if (matches.length) {
+        if (matches && matches.length) {
           document.getElementById("generalUrl_ticketNumber").value = matches[0];
           document.getElementById("eformCopypastaInput").value = matches[0];
         }
