@@ -34,7 +34,6 @@ main {
     left: 50%; /* Center the snackbar */
     bottom: 30px; /* 30px from the bottom */
 }
-/* Show the snackbar when clicking on a button (class added with JavaScript) */
 #snackbar.show {
     visibility: visible; /* Show the snackbar */
 }
@@ -60,3 +59,41 @@ main {
     margin-bottom: 8px;
     position: relative;
 }
+.mailbox_copypastas_privileges {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    display: inline-block; /* makes the thing take only as much space as it's children need */
+    height: 50px;
+}
+.mailbox_copypastas_privileges.right {
+    float: inline-end;
+}
+.mailbox_copypastas_privileges button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: 90px;
+    height: 100%;
+}
+.mailbox_copypastas_privileges button:hover {
+    background-color: #ddd;
+}
+.mailbox_copypastas_privileges button.active {
+    background-color: #ccc;
+}
+.mailbox_copypastas_privileges div {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    float: left;
+    border: none;
+    outline: none;
+    padding: 14px 16px;
+    height: 100%;
+    width: 100px;
+    text-align: right;
+}
+.mailbox_copypastas_privileges .grant {background-color: #d1ffe6;}
+.mailbox_copypastas_privileges .revoke {background-color: #ffd1d1;}

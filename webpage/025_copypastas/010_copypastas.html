@@ -62,11 +62,39 @@
     <div>
       <input type="text" id="eformCopypastaInput" placeholder="HLSUPPORT">
     </div>
-
   </section>
+
+
+  <!-- -------------------- -->
+  <!-- Mailboxes copypastas -->
+  <!-- -------------------- -->
 
   <section class="section">
     <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
+    
+    <!-- Toggle buttons -->
+    <div style="float: left;">
+      <div class="mailbox_copypastas_privileges">
+        <div class="grant">GRANT</div>
+        <button class="tablinks" onclick="openCity(event, 'London')">Full Access</button>
+        <button class="tablinks" onclick="openCity(event, 'Paris')">Send As</button>
+        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Send on Behalf</button>
+      </div>
+      <div style="margin: 0; padding: 0;"></div>
+      <div class="mailbox_copypastas_privileges">
+        <div class="revoke">REVOKE</div>
+        <button class="tablinks" onclick="openCity(event, 'London')">Full Access</button>
+        <button class="tablinks" onclick="openCity(event, 'Paris')">Send As</button>
+        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Send on Behalf</button>
+      </div>
+      <div style="margin: 0; padding: 0;"></div>
+      <div class="mailbox_copypastas_privileges right">
+        <button class="tablinks" onclick="openCity(event, 'London')">Cloud</button>
+        <button class="tablinks" onclick="openCity(event, 'Paris')">On-prem</button>
+      </div>
+    </div>
+    <div style="clear: both; height: 20px;"></div>
+    
     <input type="text" placeholder="alias" id="mailboxesCopypasta_alias">
     <textarea 
       style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
