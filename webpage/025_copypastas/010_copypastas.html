@@ -76,21 +76,21 @@
     <div style="float: left;">
       <div class="mailbox_copypastas_privileges">
         <div class="grant">GRANT</div>
-        <button class="tablinks" onclick="openCity(event, 'London')">Full Access</button>
-        <button class="tablinks" onclick="openCity(event, 'Paris')">Send As</button>
-        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Send on Behalf</button>
+        <button id="mailbox_copypastas_grantFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
+        <button id="mailbox_copypastas_grantSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
+        <button id="mailbox_copypastas_grantSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
       </div>
       <div style="margin: 0; padding: 0;"></div>
       <div class="mailbox_copypastas_privileges">
         <div class="revoke">REVOKE</div>
-        <button class="tablinks" onclick="openCity(event, 'London')">Full Access</button>
-        <button class="tablinks" onclick="openCity(event, 'Paris')">Send As</button>
-        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Send on Behalf</button>
+        <button id="mailbox_copypastas_revokeFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
+        <button id="mailbox_copypastas_revokeSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
+        <button id="mailbox_copypastas_revokeSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
       </div>
       <div style="margin: 0; padding: 0;"></div>
       <div class="mailbox_copypastas_privileges right">
-        <button class="tablinks" onclick="openCity(event, 'London')">Cloud</button>
-        <button class="tablinks" onclick="openCity(event, 'Paris')">On-prem</button>
+        <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.privilegeToggle(event);">Cloud</button>
+        <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.privilegeToggle(event);">On-prem</button>
       </div>
     </div>
     <div style="clear: both; height: 20px;"></div>
@@ -149,6 +149,18 @@
       foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
       aliasInput: document.getElementById("mailboxesCopypasta_alias"),
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
+      /* toggle buttons*/
+      buttonMap: new Map([
+        ["mailbox_copypastas_grantFullAccessButton", document.getElementById("mailbox_copypastas_grantFullAccessButton")],
+        ["mailbox_copypastas_grantSendAsButton", document.getElementById("mailbox_copypastas_grantSendAsButton")],
+        ["mailbox_copypastas_grantSendOnBehalfButton", document.getElementById("mailbox_copypastas_grantSendOnBehalfButton")],
+        ["mailbox_copypastas_revokeFullAccessButton", document.getElementById("mailbox_copypastas_revokeFullAccessButton")],
+        ["mailbox_copypastas_revokeSendAsButton", document.getElementById("mailbox_copypastas_revokeSendAsButton")],
+        ["mailbox_copypastas_revokeSendOnBehalfButton", document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton")],
+        ["mailbox_copypastas_cloudButton", document.getElementById("mailbox_copypastas_cloudButton")],
+        ["mailbox_copypastas_onpremButton", document.getElementById("mailbox_copypastas_onpremButton")],
+      ]),
+      /* non-DOM properties*/
       filteredUsersArray: [],
       readableList: "",
       commandList: "",
@@ -184,6 +196,17 @@
         this.getUsersArray();
         this.getUsersAsReadableList();
         this.writeFilteredUsers();
+      },
+
+      privilegeToggle(button) {
+        //console.log(button.target.id);
+        dom = this.buttonMap.get(button.target.id);
+        //console.log(dom);
+        if (dom.className.includes(" active")) {         
+          dom.className = dom.className.replace(" active", "");
+        } else {
+          dom.className += " active";
+        }
       },
 
       getCopyPasta() {
