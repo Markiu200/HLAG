@@ -89,31 +89,19 @@
       </div>
       <div style="margin: 0; padding: 0;"></div>
       <div class="mailbox_copypastas_privileges right">
-        <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.privilegeToggle(event);">Cloud</button>
-        <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.privilegeToggle(event);">On-prem</button>
+        <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">Cloud</button>
+        <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">On-prem</button>
       </div>
     </div>
     <div style="clear: both; height: 20px;"></div>
     
-    <input type="text" placeholder="alias" id="mailboxesCopypasta_alias">
+    <input type="text" placeholder="alias" id="mailboxesCopypasta_alias" onchange="mailboxesCopypasta.aliasOnchange()">
     <textarea 
       style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
       onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
     <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
     <button onclick="mailboxesCopypasta.clear()">Clear</button>
     <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
-    
-    <div style="display: flex;">
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantFullAccessNoAutomapping')">Grant Full Access w/o Automapping</button>
-      <!--button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantFullAccessWithAutomapping')">Grant Full Access with Automapping</button-->
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeFullAccess')">Revoke Full Access</button>
-      <button class="buttonDiv" style="background-color: coral;" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsOnprem')"><span style="color: green;">Grant</span> Send As on-prem</button>
-      <button class="buttonDiv" style="background-color: aqua;"onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grandSendAsCloud')">Grant Send As cloud</button>
-      <button class="buttonDiv" style="background-color: coral;"onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsOnprem')"><span style="color: rgb(138, 0, 0);">Revoke</span> Send As on-prem</button>
-      <button class="buttonDiv" style="background-color: aqua;" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendAsCloud')">Revoke Send As cloud</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'grantSendOnBehalf')">Grant Send On Behalf</button>
-      <button class="buttonDiv" onclick="mailboxesCopypasta.getCopypasta_commands(event, 'revokeSendOnBehalf')">Revoke Send On Behalf</button>
-    </div>
 
     <div>
       <textarea id="mailboxesCopypasta_commandResultViewWindow"
@@ -151,20 +139,23 @@
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       /* toggle buttons*/
       buttonMap: new Map([
-        ["mailbox_copypastas_grantFullAccessButton", {element: document.getElementById("mailbox_copypastas_grantFullAccessButton"), state: false}],
-        ["mailbox_copypastas_grantSendAsButton", {element: document.getElementById("mailbox_copypastas_grantSendAsButton"), state: false}],
-        ["mailbox_copypastas_grantSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_grantSendOnBehalfButton"), state: false}],
-        ["mailbox_copypastas_revokeFullAccessButton", {element: document.getElementById("mailbox_copypastas_revokeFullAccessButton"), state: false}],
-        ["mailbox_copypastas_revokeSendAsButton", {element: document.getElementById("mailbox_copypastas_revokeSendAsButton"), state: false}],
-        ["mailbox_copypastas_revokeSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton"), state: false}],
-        ["mailbox_copypastas_cloudButton", {element: document.getElementById("mailbox_copypastas_cloudButton"), state: false}],
-        ["mailbox_copypastas_onpremButton", {element: document.getElementById("mailbox_copypastas_onpremButton"), state: false}],
+        ["mailbox_copypastas_grantFullAccessButton", {element: document.getElementById("mailbox_copypastas_grantFullAccessButton"), active: false}],
+        ["mailbox_copypastas_grantSendAsButton", {element: document.getElementById("mailbox_copypastas_grantSendAsButton"), active: false}],
+        ["mailbox_copypastas_grantSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_grantSendOnBehalfButton"), active: false}],
+        ["mailbox_copypastas_revokeFullAccessButton", {element: document.getElementById("mailbox_copypastas_revokeFullAccessButton"), active: false}],
+        ["mailbox_copypastas_revokeSendAsButton", {element: document.getElementById("mailbox_copypastas_revokeSendAsButton"), active: false}],
+        ["mailbox_copypastas_revokeSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton"), active: false}],
+      ]),
+      cloudOnpremMap: new Map([
+        ["mailbox_copypastas_cloudButton", {element: document.getElementById("mailbox_copypastas_cloudButton"), active: true}],
+        ["mailbox_copypastas_onpremButton", {element: document.getElementById("mailbox_copypastas_onpremButton"), active: false}],
       ]),
       /* non-DOM properties*/
       filteredUsersArray: [],
       readableList: "",
       commandList: "",
 
+      /* User list related */
       getUsersArray() {
         users = this.textarea.value.trim();
         users = users.replaceAll(",", "");
@@ -179,7 +170,6 @@
           }
         });
       },
-
       getUsersAsReadableList() {
         this.readableList = "";
         this.filteredUsersArray.forEach(element => {
@@ -187,25 +177,132 @@
         });
         this.readableList.trim();
       },
-
       writeFilteredUsers() {
         this.foundUsers.innerHTML = this.readableList;
       },
-
       textareaOnchange() {
         this.getUsersArray();
         this.getUsersAsReadableList();
         this.writeFilteredUsers();
+        this.getCopypasta_commands(); // rebuild commands
+      },
+      aliasOnchange() {
+        this.getCopypasta_commands(); // rebuild commands
       },
 
+      /* Privilege buttons related */
       privilegeToggle(button) {
-        //console.log(button.target.id);
-        dom = this.buttonMap.get(button.target.id).element;
-        //console.log(dom);
-        if (dom.className.includes(" active")) {         
+        mapItem = this.buttonMap.get(button.target.id);
+        dom = mapItem.element;   
+        if (mapItem.active) {
           dom.className = dom.className.replace(" active", "");
+          mapItem.active = false;
         } else {
           dom.className += " active";
+          mapItem.active = true;
+        }
+        this.getCopypasta_commands(); // rebuild commands
+      },
+      cloudOnpremToggle(button) {
+        mapItem = this.cloudOnpremMap.get(button.target.id);
+        dom = mapItem.element;        
+        if (dom && button.target.id == "mailbox_copypastas_cloudButton") {
+          if (mapItem.active) {
+            return;
+          } else {
+            dom.className += " active";
+            mapItem.active = true;
+            otherOne = this.cloudOnpremMap.get("mailbox_copypastas_onpremButton");
+            otherOne.element.className = dom.className.replace(" active", "");
+            otherOne.active = false;           
+            this.getCopypasta_commands(); // rebuild commands
+            return;
+          }
+        }
+        if (dom && button.target.id == "mailbox_copypastas_onpremButton") {
+          if (mapItem.active) {
+            return;
+          } else {
+            dom.className += " active";
+            mapItem.active = true;
+            otherOne = this.cloudOnpremMap.get("mailbox_copypastas_cloudButton");
+            otherOne.element.className = dom.className.replace(" active", "");
+            otherOne.active = false;           
+            this.getCopypasta_commands(); // rebuild commands
+            return;
+          }
+        }
+      },
+
+      /* Commands related */
+      testForFields() {
+        let alias = this.aliasInput.value.trim();
+        if (!alias || alias.length == 0) {
+          return false;
+        }
+        if (!this.filteredUsersArray || this.filteredUsersArray.length == 0) {
+          return false;
+        }
+        somethingSet = false;
+        this.buttonMap.forEach((value, key) => {
+          if (value.active == true) {somethingSet = true; return;}
+        });
+        if (somethingSet) {
+          return true;
+        }
+        return false;
+      },
+      getCopypasta_commands() {
+        // test if everything is set
+        if (this.testForFields() == false) {
+          this.viewWindow.value = "";
+        }
+        // set cloud / on-prem flag
+        isCloud = true;
+        if (this.cloudOnpremMap.get("mailbox_copypastas_cloudButton").active == true) {
+          isCloud = true;
+        } else {
+          isCloud = false;
+        }
+        // getting commands
+        alias = this.aliasInput.value.trim();
+        revokeCommands = "";
+        grantCommands = "";
+        this.filteredUsersArray.forEach((user) => {
+          this.buttonMap.forEach((value, key) => {
+            if (value.active) {
+              grantCommands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
+            }
+          })
+        });
+        this.viewWindow.value = grantCommands;
+      },
+      getCopypasta_getSingleCommand(privilege, alias, user, onCloud) {
+        if (privilege == "mailbox_copypastas_grantFullAccessButton") {
+          return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
+        }
+        if (privilege == "mailbox_copypastas_revokeFullAccessButton") {
+          return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
+        }
+        if (privilege == "mailbox_copypastas_grantSendAsButton") {
+          if (onCloud) {
+            return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+          } else {
+            return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
+          }
+        }
+        if (privilege == "mailbox_copypastas_revokeSendAsButton") {
+          if (onCloud) {
+            return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+          } else {
+            return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
+          }
+        }
+        if (privilege == "mailbox_copypastas_grantSendOnBehalfButton") {
+          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
+        }
+        if (privilege == "mailbox_copypastas_revokeSendOnBehalfButton") {
+          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
         }
       },
 
@@ -227,52 +324,6 @@
         
         navigator.clipboard.writeText(generatedText);
         showSnackbar();
-      },
-
-      getCopypasta_commands(evt, privilege) {
-        let alias = this.aliasInput.value.trim();
-        this[privilege] = "";
-        this.filteredUsersArray.forEach((user) => {
-          this[privilege] += this.getCopypasta_getSingleCommand(privilege, alias, user);
-        });
-        if (evt.shiftKey) {
-          this.commandList += this[privilege];
-        } else {
-          this.commandList = this[privilege];
-        }
-        this.viewWindow.value = this.commandList;
-        navigator.clipboard.writeText(this.commandList);
-        showSnackbar();
-      },
-
-      getCopypasta_getSingleCommand(privilege, alias, user) {
-        if (privilege == "grantFullAccessNoAutomapping") {
-          return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
-        }
-        if (privilege == "grantFullAccessWithAutomapping") {
-          return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$true -Confirm:$false\r\n`;
-        }
-        if (privilege == "revokeFullAccess") {
-          return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
-        }
-        if (privilege == "grandSendAsOnprem") {
-          return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
-        }
-        if (privilege == "grandSendAsCloud") {
-          return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-        }
-        if (privilege == "revokeSendAsOnprem") {
-          return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
-        }
-        if (privilege == "revokeSendAsCloud") {
-          return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-        }
-        if (privilege == "grantSendOnBehalf") {
-          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
-        }
-        if (privilege == "revokeSendOnBehalf") {
-          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
-        }
       },
 
       clear() {
