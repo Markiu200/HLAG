@@ -151,14 +151,14 @@
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       /* toggle buttons*/
       buttonMap: new Map([
-        ["mailbox_copypastas_grantFullAccessButton", document.getElementById("mailbox_copypastas_grantFullAccessButton")],
-        ["mailbox_copypastas_grantSendAsButton", document.getElementById("mailbox_copypastas_grantSendAsButton")],
-        ["mailbox_copypastas_grantSendOnBehalfButton", document.getElementById("mailbox_copypastas_grantSendOnBehalfButton")],
-        ["mailbox_copypastas_revokeFullAccessButton", document.getElementById("mailbox_copypastas_revokeFullAccessButton")],
-        ["mailbox_copypastas_revokeSendAsButton", document.getElementById("mailbox_copypastas_revokeSendAsButton")],
-        ["mailbox_copypastas_revokeSendOnBehalfButton", document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton")],
-        ["mailbox_copypastas_cloudButton", document.getElementById("mailbox_copypastas_cloudButton")],
-        ["mailbox_copypastas_onpremButton", document.getElementById("mailbox_copypastas_onpremButton")],
+        ["mailbox_copypastas_grantFullAccessButton", {element: document.getElementById("mailbox_copypastas_grantFullAccessButton"), state: false}],
+        ["mailbox_copypastas_grantSendAsButton", {element: document.getElementById("mailbox_copypastas_grantSendAsButton"), state: false}],
+        ["mailbox_copypastas_grantSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_grantSendOnBehalfButton"), state: false}],
+        ["mailbox_copypastas_revokeFullAccessButton", {element: document.getElementById("mailbox_copypastas_revokeFullAccessButton"), state: false}],
+        ["mailbox_copypastas_revokeSendAsButton", {element: document.getElementById("mailbox_copypastas_revokeSendAsButton"), state: false}],
+        ["mailbox_copypastas_revokeSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton"), state: false}],
+        ["mailbox_copypastas_cloudButton", {element: document.getElementById("mailbox_copypastas_cloudButton"), state: false}],
+        ["mailbox_copypastas_onpremButton", {element: document.getElementById("mailbox_copypastas_onpremButton"), state: false}],
       ]),
       /* non-DOM properties*/
       filteredUsersArray: [],
@@ -200,7 +200,7 @@
 
       privilegeToggle(button) {
         //console.log(button.target.id);
-        dom = this.buttonMap.get(button.target.id);
+        dom = this.buttonMap.get(button.target.id).element;
         //console.log(dom);
         if (dom.className.includes(" active")) {         
           dom.className = dom.className.replace(" active", "");
