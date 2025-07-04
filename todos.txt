@@ -30,8 +30,8 @@ done// field for mailbox alias
 	// - optional one for mailbox display name
 done// input for user list
 done// - show parsed users
-	// multiselect for privileges modified
-	// dropdown for action taken (privileges granted / revoked)
+done// multiselect for privileges modified
+done// multiselect for cloud / onprem
 done// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version
 done// window to see actual commands

@@ -213,7 +213,7 @@
             dom.className += " active";
             mapItem.active = true;
             otherOne = this.cloudOnpremMap.get("mailbox_copypastas_onpremButton");
-            otherOne.element.className = dom.className.replace(" active", "");
+            otherOne.element.className = otherOne.element.className.replace(" active", "");
             otherOne.active = false;           
             this.getCopypasta_commands(); // rebuild commands
             return;
@@ -226,7 +226,7 @@
             dom.className += " active";
             mapItem.active = true;
             otherOne = this.cloudOnpremMap.get("mailbox_copypastas_cloudButton");
-            otherOne.element.className = dom.className.replace(" active", "");
+            otherOne.element.className = otherOne.element.className.replace(" active", "");
             otherOne.active = false;           
             this.getCopypasta_commands(); // rebuild commands
             return;
@@ -334,6 +334,10 @@
         this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
         this.readableList = "";
         this.commandList = "";
+        this.buttonMap.forEach((value, key) => {
+          value.active = false;
+          value.element.className = value.element.className.replace(" active", "");
+        })
       }
     }
 
