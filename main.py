@@ -103,21 +103,21 @@ class Navigation:
 
 
 class FileStructureReader:
-    def __init__(self, webpage_path):
-        self.webpage_path = webpage_path
+    def __init__(self, webpage_sections_folder_path):
+        self.webpage_sections_folder_path = webpage_sections_folder_path
         self.all_sections: list[Section] = []
         self.root_section = Section([], "root")
-        self.__get_root_files_and_sections(self.webpage_path, self.root_section)
+        self.__get_root_files_and_sections(self.webpage_sections_folder_path, self.root_section)
 
     def __get_root_files_and_sections(self, path: str, section: Section, parent: Section = None) -> Section:
         section.parent = parent
-        for file in os.listdir(path):
-            full_path = os.path.join(path, file)
+        for node in os.listdir(path):
+            full_path = os.path.join(path, node)
             if os.path.isfile(full_path):
-                _, ext = os.path.splitext(full_path)
-                section.webpage_files.append(WebpageFile(full_path, ext))
+                _, extension = os.path.splitext(full_path)
+                section.webpage_files.append(WebpageFile(full_path, extension))
             else:
-                section.children = self.__get_root_files_and_sections(full_path, Section([], file), section)
+                section.children = self.__get_root_files_and_sections(full_path, Section([], node), section)
         self.all_sections.append(section)
 
 
