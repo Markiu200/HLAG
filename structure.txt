@@ -1,0 +1,14 @@
+<html>
+    <head>
+        All CSS'i
+    </head>
+    <body>
+        Top JS
+        <div>
+            <nav></nav>
+            <main></main>
+            nav JS
+        </div>
+        Bottom JS
+    </body>
+</html>

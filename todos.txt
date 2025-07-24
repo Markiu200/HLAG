@@ -18,12 +18,15 @@ done// ticket status dropdown
 done// ticket source dropdown
 done// button to get Excel row for my excel
 done// button to get Excel row for their excel
+	// have status and source as switches
 
  -- // Eforms
 done// copypasta - generic
 done// copypasta - generic with number
 done// copypasta - e-form
+	// copypasta - changemanagement
 done// have it bordered into a copypasta section
+	// have elements as little windows with text in them
 
  -- // Mailbox copypastas
 done// field for mailbox alias
@@ -43,7 +46,10 @@ done// window to see actual commands
 	// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version	
  
- -- // Bugs
+ -- // Bugs and improvements
 DONE// Typo in Waiting for customer
 DONE// Own version of "hold" status translation
 DONE// Remove removing dots in user list
+	// URL handling input elements bigger
+	// Better organize layout for mailboxes copypasta
+	// Fix date fetcher in ticket copypastas
