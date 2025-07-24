@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newfluence - Home</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <section class="section">
+    <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="ticketCopypasta.parseLink()" tabindex="1">
+    <div class="inputWithCopyWrapper">
+      <input type="text" readonly id="generalUrl_ticketNumber">
+      <button onclick="ticketCopypasta.saveTicketNumber()" tabindex="-1">&#x2398;</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80" tabindex="2">
+    </div>
+    <div style="margin-top: 8px;">
+      <textarea rows="2" cols="83" style="resize: none;" id="excelComment" tabindex="3"></textarea>
+    </div>
+
+    <!-- Copy to my / their excel -->
+    <div style="display: flex;">
+      <button class="buttonDiv" onclick="ticketCopypasta.copyToMyExcel()">Copy to my Excel</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.copyToTheirExcel()">Copy to their Excel</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.clear()">Clear</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.clearAll()">Clear All</button>
+    </div>
+
+    <select name="status" id="ticketStatusDropdown" tabindex="4">
+      <option value="resolved">resolved</option>
+      <option value="waiting">waiting</option>
+      <option value="transferred">transferred</option>
+      <option value="inprog">inprog</option>
+      <option value="queued">queued</option>
+      <option value="assist">assist</option>
+      <option value="hold">hold</option>
+      <option value="vendor">vendor</option>
+    </select>
+
+    <select name="source" id="ticketSourceDropdown" tabindex="5">
+      <option value="MemoReg queue">MemoReg queue</option>
+      <option value="Email">Email</option>
+      <option value="Backdesk queue">Backdesk queue</option>
+      <option value="Hardware queue">Hardware queue</option>
+      <option value="transferred to Backdesk">transferred to Backdesk</option>
+    </select>
+  </section>
+
+
+
+  <script>
+    const constDate = new Date();
+    let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
+    generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select());
+
+    /* ticketCopypasta */
+    let ticketCopypasta = {
+      urlInput: document.getElementById("generalUrl"),
+      ticketField: document.getElementById("generalUrl_ticketNumber"),
+      summaryInput: document.getElementById("ticketSummary"),
+      commentInput: document.getElementById("excelComment"),
+      statusDropdown: document.getElementById("ticketStatusDropdown"),
+      sourceDropdown: document.getElementById("ticketSourceDropdown"),
+
+      saveTicketNumber() {
+        navigator.clipboard.writeText(this.ticketField.value);
+        showSnackbar();
+      },
+
+      parseLink() {
+        let reg = /HLSUPPORT-\d*/i;
+        var matches = this.urlInput.value.match(reg);
+        if (matches && matches.length) {
+          document.getElementById("generalUrl_ticketNumber").value = matches[0];
+          document.getElementById("eformCopypastaInput").value = matches[0];
+        }
+      },
+
+      copyToMyExcel() {
+        let url = this.urlInput.value;
+        let summary = this.summaryInput.value;
+        let status = this.statusDropdown.value;
+        if (status == "hold") {status = "waiting";}
+        if (status == "vendor") {status = "waiting";}
+        let comment = this.commentInput.value;
+        navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
+        showSnackbar();
+      },
+
+      copyToTheirExcel() {
+        // Generate date
+        let hours = constDate.getHours();
+        let year = constDate.getFullYear();
+        let month = hours <= 6 && constDate.getDate() == 1 ? constDate.getMonth() : constDate.getMonth() + 1;
+        let day = hours <= 6 ? constDate.getDate() - 1 : constDate.getDate();
+        
+        day = day.toString().padStart(2, '0');
+        month = month.toString().padStart(2, '0');
+
+        let ticketNumber = this.ticketField.value;
+        let date = `${year}.${month}.${day}`;
+        let summary = this.summaryInput.value;
+        let source = this.sourceDropdown.value;
+        let status = this.statusDropdown.value;
+        if (status == "resolved") {status = "Resolved.";}
+        if (status == "waiting") {status = "Waiting for Customer";}
+        if (status == "transferred") {status = "Transferred";}
+        if (status == "inprog") {status = "In progres";}
+        if (status == "queued") {status = "Open";}
+        if (status == "assist") {status = "In progres";}
+        if (status == "hold") {status = "Hold";}
+        if (status == "vendor") {status = "Pending on Vendor";}
+        let comment = this.commentInput.value;
+        navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${source}\t${status}\t${comment}`);
+        showSnackbar();
+      },
+
+      clear() {
+        this.urlInput.value = "";
+        this.ticketField.value = "";
+        this.summaryInput.value = "";
+        this.commentInput.value = "";
+        document.getElementById("eformCopypastaInput").value = "";
+      },
+
+      clearAll() {
+        this.clear();
+        mailboxesCopypasta.clear();
+      }
+    }
+  </script>
+
+</body>
+</html>
