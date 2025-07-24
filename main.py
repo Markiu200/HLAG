@@ -67,6 +67,7 @@ class Navigation:
         self.section_list = section_list
     
     def get_navigation_html_as_string(self) -> str:
+        """Returns &lt;nav&gt;(all the navigation here)&lt;/nav&gt; as string"""
         result = "<nav>\r\n"
         for section in self.section_list:
             if section.id == "root":
@@ -139,16 +140,19 @@ class PageBuilder:
             page_contents += section.create_section()
         page_contents += "</main>\r\n"
         # generate
-        result = """<!DOCTYPE html>
+        result = \
+"""<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Newfluence</title>""" + css.get_file_string() + """
         </head>
-    <body>""" + self.navigation.get_navigation_html_as_string() + \
-        "<div style=\"float: left; width: 220px; height: 100%;\"></div>" + page_contents + \
-            self.navigation.get_navigation_js_as_string() + """</body>
+    <body>
+""" + self.navigation.get_navigation_html_as_string() + """
+        <div style="float: left; width: 240px; height: 100%;"></div>""" + page_contents + \
+            self.navigation.get_navigation_js_as_string() + """
+    </body>
 </html>"""
         return result
         
