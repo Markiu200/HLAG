@@ -33,39 +33,72 @@
   <!-- Mailboxes copypastas -->
   <!-- -------------------- -->
 
-  <section class="section">
+  <section class="section copypastas">
     <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
     
-    <!-- Toggle buttons -->
-    <div style="float: left;">
-      <div class="mailbox_copypastas_privileges">
-        <div class="grant">GRANT</div>
-        <button id="mailbox_copypastas_grantFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
-        <button id="mailbox_copypastas_grantSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
-        <button id="mailbox_copypastas_grantSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
+    <!-- Input panel-->
+    <div class="copypastas__mailboxes__input-panel">
+      <!-- Toggle buttons -->
+      <div class="copypastas__mailboxes__input-panel__button-grid">
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title grant">GRANT</div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-behalf">Send on Behalf</button>        
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title revoke">REVOKE</div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-behalf">Send on Behalf</button>
+        <input class="copypastas__mailboxes__input-panel__button-grid__alias-window js-alias-window" 
+          type="text" placeholder="alias">
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem active">Cloud</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud">On-prem</button>
       </div>
-      <div style="margin: 0; padding: 0;"></div>
-      <div class="mailbox_copypastas_privileges">
-        <div class="revoke">REVOKE</div>
-        <button id="mailbox_copypastas_revokeFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
-        <button id="mailbox_copypastas_revokeSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
-        <button id="mailbox_copypastas_revokeSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
-      </div>
-      <div style="margin: 0; padding: 0;"></div>
-      <div class="mailbox_copypastas_privileges right">
-        <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">Cloud</button>
-        <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">On-prem</button>
+
+
+
+
+
+      <!--<div style="float: left;">
+        <div class="copypastas__mailboxes__input-panel__privileges-row">
+          <div class="grant">GRANT</div>
+          <button id="mailbox_copypastas_grantFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
+          <button id="mailbox_copypastas_grantSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
+          <button id="mailbox_copypastas_grantSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
+        </div>
+        <div style="margin: 0; padding: 0;"></div>
+        <div class="copypastas__mailboxes__input-panel__privileges-row">
+          <div class="revoke">REVOKE</div>
+          <button id="mailbox_copypastas_revokeFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
+          <button id="mailbox_copypastas_revokeSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
+          <button id="mailbox_copypastas_revokeSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
+        </div>
+        <div style="margin: 0; padding: 0;"></div>
+
+        <div class="copypastas__mailboxes__input-panel__privileges-row">
+          <div class="local__to-left">
+            <input type="text" placeholder="alias" id="js-copypastas-mailboxes-alias" onchange="mailboxesCopypasta.aliasOnchange()">
+          </div>
+          <div class="local__to-right">
+            <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">Cloud</button>
+            <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">On-prem</button>
+          </div>
+        </div>
+
+      </div>-->
+      <!-- Text inputs -->
+      <div>
+        <textarea 
+          class="copypastas__mailboxes__input-panel__text__textarea" 
+          placeholder="users" id="mailboxesCopypasta_users" 
+          onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
+        <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
+        <button onclick="mailboxesCopypasta.clear()">Clear</button>
+        <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
       </div>
     </div>
     <div style="clear: both; height: 20px;"></div>
     
-    <input type="text" placeholder="alias" id="mailboxesCopypasta_alias" onchange="mailboxesCopypasta.aliasOnchange()">
-    <textarea 
-      style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
-      onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
-    <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
-    <button onclick="mailboxesCopypasta.clear()">Clear</button>
-    <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
+    
 
     <div>
       <textarea id="mailboxesCopypasta_commandResultViewWindow"
@@ -92,7 +125,7 @@
     let mailboxesCopypasta = {
       textarea: document.getElementById("mailboxesCopypasta_users"),
       foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
-      aliasInput: document.getElementById("mailboxesCopypasta_alias"),
+      aliasInput: document.getElementById("js-copypastas-mailboxes-alias"),
       viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
       /* toggle buttons*/
       buttonMap: new Map([
