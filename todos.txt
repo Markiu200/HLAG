@@ -24,7 +24,7 @@ done// button to get Excel row for their excel
 done// copypasta - generic
 done// copypasta - generic with number
 done// copypasta - e-form
-	// copypasta - changemanagement
+done// copypasta - changemanagement
 done// have it bordered into a copypasta section
 	// have elements as little windows with text in them
 
@@ -46,6 +46,18 @@ done// window to see actual commands
 	// copypasta - for ticket resolution
 	//  - also with "wait 90 min" version	
  
+ -- // Nav
+	// make it so you can have more sections on screen than one
+	// nested sections
+	// "display all sections" to make all contents searchable
+
+ -- // Ticket tracking
+	// make interactive elemenets pluggable to ticket tracker
+	// local storage track keeper
+	// export tickets to file / text
+	// import tickets from file / text
+
+
  -- // Bugs and improvements
 DONE// Typo in Waiting for customer
 DONE// Own version of "hold" status translation
