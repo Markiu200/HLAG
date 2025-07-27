@@ -65,13 +65,11 @@ main {
 
 /* Copypastas */
 .copypastas__mailboxes__input-panel {
-    height: 160px;
     display: flex;
 }
 .copypastas__mailboxes__input-panel__button-grid {
-    display: inline-grid;
+    display: grid;
     border: 1px solid #ccc;
-    width: 400px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 .copypastas__mailboxes__input-panel__text__textarea {
@@ -81,16 +79,17 @@ main {
 .copypastas__mailboxes__input-panel__button-grid__row-title {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
-    padding: 14px 16px;
+    padding-right: 15px;;
     text-align: right;
     vertical-align: middle;
-    width: 100%; height: 100%;
 }
 .copypastas__mailboxes__input-panel__button-grid__button {
+    display: inline-block;
     background-color: #f1f1f1;
     border: none;
     outline: none;
     cursor: pointer;
+    height: 50px;
 }
 .copypastas__mailboxes__input-panel__button-grid__row-title.grant {background-color: #d1ffe6;}
 .copypastas__mailboxes__input-panel__button-grid__row-title.revoke {background-color: #ffd1d1;}
@@ -101,6 +100,5 @@ main {
     background-color: #ccc;
 }
 .copypastas__mailboxes__input-panel__button-grid__alias-window {
-    display: inline;
     grid-column: 1 / span 2;
 }
