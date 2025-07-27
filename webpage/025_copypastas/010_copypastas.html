@@ -93,11 +93,7 @@
     const copypastas = {
       start() {
         this.mailboxes.start();
-      },  
-      
-      ButtonObject: function() {
-        this.active = false;
-      },
+      },     
 
       mailboxes: {
         /** 
@@ -403,10 +399,30 @@
 
         }
 
-      }
-    } // mailboxes
-    copypastas.start();
+      } // mailboxes
+    } // copypastas
     
+    // Internal classes - ButtonObject
+    copypastas.ButtonObject = function(domObject = null, isActive = false) {
+      this.element = domObject;
+      this.active = isActive;
+    }
+    copypastas.ButtonObject.prototype.activate = function() {
+      this.active = true;
+      if (this.element != null) {
+        this.element.classList.add("active");
+      }
+    }
+    copypastas.ButtonObject.prototype.deactivate = function() {
+      this.active = false;
+      if (this.element != null) {
+        this.element.classList.remove("active");
+      }
+    }
+
+    // initialize
+    copypastas.start();
+
     //
     //  FUNCTIONS
     //
