@@ -54,8 +54,8 @@
         <input class="copypastas__mailboxes__input-panel__button-grid__alias-window js-alias-input-window" 
           type="text" placeholder="alias">
         <!-- span from right -->
-        <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem active">Cloud</button>
-        <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud">On-prem</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud active">Cloud</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem">On-prem</button>
 
       </div>
 
@@ -136,20 +136,9 @@
           /* non-DOM properties */
           this.usersArray = [],
           this.readableUsersListString = "",
-          /* state */
-          this.state = {
-            jsGrantFull: false,
-            jsGrantAs: false,
-            jsGrantBehalf: false,
-            jsRevokeFull: false,
-            jsRevokeAs: false,
-            jsRevokeBehalf: false,
-            jsOnprem: false,
-            jsCloud: true,
-            jsAliasInputWindow: null,
-            jsUsersInputWindow: null
-          }
           this.#startEventListeners();
+          this.loadState();
+          this.onUsersInputWindowChange();
         }; // constructor
 
         /* Event listeners */
@@ -168,7 +157,7 @@
             ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
             ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))]
           ]);
-        };
+        }
 
         onPrivilegeButtonClick(event) {
           for (const [key, value] of this.buttonMap) {
@@ -176,7 +165,8 @@
               this.privilegeToggle(value);
             }
           }
-        };
+          this.saveState();
+        }
 
         onOnpremCloudButtonClick(event) {
           let buttonObject;
@@ -186,24 +176,28 @@
             buttonObject = this.onpremCloudMap.get("js-cloud");
           }
           this.onpremCloudToggle(buttonObject);
-        };
+          this.saveState();
+        }
 
         onUsersInputWindowChange() {
           this.getUsersArray();
           this.getUsersAsReadableList();
           this.writeFilteredUsers();
           this.getCopypasta_commands(); // rebuild commands
-        };
+          this.saveState();
+        }
 
         onAliasInputWindowChange() {
           this.getCopypasta_commands(); // rebuild commands
-        };
+          this.saveState();
+        }
 
         onClearButtonClick() {
           this.clear();
-        };
+          this.saveState();
+        }
 
-        /* Methods - User list related */
+        /* Methods - User list and alias related */
 
         getUsersArray() {
           let users = this.usersInputWindow.value.trim();
@@ -215,17 +209,17 @@
           if (this.usersArray.length == 1 && this.usersArray[0] == "") {
             this.usersArray.splice(0, this.usersArray.length);
           }
-        };
+        }
         getUsersAsReadableList() {
           this.readableUsersListString = "";
           this.usersArray.forEach(element => {
             this.readableUsersListString += "\"" + element + "\" ";
           });
           this.readableUsersListString.trim();
-        };
+        }
         writeFilteredUsers() {
           this.usersOutputWindow.innerHTML = this.readableUsersListString;
-        };
+        }
 
         /* Methods - Privilege buttons related */
 
@@ -249,8 +243,8 @@
          * Returns nothing.
         */
         onpremCloudToggle(button) {
-          this.onpremCloudMap.forEach((obj) => {
-            obj.element.deactivate();
+          this.onpremCloudMap.forEach((buttonObj) => {
+            buttonObj.deactivate();
           });
           button.activate()
           this.getCopypasta_commands(); // rebuild commands
@@ -265,18 +259,15 @@
         testForFields() {
           let alias = this.aliasInputWindow.value.trim();
           if (!alias || alias.length == 0) {
-            console.log("alias empty");
             return false;
           }
           if (!this.usersArray || this.usersArray.length == 0) {
-            console.log("usersArray empty");
             return false;
           }
           let allSet = false;
           this.buttonMap.forEach((value, key) => {
             if (value.active == true) {allSet = true; return;}
           });
-          console.log("no buttons selected");
           return allSet; // and also other things work out too
         };
 
@@ -287,7 +278,6 @@
         getCopypasta_commands() {
           // test if everything is set
           if (this.testForFields() == false) {
-            console.log("test clear");
             this.commandsOutputWindow.value = "";
             return;
           }
@@ -308,7 +298,6 @@
               }
             })
           });
-          console.log("commands got");
           this.commandsOutputWindow.value = commands;
         };
 
@@ -370,7 +359,6 @@
          * Returns nothing.
         */
         clear() {
-          console.log("clear run!");
           this.usersInputWindow.value = "";
           this.usersOutputWindow.innerHTML = "";
           this.aliasInputWindow.value = "";
@@ -378,31 +366,34 @@
           this.usersArray.splice(0, this.usersArray.length);
           this.readableUsersListString = "";
           this.buttonMap.forEach((value, key) => {
-            value.element.deactivate();
+            value.deactivate();
           })
         };
 
         /* localStorage */
         saveState() {
-          this.state.jsGrantFull = this.buttonMap.get("js-grant-full").active;
-          this.state.jsGrantAs = this.buttonMap.get("js-grant-as").active;
-          this.state.jsGrantBehalf = this.buttonMap.get("js-grant-behalf").active;
-          this.state.jsRevokeFull = this.buttonMap.get("js-revoke-full").active;
-          this.state.jsRevokeAs = this.buttonMap.get("js-revoke-as").active;
-          this.state.jsRevokeBehalf = this.buttonMap.get("js-revoke-behalf").active;
-          this.state.jsOnprem = this.onpremCloudMap.get("js-onprem").active;
-          this.state.jsCloud = this.onpremCloudMap.get("js-cloud").active;
-          this.state.jsAliasInputWindow = this.aliasInputWindow.value;
-          this.state.jsUsersInputWindow = this.usersInputWindow.value;
-          localStorage.setItem("copypastasMailboxes", JSON.stringify(this.state));
-          console.log(JSON.stringify(this.state));
+          let state = {};
+          this.buttonMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          this.onpremCloudMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          state["users"] = this.usersInputWindow.value;
+          state["alias"] = this.aliasInputWindow.value;
+          localStorage.setItem("copypastasMailboxes", JSON.stringify(state));
         };
 
         loadState() {
           const loadedObject = JSON.parse(localStorage.getItem("copypastasMailboxes"));
-          this.buttonMap.set("js-grant-full", loadedObject.jsGrantFull);
-          this.buttonMap.set("js-grant-as", loadedObject.jsGrantAs);
-          this.buttonMap.set("js-grant-behalf", loadedObject.jsGrantBehalf);
+          this.buttonMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.onpremCloudMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.usersInputWindow.value = loadedObject["users"];
+          this.aliasInputWindow.value = loadedObject["alias"];
         };
 
         returnStateAsObject() {
