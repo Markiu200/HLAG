@@ -90,56 +90,71 @@
 
   <script>
     // NAMESPACE copypastas
-    const copypastas = {
-      start() {
-        this.mailboxes.start();
-      },     
+    class Copypastas {
+      static MailboxesPanelButton = class MailboxesPanelButton {
+        // https://stackoverflow.com/questions/67648500/pre-es6-static-functions-in-a-class
+        // https://stackoverflow.com/questions/55204088/defining-javascript-functions-inside-vs-outside-of-a-class
+        // https://stackoverflow.com/questions/28784375/nested-es6-classes
+        constructor(domObject = null, isActive = false) {
+          this.element = domObject;
+          this.active = isActive;
+        }
+        activate() {
+          this.active = true;
+          if (this.element != null) {
+            this.element.classList.add("active");
+          }
+        }
+        deactivate() {
+          this.active = false;
+          if (this.element != null) {
+            this.element.classList.remove("active");
+          }
+        }
+      } // MailboxesPanelButton
 
-      mailboxes: {
-        /** 
-         * It gonna be internal class, start with "new" (?)
-        */
-        aliasInputWindow: document.querySelector(".js-alias-input-window"),
-        usersInputWindow: document.querySelector(".js-users-input-window"),
-        usersOutputWindow: document.querySelector(".js-users-output-window"),
-        commandsOutputWindow: document.querySelector(".js-commands-output-window"),
-        clearCommandsButton: document.querySelector(".js-clear-commands-button"),
-        /* toggle buttons*/
-        buttonMap: new Map([
-          ["js-grant-full", {element: document.querySelector(".js-grant-full"), active: false}],
-          ["js-grant-as", {element: document.querySelector(".js-grant-as"), active: false}],
-          ["js-grant-behalf", {element: document.querySelector(".js-grant-behalf"), active: false}],
-          ["js-revoke-full", {element: document.querySelector(".js-revoke-full"), active: false}],
-          ["js-revoke-as", {element: document.querySelector(".js-revoke-as"), active: false}],
-          ["js-revoke-behalf", {element: document.querySelector(".js-revoke-behalf"), active: false}],
-        ]),
-        onpremCloudMap: new Map([
-          ["js-onprem", {element: document.querySelector(".js-onprem"), active: true}],
-          ["js-cloud", {element: document.querySelector(".js-cloud"), active: false}],
-        ]),
-        /* non-DOM properties */
-        usersArray: [],
-        readableUsersListString: "",
-        /* state */
-        state: {
-          jsGrantFull: false,
-          jsGrantAs: false,
-          jsGrantBehalf: false,
-          jsRevokeFull: false,
-          jsRevokeAs: false,
-          jsRevokeBehalf: false,
-          jsOnprem: false,
-          jsCloud: true,
-          jsAliasInputWindow: null,
-          jsUsersInputWindow: null
-        },
+      static Mailboxes = class Mailboxes {
+        constructor() {
+          this.aliasInputWindow = document.querySelector(".js-alias-input-window"),
+          this.usersInputWindow = document.querySelector(".js-users-input-window"),
+          this.usersOutputWindow = document.querySelector(".js-users-output-window"),
+          this.commandsOutputWindow = document.querySelector(".js-commands-output-window"),
+          this.clearCommandsButton = document.querySelector(".js-clear-commands-button"),
+          /* toggle buttons*/
+          this.buttonMap = new Map([
+            ["js-grant-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-full"), false)],
+            ["js-grant-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-as"), false)],
+            ["js-grant-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-behalf"), false)],
+            ["js-revoke-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-full"), false)],
+            ["js-revoke-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-as"), false)],
+            ["js-revoke-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-behalf"), false)],
+          ]),
+          this.onpremCloudMap = new Map([
+            ["js-onprem", new Copypastas.MailboxesPanelButton(document.querySelector(".js-onprem"), false)],
+            ["js-cloud", new Copypastas.MailboxesPanelButton(document.querySelector(".js-cloud"), true)],
+          ]),
+          /* non-DOM properties */
+          this.usersArray = [],
+          this.readableUsersListString = "",
+          /* state */
+          this.state = {
+            jsGrantFull: false,
+            jsGrantAs: false,
+            jsGrantBehalf: false,
+            jsRevokeFull: false,
+            jsRevokeAs: false,
+            jsRevokeBehalf: false,
+            jsOnprem: false,
+            jsCloud: true,
+            jsAliasInputWindow: null,
+            jsUsersInputWindow: null
+          }
+          this.#startEventListeners();
+        }; // constructor
 
+        /* Event listeners */
 
-        /* Initializer */
-        start() {
-          const onPrivilegeButtonClickBind = this.onPrivilegeButtonClick.bind(this);
-          const onOnpremCloudButtonClickBind = this.onOnpremCloudButtonClick.bind(this);
-          /* add event listeners */
+        #startEventListeners() {
           this.eventListeners = new Map([
             ["js-grant-full", this.buttonMap.get("js-grant-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
             ["js-grant-as", this.buttonMap.get("js-grant-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
@@ -153,16 +168,15 @@
             ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
             ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))]
           ]);
-        },
+        };
 
-        /* Event listeners */
         onPrivilegeButtonClick(event) {
           for (const [key, value] of this.buttonMap) {
             if (event.target.classList.contains(key)) {
               this.privilegeToggle(value);
             }
           }
-        },
+        };
 
         onOnpremCloudButtonClick(event) {
           let buttonObject;
@@ -172,27 +186,27 @@
             buttonObject = this.onpremCloudMap.get("js-cloud");
           }
           this.onpremCloudToggle(buttonObject);
-        },
+        };
 
         onUsersInputWindowChange() {
           this.getUsersArray();
           this.getUsersAsReadableList();
           this.writeFilteredUsers();
           this.getCopypasta_commands(); // rebuild commands
-        },
+        };
 
         onAliasInputWindowChange() {
           this.getCopypasta_commands(); // rebuild commands
-        },
+        };
 
         onClearButtonClick() {
           this.clear();
-        },
+        };
 
         /* Methods - User list related */
 
         getUsersArray() {
-          users = this.usersInputWindow.value.trim();
+          let users = this.usersInputWindow.value.trim();
           users = users.replaceAll(",", "");
           users = users.replaceAll("\t", " ");
           users = users.replaceAll("\r", "");
@@ -201,48 +215,46 @@
           if (this.usersArray.length == 1 && this.usersArray[0] == "") {
             this.usersArray.splice(0, this.usersArray.length);
           }
-        },
+        };
         getUsersAsReadableList() {
           this.readableUsersListString = "";
           this.usersArray.forEach(element => {
             this.readableUsersListString += "\"" + element + "\" ";
           });
           this.readableUsersListString.trim();
-        },
+        };
         writeFilteredUsers() {
           this.usersOutputWindow.innerHTML = this.readableUsersListString;
-        },
+        };
 
         /* Methods - Privilege buttons related */
 
         /** 
          * Toggles particular privileges buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
          * Returns nothing.
         */
         privilegeToggle(button) {
           if (button.active) {
-            button.element.classList.remove("active");
-            button.active = false;
+            button.deactivate();
           } else {
-            button.element.classList.add("active");
-            button.active = true;
+            button.activate();
           }
           this.getCopypasta_commands(); // rebuild commands
-        },
+        };
 
         /** 
          * Toggles On-prem / Cloud buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
          * Returns nothing.
         */
         onpremCloudToggle(button) {
           this.onpremCloudMap.forEach((obj) => {
-            obj.element.classList.remove("active");
-            obj.active = false;
+            obj.element.deactivate();
           });
-          button.element.classList.add("active");
-          button.active = true;
+          button.activate()
           this.getCopypasta_commands(); // rebuild commands
-        },
+        };
 
         /* Commands related */
 
@@ -260,13 +272,13 @@
             console.log("usersArray empty");
             return false;
           }
-          allSet = false;
+          let allSet = false;
           this.buttonMap.forEach((value, key) => {
             if (value.active == true) {allSet = true; return;}
           });
           console.log("no buttons selected");
           return allSet; // and also other things work out too
-        },
+        };
 
         /**
          * Writes generated commands to the output window.
@@ -280,7 +292,7 @@
             return;
           }
           // set cloud / on-prem flag
-          isCloud = true;
+          let isCloud = true;
           if (this.onpremCloudMap.get("js-cloud").active == true) {
             isCloud = true;
           } else {
@@ -288,18 +300,17 @@
           }
           // getting commands
           let alias = this.aliasInputWindow.value.trim();
-          revokeCommands = "";
-          grantCommands = "";
+          let commands = "";
           this.usersArray.forEach((user) => {
             this.buttonMap.forEach((value, key) => {
               if (value.active) {
-                grantCommands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
+                commands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
               }
             })
           });
           console.log("commands got");
-          this.commandsOutputWindow.value = grantCommands;
-        },
+          this.commandsOutputWindow.value = commands;
+        };
 
         /** 
          * Generates one command line for given parameters.
@@ -332,7 +343,7 @@
           if (privilege == "js-revoke-behalf") {
             return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
           }
-        },
+        };
 
         getCopyPasta() {
           let generatedText;
@@ -352,7 +363,7 @@
           
           navigator.clipboard.writeText(generatedText);
           showSnackbar();
-        },
+        };
 
         /** 
          * Clears selected privileges, users and alias windows.
@@ -367,10 +378,9 @@
           this.usersArray.splice(0, this.usersArray.length);
           this.readableUsersListString = "";
           this.buttonMap.forEach((value, key) => {
-            value.active = false;
-            value.element.classList.remove("active");
+            value.element.deactivate();
           })
-        },
+        };
 
         /* localStorage */
         saveState() {
@@ -386,45 +396,27 @@
           this.state.jsUsersInputWindow = this.usersInputWindow.value;
           localStorage.setItem("copypastasMailboxes", JSON.stringify(this.state));
           console.log(JSON.stringify(this.state));
-        },
+        };
 
         loadState() {
           const loadedObject = JSON.parse(localStorage.getItem("copypastasMailboxes"));
           this.buttonMap.set("js-grant-full", loadedObject.jsGrantFull);
           this.buttonMap.set("js-grant-as", loadedObject.jsGrantAs);
           this.buttonMap.set("js-grant-behalf", loadedObject.jsGrantBehalf);
-        },
+        };
 
         returnStateAsObject() {
 
-        }
-
-      } // mailboxes
-    } // copypastas
+        };
+      } // Mailboxes
+    } // Copypastas
     
-    // Internal classes - ButtonObject
-    copypastas.ButtonObject = function(domObject = null, isActive = false) {
-      this.element = domObject;
-      this.active = isActive;
-    }
-    copypastas.ButtonObject.prototype.activate = function() {
-      this.active = true;
-      if (this.element != null) {
-        this.element.classList.add("active");
-      }
-    }
-    copypastas.ButtonObject.prototype.deactivate = function() {
-      this.active = false;
-      if (this.element != null) {
-        this.element.classList.remove("active");
-      }
-    }
-
-    // initialize
-    copypastas.start();
+    // Initialize
+    const copypastas = new Copypastas();
+    const mailboxes = new Copypastas.Mailboxes();
 
     //
-    //  FUNCTIONS
+    //  FUNCTIONS (outside Copypastas)
     //
     function showSnackbar(text = "Copied") {
       var x = document.getElementById("snackbar");
@@ -505,9 +497,6 @@
       );
       showSnackbar();
     }
-
-    // mailboxesCopypasta.textareaOnchange()
-    // window.onload = (event) => {mailboxesCopypasta.textareaOnchange()};
   </script>
 </body>
 </html>
