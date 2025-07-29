@@ -73,7 +73,7 @@ main {
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 .copypastas__mailboxes__input-panel__text__textarea {
-    resize: none;
+    resize: horizontal;
     height: 99%;
 }
 .copypastas__mailboxes__input-panel__button-grid__row-title {
@@ -101,4 +101,17 @@ main {
 }
 .copypastas__mailboxes__input-panel__button-grid__alias-window {
     grid-column: 1 / span 2;
+}
+.copypastas__mailboxes__output-panel__users {
+    font-size: small;
+    border: #8F8F9D 1px solid;
+    padding: 2px;
+}
+.copypastas__mailboxes__output-panel__commands {
+    width: 100%; 
+    resize: vertical;
+}
+.copypastas__mailboxes__output-panel__message {
+    width: 100%;
+    resize: none;
 }

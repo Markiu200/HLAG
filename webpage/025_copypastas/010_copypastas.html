@@ -63,17 +63,19 @@
       <div>
         <textarea 
           class="copypastas__mailboxes__input-panel__text__textarea js-users-input-window" placeholder="users" ></textarea>
-        <button">Craft & copy</button>
         <button class="js-clear-commands-button">Clear</button>
-        <p style="font-size: small;" class="js-users-output-window"></p>
       </div>
-    </div>
+    </div> <!-- /copypastas__mailboxes__input-panel -->
     <div style="clear: both; height: 20px;"></div>
     
-    
+
+    <!-- Output windows -->
     <div>
-      <textarea class="js-commands-output-window"
-        rows="12" placeholder="commands will appear here..." style="width: 90%; resize: vertical;"></textarea>
+      <p class="copypastas__mailboxes__output-panel__users js-users-output-window"></p>
+      <textarea class="copypastas__mailboxes__output-panel__commands js-commands-output-window"
+        rows="12" placeholder="commands will appear here..."></textarea>
+      <textarea class="copypastas__mailboxes__output-panel__message js-resolution-message-output-window" 
+        rows="4" readonly placeholder="resolution message will appear here..."></textarea>
     </div>
 
   </section>
@@ -119,6 +121,7 @@
           this.usersInputWindow = document.querySelector(".js-users-input-window"),
           this.usersOutputWindow = document.querySelector(".js-users-output-window"),
           this.commandsOutputWindow = document.querySelector(".js-commands-output-window"),
+          this.resolutionMessageOutputWindow = document.querySelector(".js-resolution-message-output-window"),
           this.clearCommandsButton = document.querySelector(".js-clear-commands-button"),
           /* toggle buttons*/
           this.buttonMap = new Map([
@@ -155,7 +158,7 @@
             ["js-cloud", this.onpremCloudMap.get("js-cloud").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
             ["js-alias-input-window", this.aliasInputWindow.addEventListener("change", this.onAliasInputWindowChange.bind(this))],
             ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
-            ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))]
+            ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))],
           ]);
         }
 
@@ -279,6 +282,7 @@
           // test if everything is set
           if (this.testForFields() == false) {
             this.commandsOutputWindow.value = "";
+            this.resolutionMessageOutputWindow.value = "";
             return;
           }
           // set cloud / on-prem flag
@@ -299,6 +303,14 @@
             })
           });
           this.commandsOutputWindow.value = commands;
+          // for resolution message
+          let usedActions = [];
+          this.buttonMap.forEach((value, key) => {
+            if (value.active) {
+              usedActions.push(key);
+            }
+          })
+          this.putResolutionMessage(usedActions);
         };
 
         /** 
@@ -334,24 +346,98 @@
           }
         };
 
-        getCopyPasta() {
-          let generatedText;
-          let alias = this.aliasInputWindow.value.trim();
+        putResolutionMessage(actions) {
+          let actionMap = new Map([
+            ['granted', []],
+            ['revoked', []]
+          ])
           
+          // users part
+          let beginning;
           if (this.usersArray.length > 1) {
-            generatedText = "Users ";
+            beginning = "Users ";
             this.usersArray.forEach(element => {  
-              generatedText += element + ", ";
+              beginning += element + ", ";
             })
-            generatedText = generatedText.slice(0, generatedText.length - 2);
-            generatedText += " were added to the " + alias + " mailbox.";
+            beginning = beginning.slice(0, beginning.length - 2);
+            beginning += " have been ";
           } else {
-            generatedText = "User " + this.usersArray[0] + " was added to the " + alias + " mailbox.";
+            beginning = "User " + this.usersArray[0];
+            beginning += " has been ";
           }
-          console.log(generatedText);
+
+          // action and privileges part
+          let chosenGrant = [];
+          let chosenRevoke = [];
+          let a, b, c;
+          actions.forEach((action) => {
+            [a, b, c] = action.split("-");
+            switch(b) {
+              case "grant":
+                switch(c) {
+                  case "full":
+                    chosenGrant.push("Full Access");
+                    break;
+                  case "as":
+                    chosenGrant.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenGrant.push("Send on Behalf");
+                    break;
+                }
+                break;
+              case "revoke":
+                switch(c) {
+                  case "full":
+                    chosenRevoke.push("Full Access");
+                    break;
+                  case "as":
+                    chosenRevoke.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenRevoke.push("Send on Behalf");
+                    break;
+                }
+                break;
+            }
+          });
+          let granted = "";
+          let revoked = "";
+          if (chosenGrant.length) {
+            granted = beginning + "granted ";
+            chosenGrant.forEach((privilege) => {
+              granted += privilege + " and ";
+            });
+            granted = granted.slice(0, granted.length - 5);
+            granted += " privileges to ";
+          }
+          if (chosenRevoke.length) {
+            revoked = beginning + "revoked ";
+            chosenRevoke.forEach((privilege) => {
+              revoked += privilege + " and ";
+            });
+            revoked = revoked.slice(0, revoked.length - 5);
+            revoked += " privileges to "
+          }
+
+          // mailbox and sync part
+          let alias = this.aliasInputWindow.value.trim();
+          if (granted != "") {
+            granted += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+          if (revoked != "") {
+            revoked += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+
+          // final message
+          let message;
+          if (granted == "" || revoked == "") {
+            message = granted + revoked;
+          } else {
+            message = granted + "\r\n" + revoked;
+          }
           
-          navigator.clipboard.writeText(generatedText);
-          showSnackbar();
+          this.resolutionMessageOutputWindow.value = message;
         };
 
         /** 
