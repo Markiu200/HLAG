@@ -63,5 +63,95 @@ DONE// Typo in Waiting for customer
 DONE// Own version of "hold" status translation
 DONE// Remove removing dots in user list
 	// URL handling input elements bigger
-	// Better organize layout for mailboxes copypasta
-	// Fix date fetcher in ticket copypastas
+DONE// Better organize layout for mailboxes copypasta
+DONE// Fix date fetcher in ticket copypastas
+
+
+Ideas:
+Przepisz jakieś pierwsze article (miej je jako <article>) jako podstrony. 
+Mając to, ogarnij nawigację:
+ - niech są zagnieżdżane te elementy
+ - dodaj całą kontrolę widzialności elementów
+  - i dodaj dynks że można kilka rzeczy na raz widzieć
+Co do zagnieżdżania:
+ - na razie olej jakieś 'konspekty' w wielokrotnie zagnieżdzaniu. Nie ma tego w mainie, to niech nie ma wszędzie indziej
+
+Teraz inna kwestia obrazków, bo nie wiem czy ja chcę obrazki base64 inline czy osobno pliki w folderze, może both?
+ - dodaj jakąś globalną zmienną do ustawiania czy mają być tak czy tak
+ - żeby stronę dało się w edycji podglądać, obrazki musiałyby być w HTMLach jako <img> poprawny, dopiero podczas przetwarzania 
+   ten element byłby podmieniany na jakby cały w base64 albo tylko src poprawiony,
+ - no i kwestia czy zgodnie z "dobrymi praktykami" rezerwować diva o stałej wielkości - jeśli tak, to jak parser ma to zrobić
+  - albo sprawdzić czy img ma ustawione wielkości, a jeśli ma to nie ruszać
+  - albo jak nie ma, to Python zczytuje z metadanych plików jakie są rozmiary i dodać taką właśnie rezerwację
+   - może data- żeby wskazać parserowi że ma nie ruszać parametrów img?
+A w związku z tym:
+ - jeśli nie chcę PILa, a chyba nie chcę, to dodać metody w Pythonie żeby zczytywać metadane z png i zczytywał wielkości, poza
+   tym to w zasadzie nic więcej nie potrzebuję (base64 widać ma osobny include)
+
+Oraz ticket-tracker. Mamy już zapisywanie stanu bieżącego, a w marzeniach jest jeszcze zapisywanie tych tixów w jakiejś liście,
+nie mówiąc już o eksportowaniu tego jakoś i importowaniu.
+ - jeśli eksportować, to chyba jako JSON.strigify? Bo to do pliku. Chyba że uda się generować plik przeglądarką (do sprawdzenia).
+ - import ze stringu albo z pliku (ze stringiem)
+ - w takich bazach pewie wartałoby dodać jakiś index do elementów - datę perhaps? Jak się uda to tą unixową
+Pytanie tylko na pierona mi to? Żeby zapisywać co robiłem z tixem? Raczej nie odejdę od Excela z trackerem, jak już to jakoś to
+pożenić, może dodać do excela kolumnę na wspomniane indexy.
+A jeśli tak, to nie ucieknę od kwesti jak łączyć tixy z artykułami.
+ - w całości to musi być zamknięte w JS myślę, z resztą co Python tu pomoże z kwestiami operacyjnymi,
+ - jak już zamykam wszystko w klasach, ticket-tracker miałby klasę na ticket
+  - klasa Ticket miałaby metodę do dodawania elementów
+   - elementami mogłyby być interaktywne elementy które już teraz są spakowane w klasy (jak copypasty)
+   - ale też kawałki artykułów lub całe artykuły, co nie wiem jak zrobić jeszcze,
+    - może każda sekcja / artykuł miałby id i pythonem doklupany jakiś rejestrator?
+   	 - to by oznaczało że każdy kawałek strony byłby miał własny ID, co by musiał dodawać Python przy parsowaniu (ze ścieżki może)
+  - w każdym razie elementy miałyby jakiś plusik przy sobie żeby "dodać do ticketu". Ticket zapamiętywałby swój stan i stamtąd
+    można by usuwać te elementy
+W zasadzie podobnie jak ticket-tracker teraz, wszystkie interaktywne elementy zapamiętywałyby swój stan,
+ALBO - walić zapamiętywanie stanów tak po prostu (jak dla copypastów) i mieć to wyłącznie przy ticket trackerze.
+
+Wczytywanie tixa wtedy musiałoby przywracać wszystkim interaktywnym elementom ich stan (więc musiałyby one mieć metodę do 
+ładowania stanu).
+
+Teraz kwestia reorganizacji istniejącego kodu. Wszystko jest teraz w jednym pliku, ale może wywalić każde klasy do swojego pliku.
+ - każda klasa do swojego pliku
+Główny plik miałby globalne zmienne w razie W (a przydałabysię do ustawiania trybu obrazków). Plus zamknąć to w main i móc odpalać
+to z argumentami co do trybu obrazków.
+Rozważam też olać koncept XMLowy i trzymać się HTMLów ze stylami. Jak się je dobrze zrobi to XML się pewnie nawet nie przyda.
+
+
+
+
+
+ Done ideas:
+ na podstawie zagnizdzonej strukturze folderow budowany bedzie navigator
+same strony beda wszystkie na tym samym poziomie - ich widocznosc bedzie sterowana z navigatora - tylko pozorne zagniezdzenie
+
+struktura - kazdy folder w webpage_location to pozycja w nawigatorze
+pliki w folderach beda zawierac zawartosci tych stron
+
+pliki xml - okreslaja tylko co ma byc na stronie - html, css, javascript generowany w Pythonie
+pliki html - tylko <body> bedzie kopiowany (w <body> będzie <script> jesli bedzie taka potrzeba)
+css w katalogu glownym - podstrony beda go zaciagac na czas edycji, ale bedzie tylko jeden po utworzeniu strony
+pliki w katalogu glownym - beda zawierac globalne definicje - musza byc zaladowane przed pierwszym katalogiem!
+strona glowna tez jako katalog - pierwszy w numeracji
+
+mozliwy mix miedzy xml i html - kazdy "kawalek" strony to swoj wlasny div, beda nakladane jeden na drugi w kolejnosci numeracji
+
+PageBuilder bylby tworzyl calosc strony - przyjmowalby Navigator i PageContents, oraz zawartosc katalogu root.
+Tworzylby wtedy cala otoczke HTML, i head, wklejalby CSS w head
+
+PageContents w zasadzie tylko udostepni wszystkie sekcje jako tekst
+
+Navigator udostepni nawigacje jako tekst, ale JS musialby byc osobno zeby moc go dodac na sam dol strony (tak zeby cala strona 
+wraz z sekcjami juz byla zaladowana, zeby getElementById zalapywal wszystko)
+
+W tej sytuacji FileStructureReader musialby:
+ * udostepniac pliki tylko w root
+ * udostepniac cale sekcje jako sekcje
+ * jakos zbierac informacje o tym jak sekcje sa zagniezdzone zeby odzwierciedlac to w nawigacji
+
+Wiec co do zbierania - algorytm moglby akceptowac jakis Section - root bylby specjalnym Section na ta okazje. 
+Sekcje beda zapisywane na liste sekcji, ale wraz z utworzeniem kazdej z nich, pole parent w sekcji bedzie zaludniane parentem wlasnie
+
+Osobna metoda moglaby przejsc liste sekcji i zczytywac jaki jest parent - to odroznie pliki z roota od faktycznych sekcji
+
+Pole children dla sekcji? Tak jest
