@@ -33,43 +33,49 @@
   <!-- Mailboxes copypastas -->
   <!-- -------------------- -->
 
-  <section class="section">
+  <section class="section copypastas">
     <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
     
-    <!-- Toggle buttons -->
-    <div style="float: left;">
-      <div class="mailbox_copypastas_privileges">
-        <div class="grant">GRANT</div>
-        <button id="mailbox_copypastas_grantFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
-        <button id="mailbox_copypastas_grantSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
-        <button id="mailbox_copypastas_grantSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
+    <!-- Input panel-->
+    <div class="copypastas__mailboxes__input-panel">
+      <!-- Toggle buttons grid - 4 columns -->
+      <div class="copypastas__mailboxes__input-panel__button-grid">
+
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title grant"><p>GRANT</p></div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-behalf">Send on Behalf</button>  
+
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title revoke"><p>REVOKE</p></div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-behalf">Send on Behalf</button>
+
+        <input class="copypastas__mailboxes__input-panel__button-grid__alias-window js-alias-input-window" 
+          type="text" placeholder="alias">
+        <!-- span from right -->
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud active">Cloud</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem">On-prem</button>
+
       </div>
-      <div style="margin: 0; padding: 0;"></div>
-      <div class="mailbox_copypastas_privileges">
-        <div class="revoke">REVOKE</div>
-        <button id="mailbox_copypastas_revokeFullAccessButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Full Access</button>
-        <button id="mailbox_copypastas_revokeSendAsButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send As</button>
-        <button id="mailbox_copypastas_revokeSendOnBehalfButton" onclick="mailboxesCopypasta.privilegeToggle(event);">Send on Behalf</button>
+
+      <!-- Text inputs -->
+      <div>
+        <textarea 
+          class="copypastas__mailboxes__input-panel__text__textarea js-users-input-window" placeholder="users" ></textarea>
+        <button class="js-clear-commands-button">Clear</button>
       </div>
-      <div style="margin: 0; padding: 0;"></div>
-      <div class="mailbox_copypastas_privileges right">
-        <button id="mailbox_copypastas_cloudButton" class=" active" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">Cloud</button>
-        <button id="mailbox_copypastas_onpremButton" onclick="mailboxesCopypasta.cloudOnpremToggle(event);">On-prem</button>
-      </div>
-    </div>
+    </div> <!-- /copypastas__mailboxes__input-panel -->
     <div style="clear: both; height: 20px;"></div>
     
-    <input type="text" placeholder="alias" id="mailboxesCopypasta_alias" onchange="mailboxesCopypasta.aliasOnchange()">
-    <textarea 
-      style="resize: none;" rows="8" cols="20" placeholder="users" id="mailboxesCopypasta_users" 
-      onchange="mailboxesCopypasta.textareaOnchange()"></textarea>
-    <button onclick="mailboxesCopypasta.getCopyPasta()">Craft & copy</button>
-    <button onclick="mailboxesCopypasta.clear()">Clear</button>
-    <p style="font-size: small;" id="mailboxesCopypasta_usersGotList"></p>
 
+    <!-- Output windows -->
     <div>
-      <textarea id="mailboxesCopypasta_commandResultViewWindow"
-        rows="12" placeholder="commands will appear here..." style="width: 90%; resize: vertical;"></textarea>
+      <p class="copypastas__mailboxes__output-panel__users js-users-output-window"></p>
+      <textarea class="copypastas__mailboxes__output-panel__commands js-commands-output-window"
+        rows="12" placeholder="commands will appear here..."></textarea>
+      <textarea class="copypastas__mailboxes__output-panel__message js-resolution-message-output-window" 
+        rows="4" readonly placeholder="resolution message will appear here..."></textarea>
     </div>
 
   </section>
@@ -85,221 +91,409 @@
 
 
   <script>
-    //
-    //  OBJECTS SECTION
-    //
-    /* mailboxesCopypasta */
-    let mailboxesCopypasta = {
-      textarea: document.getElementById("mailboxesCopypasta_users"),
-      foundUsers: document.getElementById("mailboxesCopypasta_usersGotList"),
-      aliasInput: document.getElementById("mailboxesCopypasta_alias"),
-      viewWindow: document.getElementById("mailboxesCopypasta_commandResultViewWindow"),
-      /* toggle buttons*/
-      buttonMap: new Map([
-        ["mailbox_copypastas_grantFullAccessButton", {element: document.getElementById("mailbox_copypastas_grantFullAccessButton"), active: false}],
-        ["mailbox_copypastas_grantSendAsButton", {element: document.getElementById("mailbox_copypastas_grantSendAsButton"), active: false}],
-        ["mailbox_copypastas_grantSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_grantSendOnBehalfButton"), active: false}],
-        ["mailbox_copypastas_revokeFullAccessButton", {element: document.getElementById("mailbox_copypastas_revokeFullAccessButton"), active: false}],
-        ["mailbox_copypastas_revokeSendAsButton", {element: document.getElementById("mailbox_copypastas_revokeSendAsButton"), active: false}],
-        ["mailbox_copypastas_revokeSendOnBehalfButton", {element: document.getElementById("mailbox_copypastas_revokeSendOnBehalfButton"), active: false}],
-      ]),
-      cloudOnpremMap: new Map([
-        ["mailbox_copypastas_cloudButton", {element: document.getElementById("mailbox_copypastas_cloudButton"), active: true}],
-        ["mailbox_copypastas_onpremButton", {element: document.getElementById("mailbox_copypastas_onpremButton"), active: false}],
-      ]),
-      /* non-DOM properties*/
-      filteredUsersArray: [],
-      readableList: "",
-      commandList: "",
-
-      /* User list related */
-      getUsersArray() {
-        users = this.textarea.value.trim();
-        users = users.replaceAll(",", "");
-        users = users.replaceAll("\t", " ");
-        users = users.replaceAll("\r", "");
-        users = users.replaceAll("\n", " ");
-        let usersArray = users.split(" ");
-        this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
-        usersArray.forEach(element => {
-          if (element && element.length > 0) {
-            this.filteredUsersArray.push(element);
-          }
-        });
-      },
-      getUsersAsReadableList() {
-        this.readableList = "";
-        this.filteredUsersArray.forEach(element => {
-          this.readableList += "\"" + element + "\" ";
-        });
-        this.readableList.trim();
-      },
-      writeFilteredUsers() {
-        this.foundUsers.innerHTML = this.readableList;
-      },
-      textareaOnchange() {
-        this.getUsersArray();
-        this.getUsersAsReadableList();
-        this.writeFilteredUsers();
-        this.getCopypasta_commands(); // rebuild commands
-      },
-      aliasOnchange() {
-        this.getCopypasta_commands(); // rebuild commands
-      },
-
-      /* Privilege buttons related */
-      privilegeToggle(button) {
-        mapItem = this.buttonMap.get(button.target.id);
-        dom = mapItem.element;   
-        if (mapItem.active) {
-          dom.className = dom.className.replace(" active", "");
-          mapItem.active = false;
-        } else {
-          dom.className += " active";
-          mapItem.active = true;
+    // NAMESPACE copypastas
+    class Copypastas {
+      static MailboxesPanelButton = class MailboxesPanelButton {
+        // https://stackoverflow.com/questions/67648500/pre-es6-static-functions-in-a-class
+        // https://stackoverflow.com/questions/55204088/defining-javascript-functions-inside-vs-outside-of-a-class
+        // https://stackoverflow.com/questions/28784375/nested-es6-classes
+        constructor(domObject = null, isActive = false) {
+          this.element = domObject;
+          this.active = isActive;
         }
-        this.getCopypasta_commands(); // rebuild commands
-      },
-      cloudOnpremToggle(button) {
-        mapItem = this.cloudOnpremMap.get(button.target.id);
-        dom = mapItem.element;        
-        if (dom && button.target.id == "mailbox_copypastas_cloudButton") {
-          if (mapItem.active) {
-            return;
+        activate() {
+          this.active = true;
+          if (this.element != null) {
+            this.element.classList.add("active");
+          }
+        }
+        deactivate() {
+          this.active = false;
+          if (this.element != null) {
+            this.element.classList.remove("active");
+          }
+        }
+      } // MailboxesPanelButton
+
+      static Mailboxes = class Mailboxes {
+        constructor() {
+          this.aliasInputWindow = document.querySelector(".js-alias-input-window"),
+          this.usersInputWindow = document.querySelector(".js-users-input-window"),
+          this.usersOutputWindow = document.querySelector(".js-users-output-window"),
+          this.commandsOutputWindow = document.querySelector(".js-commands-output-window"),
+          this.resolutionMessageOutputWindow = document.querySelector(".js-resolution-message-output-window"),
+          this.clearCommandsButton = document.querySelector(".js-clear-commands-button"),
+          /* toggle buttons*/
+          this.buttonMap = new Map([
+            ["js-grant-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-full"), false)],
+            ["js-grant-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-as"), false)],
+            ["js-grant-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-behalf"), false)],
+            ["js-revoke-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-full"), false)],
+            ["js-revoke-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-as"), false)],
+            ["js-revoke-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-behalf"), false)],
+          ]),
+          this.onpremCloudMap = new Map([
+            ["js-onprem", new Copypastas.MailboxesPanelButton(document.querySelector(".js-onprem"), false)],
+            ["js-cloud", new Copypastas.MailboxesPanelButton(document.querySelector(".js-cloud"), true)],
+          ]),
+          /* non-DOM properties */
+          this.usersArray = [],
+          this.readableUsersListString = "",
+          this.#startEventListeners();
+          this.loadState();
+          this.onUsersInputWindowChange();
+        }; // constructor
+
+        /* Event listeners */
+
+        #startEventListeners() {
+          this.eventListeners = new Map([
+            ["js-grant-full", this.buttonMap.get("js-grant-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-grant-as", this.buttonMap.get("js-grant-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-grant-behalf", this.buttonMap.get("js-grant-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-full", this.buttonMap.get("js-revoke-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-as", this.buttonMap.get("js-revoke-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-behalf", this.buttonMap.get("js-revoke-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-onprem", this.onpremCloudMap.get("js-onprem").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
+            ["js-cloud", this.onpremCloudMap.get("js-cloud").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
+            ["js-alias-input-window", this.aliasInputWindow.addEventListener("change", this.onAliasInputWindowChange.bind(this))],
+            ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
+            ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))],
+          ]);
+        }
+
+        onPrivilegeButtonClick(event) {
+          for (const [key, value] of this.buttonMap) {
+            if (event.target.classList.contains(key)) {
+              this.privilegeToggle(value);
+            }
+          }
+          this.saveState();
+        }
+
+        onOnpremCloudButtonClick(event) {
+          let buttonObject;
+          if (event.target.classList.contains("js-onprem")) {
+            buttonObject = this.onpremCloudMap.get("js-onprem");
           } else {
-            dom.className += " active";
-            mapItem.active = true;
-            otherOne = this.cloudOnpremMap.get("mailbox_copypastas_onpremButton");
-            otherOne.element.className = otherOne.element.className.replace(" active", "");
-            otherOne.active = false;           
-            this.getCopypasta_commands(); // rebuild commands
-            return;
+            buttonObject = this.onpremCloudMap.get("js-cloud");
           }
+          this.onpremCloudToggle(buttonObject);
+          this.saveState();
         }
-        if (dom && button.target.id == "mailbox_copypastas_onpremButton") {
-          if (mapItem.active) {
-            return;
-          } else {
-            dom.className += " active";
-            mapItem.active = true;
-            otherOne = this.cloudOnpremMap.get("mailbox_copypastas_cloudButton");
-            otherOne.element.className = otherOne.element.className.replace(" active", "");
-            otherOne.active = false;           
-            this.getCopypasta_commands(); // rebuild commands
-            return;
-          }
-        }
-      },
 
-      /* Commands related */
-      testForFields() {
-        let alias = this.aliasInput.value.trim();
-        if (!alias || alias.length == 0) {
-          return false;
+        onUsersInputWindowChange() {
+          this.getUsersArray();
+          this.getUsersAsReadableList();
+          this.writeFilteredUsers();
+          this.getCopypasta_commands(); // rebuild commands
+          this.saveState();
         }
-        if (!this.filteredUsersArray || this.filteredUsersArray.length == 0) {
-          return false;
+
+        onAliasInputWindowChange() {
+          this.getCopypasta_commands(); // rebuild commands
+          this.saveState();
         }
-        somethingSet = false;
-        this.buttonMap.forEach((value, key) => {
-          if (value.active == true) {somethingSet = true; return;}
-        });
-        if (somethingSet) {
-          return true;
+
+        onClearButtonClick() {
+          this.clear();
+          this.saveState();
         }
-        return false;
-      },
-      getCopypasta_commands() {
-        // test if everything is set
-        if (this.testForFields() == false) {
-          this.viewWindow.value = "";
+
+        /* Methods - User list and alias related */
+
+        getUsersArray() {
+          let users = this.usersInputWindow.value.trim();
+          users = users.replaceAll(",", "");
+          users = users.replaceAll("\t", " ");
+          users = users.replaceAll("\r", "");
+          users = users.replaceAll("\n", " ");
+          this.usersArray = users.split(" ");
+          if (this.usersArray.length == 1 && this.usersArray[0] == "") {
+            this.usersArray.splice(0, this.usersArray.length);
+          }
         }
-        // set cloud / on-prem flag
-        isCloud = true;
-        if (this.cloudOnpremMap.get("mailbox_copypastas_cloudButton").active == true) {
-          isCloud = true;
-        } else {
-          isCloud = false;
+        getUsersAsReadableList() {
+          this.readableUsersListString = "";
+          this.usersArray.forEach(element => {
+            this.readableUsersListString += "\"" + element + "\" ";
+          });
+          this.readableUsersListString.trim();
         }
-        // getting commands
-        alias = this.aliasInput.value.trim();
-        revokeCommands = "";
-        grantCommands = "";
-        this.filteredUsersArray.forEach((user) => {
+        writeFilteredUsers() {
+          this.usersOutputWindow.innerHTML = this.readableUsersListString;
+        }
+
+        /* Methods - Privilege buttons related */
+
+        /** 
+         * Toggles particular privileges buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
+         * Returns nothing.
+        */
+        privilegeToggle(button) {
+          if (button.active) {
+            button.deactivate();
+          } else {
+            button.activate();
+          }
+          this.getCopypasta_commands(); // rebuild commands
+        };
+
+        /** 
+         * Toggles On-prem / Cloud buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
+         * Returns nothing.
+        */
+        onpremCloudToggle(button) {
+          this.onpremCloudMap.forEach((buttonObj) => {
+            buttonObj.deactivate();
+          });
+          button.activate()
+          this.getCopypasta_commands(); // rebuild commands
+        };
+
+        /* Commands related */
+
+        /** 
+         * Checks if alias is set, at least one user is set, and at least one privilege is set.
+         * Returns true if all is ok.
+        */
+        testForFields() {
+          let alias = this.aliasInputWindow.value.trim();
+          if (!alias || alias.length == 0) {
+            return false;
+          }
+          if (!this.usersArray || this.usersArray.length == 0) {
+            return false;
+          }
+          let allSet = false;
+          this.buttonMap.forEach((value, key) => {
+            if (value.active == true) {allSet = true; return;}
+          });
+          return allSet; // and also other things work out too
+        };
+
+        /**
+         * Writes generated commands to the output window.
+         * Returns nothing.
+        */
+        getCopypasta_commands() {
+          // test if everything is set
+          if (this.testForFields() == false) {
+            this.commandsOutputWindow.value = "";
+            this.resolutionMessageOutputWindow.value = "";
+            return;
+          }
+          // set cloud / on-prem flag
+          let isCloud = true;
+          if (this.onpremCloudMap.get("js-cloud").active == true) {
+            isCloud = true;
+          } else {
+            isCloud = false;
+          }
+          // getting commands
+          let alias = this.aliasInputWindow.value.trim();
+          let commands = "";
+          this.usersArray.forEach((user) => {
+            this.buttonMap.forEach((value, key) => {
+              if (value.active) {
+                commands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
+              }
+            })
+          });
+          this.commandsOutputWindow.value = commands;
+          // for resolution message
+          let usedActions = [];
           this.buttonMap.forEach((value, key) => {
             if (value.active) {
-              grantCommands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
+              usedActions.push(key);
             }
           })
-        });
-        this.viewWindow.value = grantCommands;
-      },
-      getCopypasta_getSingleCommand(privilege, alias, user, onCloud) {
-        if (privilege == "mailbox_copypastas_grantFullAccessButton") {
-          return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
-        }
-        if (privilege == "mailbox_copypastas_revokeFullAccessButton") {
-          return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
-        }
-        if (privilege == "mailbox_copypastas_grantSendAsButton") {
-          if (onCloud) {
-            return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-          } else {
-            return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
-          }
-        }
-        if (privilege == "mailbox_copypastas_revokeSendAsButton") {
-          if (onCloud) {
-            return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-          } else {
-            return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
-          }
-        }
-        if (privilege == "mailbox_copypastas_grantSendOnBehalfButton") {
-          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
-        }
-        if (privilege == "mailbox_copypastas_revokeSendOnBehalfButton") {
-          return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
-        }
-      },
+          this.putResolutionMessage(usedActions);
+        };
 
-      getCopyPasta() {
-        let generatedText;
-        let alias = this.aliasInput.value.trim();
-        
-        if (this.filteredUsersArray.length > 1) {
-          generatedText = "Users ";
-          this.filteredUsersArray.forEach(element => {  
-            generatedText += element + ", ";
+        /** 
+         * Generates one command line for given parameters.
+         * Returns string.
+        */
+        getCopypasta_getSingleCommand(privilege, alias, user, onCloud) {
+          if (privilege == "js-grant-full") {
+            return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
+          }
+          if (privilege == "js-revoke-full") {
+            return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
+          }
+          if (privilege == "js-grant-as") {
+            if (onCloud) {
+              return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+            } else {
+              return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
+            }
+          }
+          if (privilege == "js-revoke-as") {
+            if (onCloud) {
+              return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+            } else {
+              return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
+            }
+          }
+          if (privilege == "js-grant-behalf") {
+            return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
+          }
+          if (privilege == "js-revoke-behalf") {
+            return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
+          }
+        };
+
+        putResolutionMessage(actions) {
+          let actionMap = new Map([
+            ['granted', []],
+            ['revoked', []]
+          ])
+          
+          // users part
+          let beginning;
+          if (this.usersArray.length > 1) {
+            beginning = "Users ";
+            this.usersArray.forEach(element => {  
+              beginning += element + ", ";
+            })
+            beginning = beginning.slice(0, beginning.length - 2);
+            beginning += " have been ";
+          } else {
+            beginning = "User " + this.usersArray[0];
+            beginning += " has been ";
+          }
+
+          // action and privileges part
+          let chosenGrant = [];
+          let chosenRevoke = [];
+          let a, b, c;
+          actions.forEach((action) => {
+            [a, b, c] = action.split("-");
+            switch(b) {
+              case "grant":
+                switch(c) {
+                  case "full":
+                    chosenGrant.push("Full Access");
+                    break;
+                  case "as":
+                    chosenGrant.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenGrant.push("Send on Behalf");
+                    break;
+                }
+                break;
+              case "revoke":
+                switch(c) {
+                  case "full":
+                    chosenRevoke.push("Full Access");
+                    break;
+                  case "as":
+                    chosenRevoke.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenRevoke.push("Send on Behalf");
+                    break;
+                }
+                break;
+            }
+          });
+          let granted = "";
+          let revoked = "";
+          if (chosenGrant.length) {
+            granted = beginning + "granted ";
+            chosenGrant.forEach((privilege) => {
+              granted += privilege + " and ";
+            });
+            granted = granted.slice(0, granted.length - 5);
+            granted += " privileges to ";
+          }
+          if (chosenRevoke.length) {
+            revoked = beginning + "revoked ";
+            chosenRevoke.forEach((privilege) => {
+              revoked += privilege + " and ";
+            });
+            revoked = revoked.slice(0, revoked.length - 5);
+            revoked += " privileges to "
+          }
+
+          // mailbox and sync part
+          let alias = this.aliasInputWindow.value.trim();
+          if (granted != "") {
+            granted += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+          if (revoked != "") {
+            revoked += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+
+          // final message
+          let message;
+          if (granted == "" || revoked == "") {
+            message = granted + revoked;
+          } else {
+            message = granted + "\r\n" + revoked;
+          }
+          
+          this.resolutionMessageOutputWindow.value = message;
+        };
+
+        /** 
+         * Clears selected privileges, users and alias windows.
+         * Returns nothing.
+        */
+        clear() {
+          this.usersInputWindow.value = "";
+          this.usersOutputWindow.innerHTML = "";
+          this.aliasInputWindow.value = "";
+          this.commandsOutputWindow.value = "";
+          this.usersArray.splice(0, this.usersArray.length);
+          this.readableUsersListString = "";
+          this.buttonMap.forEach((value, key) => {
+            value.deactivate();
           })
-          generatedText = generatedText.slice(0, generatedText.length - 2);
-          generatedText += " were added to the " + alias + " mailbox.";
-        } else {
-          generatedText = "User " + this.filteredUsersArray[0] + " was added to the " + alias + " mailbox.";
-        }
-        console.log(generatedText);
-        
-        navigator.clipboard.writeText(generatedText);
-        showSnackbar();
-      },
+        };
 
-      clear() {
-        this.textarea.value = "";
-        this.foundUsers.innerHTML = "";
-        this.aliasInput.value = "";
-        this.viewWindow.value = "";
-        this.filteredUsersArray.splice(0, this.filteredUsersArray.length);
-        this.readableList = "";
-        this.commandList = "";
-        this.buttonMap.forEach((value, key) => {
-          value.active = false;
-          value.element.className = value.element.className.replace(" active", "");
-        })
-      }
-    }
+        /* localStorage */
+        saveState() {
+          let state = {};
+          this.buttonMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          this.onpremCloudMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          state["users"] = this.usersInputWindow.value;
+          state["alias"] = this.aliasInputWindow.value;
+          localStorage.setItem("copypastasMailboxes", JSON.stringify(state));
+        };
+
+        loadState() {
+          const loadedObject = JSON.parse(localStorage.getItem("copypastasMailboxes"));
+          this.buttonMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.onpremCloudMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.usersInputWindow.value = loadedObject["users"];
+          this.aliasInputWindow.value = loadedObject["alias"];
+        };
+
+        returnStateAsObject() {
+
+        };
+      } // Mailboxes
+    } // Copypastas
     
+    // Initialize
+    const copypastas = new Copypastas();
+    const mailboxes = new Copypastas.Mailboxes();
+
     //
-    //  FUNCTIONS
+    //  FUNCTIONS (outside Copypastas)
     //
     function showSnackbar(text = "Copied") {
       var x = document.getElementById("snackbar");
@@ -380,9 +574,6 @@
       );
       showSnackbar();
     }
-
-    mailboxesCopypasta.textareaOnchange()
-    // window.onload = (event) => {mailboxesCopypasta.textareaOnchange()};
   </script>
 </body>
 </html>

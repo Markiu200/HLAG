@@ -62,41 +62,56 @@ main {
     margin-bottom: 8px;
     position: relative;
 }
-.mailbox_copypastas_privileges {
-    overflow: hidden;
+
+/* Copypastas */
+.copypastas__mailboxes__input-panel {
+    display: flex;
+}
+.copypastas__mailboxes__input-panel__button-grid {
+    display: grid;
     border: 1px solid #ccc;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.copypastas__mailboxes__input-panel__text__textarea {
+    resize: horizontal;
+    height: 99%;
+}
+.copypastas__mailboxes__input-panel__button-grid__row-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    padding-right: 15px;;
+    text-align: right;
+    vertical-align: middle;
+}
+.copypastas__mailboxes__input-panel__button-grid__button {
+    display: inline-block;
     background-color: #f1f1f1;
-    display: inline-block; /* makes the thing take only as much space as it's children need */
-    height: 50px;
-}
-.mailbox_copypastas_privileges.right {
-    float: inline-end;
-}
-.mailbox_copypastas_privileges button {
-    background-color: inherit;
-    float: left;
     border: none;
     outline: none;
     cursor: pointer;
-    width: 90px;
-    height: 100%;
+    height: 50px;
 }
-.mailbox_copypastas_privileges button:hover {
+.copypastas__mailboxes__input-panel__button-grid__row-title.grant {background-color: #d1ffe6;}
+.copypastas__mailboxes__input-panel__button-grid__row-title.revoke {background-color: #ffd1d1;}
+.copypastas__mailboxes__input-panel__button-grid__button:hover {
     background-color: #ddd;
 }
-.mailbox_copypastas_privileges button.active {
+.copypastas__mailboxes__input-panel__button-grid__button.active {
     background-color: #ccc;
 }
-.mailbox_copypastas_privileges div {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
-    float: left;
-    border: none;
-    outline: none;
-    padding: 14px 16px;
-    height: 100%;
-    width: 100px;
-    text-align: right;
+.copypastas__mailboxes__input-panel__button-grid__alias-window {
+    grid-column: 1 / span 2;
 }
-.mailbox_copypastas_privileges .grant {background-color: #d1ffe6;}
-.mailbox_copypastas_privileges .revoke {background-color: #ffd1d1;}
+.copypastas__mailboxes__output-panel__users {
+    font-size: small;
+    border: #8F8F9D 1px solid;
+    padding: 2px;
+}
+.copypastas__mailboxes__output-panel__commands {
+    width: 100%; 
+    resize: vertical;
+}
+.copypastas__mailboxes__output-panel__message {
+    width: 100%;
+    resize: none;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .grid {
+      display: inline-grid;
+      border: 1px solid #ccc;
+      width: 400px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .grid div {
+      height: 50px;
+      background-color: azure;
+      text-align: center;
+    }
+    .input {
+      grid-column: 1 / span 2;
+    }
+    .span-2-down {
+      grid-row: 1 / span 3;
+    }
+    .other-div {
+      background-color: aquamarine;
+      height: 300px; 
+      width: 300px; 
+    }
+    .other-div-1 {
+      background-color: aquamarine;
+      height: 300px; 
+      width: 300px; 
+      text-align: center;
+      line-height: 300px;
+    }
+    .other-div-2 {
+      background-color: aquamarine;
+      display: flex;
+      height: 300px; 
+      width: 300px; 
+      text-align: center;
+    }
+    .other-div-3 {
+      background-color: aquamarine;
+      height: 300px; 
+      width: 300px; 
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .other-div-4 {
+      background-color: aquamarine;
+      height: 300px; 
+      width: 300px; 
+      margin: auto;
+    }
+    .content {
+      text-align: center;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="grid">
+    <div>DIV 1</div>
+    <div>DIV 2</div>
+  </div>
+
+
+  <div class="other-div"><p class="content">Some other centered</p></div>
+</body>
+</html>
