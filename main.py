@@ -11,7 +11,9 @@ class WebpageFile:
             return self.__create_div_from_html()
         if self.file_type == ".css":
             return self.__create_style_from_css()
-        raise Exception
+        if self.file_type == ".txt":
+            return ""
+        raise Exception("This file extension is not supported")
 
     def __create_div_from_html(self) -> str:
         """For HTML files, only return contents of &lt;body&gt; as is."""
@@ -162,49 +164,5 @@ structure_reader = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
 navigation = Navigation(structure_reader.all_sections)
 page_builder = PageBuilder(navigation, structure_reader)
 
-#print(navigation.get_navigation_html_as_string())
 with open("newfluence.html", "w") as file:
     file.write(page_builder.build())
-
-
-
-
-
-"""
-na podstawie zagnizdzonej strukturze folderow budowany bedzie navigator
-same strony beda wszystkie na tym samym poziomie - ich widocznosc bedzie sterowana z navigatora - tylko pozorne zagniezdzenie
-
-struktura - kazdy folder w webpage_location to pozycja w nawigatorze
-pliki w folderach beda zawierac zawartosci tych stron
-
-pliki xml - okreslaja tylko co ma byc na stronie - html, css, javascript generowany w Pythonie
-pliki html - tylko <body> bedzie kopiowany (w <body> będzie <script> jesli bedzie taka potrzeba)
-css w katalogu glownym - podstrony beda go zaciagac na czas edycji, ale bedzie tylko jeden po utworzeniu strony
-pliki w katalogu glownym - beda zawierac globalne definicje - musza byc zaladowane przed pierwszym katalogiem!
-strona glowna tez jako katalog - pierwszy w numeracji
-
-mozliwy mix miedzy xml i html - kazdy "kawalek" strony to swoj wlasny div, beda nakladane jeden na drugi w kolejnosci numeracji
-
-PageBuilder bylby tworzyl calosc strony - przyjmowalby Navigator i PageContents, oraz zawartosc katalogu root.
-Tworzylby wtedy cala otoczke HTML, i head, wklejalby CSS w head
-
-PageContents w zasadzie tylko udostepni wszystkie sekcje jako tekst
-
-Navigator udostepni nawigacje jako tekst, ale JS musialby byc osobno zeby moc go dodac na sam dol strony (tak zeby cala strona 
-wraz z sekcjami juz byla zaladowana, zeby getElementById zalapywal wszystko)
-
-W tej sytuacji FileStructureReader musialby:
- * udostepniac pliki tylko w root
- * udostepniac cale sekcje jako sekcje
- * jakos zbierac informacje o tym jak sekcje sa zagniezdzone zeby odzwierciedlac to w nawigacji
-
-Wiec co do zbierania - algorytm moglby akceptowac jakis Section - root bylby specjalnym Section na ta okazje. 
-Sekcje beda zapisywane na liste sekcji, ale wraz z utworzeniem kazdej z nich, pole parent w sekcji bedzie zaludniane parentem wlasnie
-
-Osobna metoda moglaby przejsc liste sekcji i zczytywac jaki jest parent - to odroznie pliki z roota od faktycznych sekcji
-
-Pole children dla sekcji? Tak jest
-
-
-
-"""

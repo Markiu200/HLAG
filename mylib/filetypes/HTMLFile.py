@@ -2,7 +2,7 @@ class HTMLFile:
     def __init__(self, path: str):
         self.path = path
 
-    def parseArticle(self) -> str:
+    def to_string(self) -> str:
         """For HTML files, only return contents of &lt;body&gt; as is, but as &lt;article&gt."""
         result = ""
         save_flag = False
