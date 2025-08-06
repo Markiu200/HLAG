@@ -8,7 +8,9 @@ if __name__ == "__main__":
         os.chdir("..")
     syspath.append(str(Path('./mylib/').absolute()))
     syspath.append(str(Path('./mylib/filetypes').absolute()))
-from filetypes.file import File
+from filetypes.meta_file import MetaFile
+from filetypes.html_file import HTMLFile
+from filetypes.css_file import CSSFile
 from filetypes.directory import Directory
 
 
@@ -31,9 +33,13 @@ class StructureReader:
                     if in_root:
                         continue
                     else:
-                        pass
-                else:
-                    directory.children.append(File(abspath, parent=directory))
+                        directory.children.append(MetaFile(abspath, parent=directory))
+                        continue
+                _, extension = os.path.splitext(pathstr)
+                if extension == ".html":
+                    directory.children.append(HTMLFile(abspath, parent=directory))
+                if extension == ".css":
+                    directory.children.append(CSSFile(abspath, parent=directory))
             #
             if os.path.isdir(abspath):
                 new_children = Directory(abspath, parent=directory)

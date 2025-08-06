@@ -2,6 +2,7 @@ from pathlib import Path
 from file import File
 from node import Node
 
+
 class HTMLFile(File):
     def __init__(self, path: Path, parent: Node):
         super().__init__(path, parent)
@@ -21,6 +22,6 @@ class HTMLFile(File):
                     result += line
         result = f"<section>{result}</section>"
         return result
-    
+
     def __str__(self):
         return self.to_string()
