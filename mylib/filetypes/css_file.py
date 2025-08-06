@@ -1,4 +1,4 @@
-from File import File
+from file import File
 
 class CSSFile(File):
     def __init__(self, path: str):

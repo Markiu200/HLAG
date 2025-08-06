@@ -1,5 +1,8 @@
 import os
-
+if __name__ == "__main__":
+    from sys import path as syspath
+    from pathlib import Path
+    syspath.append(str(Path('./mylib/filetypes').absolute()))
 
 class WebpageFile:
     def __init__(self, path: str, file_type: str):
