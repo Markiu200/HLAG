@@ -1,6 +1,6 @@
 class Navigation:
-    def __init__(self, section_list: list[Section]):
-        self.section_list = section_list
+    def __init__(self):
+
     
     def get_navigation_html_as_string(self) -> str:
         """Returns &lt;nav&gt;(all the navigation here)&lt;/nav&gt; as string"""

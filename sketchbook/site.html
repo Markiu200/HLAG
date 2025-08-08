@@ -1,16 +1,968 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Newfluence</title><style>
+
+* {box-sizing: border-box;}
+body {
+    display: flex;
+}
+.buttonDiv {
+    width: 80px; 
+    height: 40px; 
+    border-radius: 10px;
+    margin: 5px;
+    font-size: x-small;
+}
+p {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+    float: left;
+    width: 100%;
+}
+#snackbar {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: #333; /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    bottom: 30px; /* 30px from the bottom */
+}
+#snackbar.show {
+    visibility: visible; /* Show the snackbar */
+}
+.inputWithCopyWrapper {
+    position: relative;
+    display: inline;
+}
+.inputWithCopyWrapper input {
+    height: 22px;
+}
+.inputWithCopyWrapper button {
+    position: absolute;
+    top: -2px;
+    right: -16px;
+    width: 40px;
+    height: 22px;
+}
+.section {
+    padding: 30px; 
+    border-style: solid; 
+    border-width: 1px;
+    border-color: gray;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+/* Copypastas */
+.copypastas__mailboxes__input-panel {
+    display: flex;
+}
+.copypastas__mailboxes__input-panel__button-grid {
+    display: grid;
+    border: 1px solid #ccc;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.copypastas__mailboxes__input-panel__text__textarea {
+    resize: horizontal;
+    height: 99%;
+}
+.copypastas__mailboxes__input-panel__button-grid__row-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    padding-right: 15px;;
+    text-align: right;
+    vertical-align: middle;
+}
+.copypastas__mailboxes__input-panel__button-grid__button {
+    display: inline-block;
+    background-color: #f1f1f1;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    height: 50px;
+}
+.copypastas__mailboxes__input-panel__button-grid__row-title.grant {background-color: #d1ffe6;}
+.copypastas__mailboxes__input-panel__button-grid__row-title.revoke {background-color: #ffd1d1;}
+.copypastas__mailboxes__input-panel__button-grid__button:hover {
+    background-color: #ddd;
+}
+.copypastas__mailboxes__input-panel__button-grid__button.active {
+    background-color: #ccc;
+}
+.copypastas__mailboxes__input-panel__button-grid__alias-window {
+    grid-column: 1 / span 2;
+}
+.copypastas__mailboxes__output-panel__users {
+    font-size: small;
+    border: #8F8F9D 1px solid;
+    padding: 2px;
+}
+.copypastas__mailboxes__output-panel__commands {
+    width: 100%; 
+    resize: vertical;
+}
+.copypastas__mailboxes__output-panel__message {
+    width: 100%;
+    resize: none;
+}
+nav {
+    position: fixed;
+    width: 200px;
+    height: 98%;
+    border-style: solid;
+    border-width: 1px;
+}
+nav button.active {
+    background-color: #ffd1d1;
+}
+section.hidden, .js-nav-subnav.hidden {
+  display: none;
+}
+</style>
+
+
+        </head>
+    <body>
+<nav class="js-site-navigation">
+  <div>
+    <button class="js-nav-button js-for-020_ticket_tracker">Ticket Tracker</button>
+    <button class="js-nav-button js-for-025_copypastas">Copypastas</button>
+    <button class="js-nav-button js-for-030_exchange js-nav-expandable">Exchange</button>
+    <div class="js-for-030_exchange js-nav-subnav nav__nested--1">
+      <button class="js-nav-button js-for-030_exchange.010_basic_troubleshooting">Basic Troubleshooting</button>
+      <button class="js-nav-button js-for-030_exchange.015_exchange_2">Exchange 2</button>
+      <button class="js-nav-button js-for-030_exchange.020_exchange_3">Exchange 3</button>
+      <button class="js-nav-button js-for-030_exchange.099_not_existing js-nav-expandable">Not exisitng</button>
+      <div class="js-for-030_exchange.099_not_existing js-nav-subnav nav__nested--2">
+        <button class="js-nav-button js-for-030_exchange.099_not_existing.010_not_existing">Not existing nested</button>
+      </div>
+    </div>
+    <button class="js-nav-button js-for-032_active_directory js-nav-expandable">Active Directory</button>
+    <div class="js-for-032_active_directory js-nav-subnav nav__nested--1">
+      <button class="js-nav-button js-for-032_active_directory.010_ad_groups">AD Groups</button>
+    </div>
+  </div>
+
+  <!-- <button onclick="navigation.show('020_ticket_tracker')">020_ticket_tracker</button>
+  <button onclick="navigation.show('025_copypastas')">025_copypastas</button>
+  <button onclick="navigation.show('010_basic_troubleshooting')">010_basic_troubleshooting</button>
+  <button onclick="navigation.show('015_exchange_2')">015_exchange_2</button>
+  <button onclick="navigation.show('020_exchange_3')">020_exchange_3</button>
+  <button onclick="navigation.show('030_exchange')">030_exchange</button>
+  <button onclick="navigation.show('010_ad_groups')">010_ad_groups</button>
+  <button onclick="navigation.show('032_active_directory')">032_active_directory</button> -->
+</nav>
+
+
+
+
+        <div style="float: left; width: 240px; height: 100%;"></div><main>
+
+<section id="020_ticket_tracker"><div>  <section class="section">
+    <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="ticketCopypasta.parseLink()" tabindex="1">
+    <div class="inputWithCopyWrapper">
+      <input type="text" readonly id="generalUrl_ticketNumber">
+      <button onclick="ticketCopypasta.saveTicketNumber()" tabindex="-1">&#x2398;</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80" tabindex="2">
+    </div>
+    <div style="margin-top: 8px;">
+      <textarea rows="2" cols="83" style="resize: none;" id="excelComment" tabindex="3"></textarea>
+    </div>
+
+    <!-- Copy to my / their excel -->
+    <div style="display: flex;">
+      <button class="buttonDiv" onclick="ticketCopypasta.copyToMyExcel()">Copy to my Excel</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.copyToTheirExcel()">Copy to their Excel</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.clear()">Clear</button>
+      <button class="buttonDiv" onclick="ticketCopypasta.clearAll()">Clear All</button>
+    </div>
+
+    <select name="status" id="ticketStatusDropdown" tabindex="4">
+      <option value="resolved">resolved</option>
+      <option value="waiting">waiting</option>
+      <option value="transferred">transferred</option>
+      <option value="inprog">inprog</option>
+      <option value="queued">queued</option>
+      <option value="assist">assist</option>
+      <option value="hold">hold</option>
+      <option value="vendor">vendor</option>
+    </select>
+
+    <select name="source" id="ticketSourceDropdown" tabindex="5">
+      <option value="MemoReg queue">MemoReg queue</option>
+      <option value="Email">Email</option>
+      <option value="Backdesk queue">Backdesk queue</option>
+      <option value="Hardware queue">Hardware queue</option>
+      <option value="transferred to Backdesk">transferred to Backdesk</option>
+    </select>
+  </section>
+
+
+
+  <script>
+    const constDate = new Date();
+    let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
+    generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select());
+
+    /* ticketCopypasta */
+    let ticketCopypasta = {
+      urlInput: document.getElementById("generalUrl"),
+      ticketField: document.getElementById("generalUrl_ticketNumber"),
+      summaryInput: document.getElementById("ticketSummary"),
+      commentInput: document.getElementById("excelComment"),
+      statusDropdown: document.getElementById("ticketStatusDropdown"),
+      sourceDropdown: document.getElementById("ticketSourceDropdown"),
+
+      saveTicketNumber() {
+        navigator.clipboard.writeText(this.ticketField.value);
+        showSnackbar();
+      },
+
+      parseLink() {
+        let reg = /HLSUPPORT-\d*/i;
+        var matches = this.urlInput.value.match(reg);
+        if (matches && matches.length) {
+          document.getElementById("generalUrl_ticketNumber").value = matches[0];
+          document.getElementById("eformCopypastaInput").value = matches[0];
+        }
+      },
+
+      copyToMyExcel() {
+        let url = this.urlInput.value;
+        let summary = this.summaryInput.value;
+        let status = this.statusDropdown.value;
+        if (status == "hold") {status = "waiting";}
+        if (status == "vendor") {status = "waiting";}
+        let comment = this.commentInput.value;
+        navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
+        showSnackbar();
+      },
+
+      copyToTheirExcel() {
+        // Generate date
+        let hours = constDate.getHours();
+        let year = constDate.getFullYear();
+        let month = hours <= 6 && constDate.getDate() == 1 ? constDate.getMonth() : constDate.getMonth() + 1;
+        let day = hours <= 6 ? constDate.getDate() - 1 : constDate.getDate();
+        
+        day = day.toString().padStart(2, '0');
+        month = month.toString().padStart(2, '0');
+
+        let ticketNumber = this.ticketField.value;
+        let date = `${year}.${month}.${day}`;
+        let summary = this.summaryInput.value;
+        let source = this.sourceDropdown.value;
+        let status = this.statusDropdown.value;
+        if (status == "resolved") {status = "Resolved.";}
+        if (status == "waiting") {status = "Waiting for Customer";}
+        if (status == "transferred") {status = "Transferred";}
+        if (status == "inprog") {status = "In progres";}
+        if (status == "queued") {status = "Open";}
+        if (status == "assist") {status = "In progres";}
+        if (status == "hold") {status = "Hold";}
+        if (status == "vendor") {status = "Pending on Vendor";}
+        let comment = this.commentInput.value;
+        navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${source}\t${status}\t${comment}`);
+        showSnackbar();
+      },
+
+      clear() {
+        this.urlInput.value = "";
+        this.ticketField.value = "";
+        this.summaryInput.value = "";
+        this.commentInput.value = "";
+        document.getElementById("eformCopypastaInput").value = "";
+      },
+
+      clearAll() {
+        this.clear();
+        mailboxesCopypasta.clear();
+      }
+    }
+  </script>
+
+</div></section><section id="025_copypastas"><div>  <!-- The copypasta snackbar -->
+  <div id="snackbar">Copied</div>
+
+  <!-- E-form copypasta section -->
+  <section class="section">
+    <div style="display: flex;">
+      <button class="buttonDiv" onclick="eformHandledCopypasta()">E-form handled</button>
+      <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
+      <button class="buttonDiv" onclick="eformWillBeHandledCopypasta()">E-form will be handled</button>
+      <button class="buttonDiv" onclick="sitaEformHandledCopypasta()">SITA E-form handled</button>
+      <button class="buttonDiv" onclick="eformByChangemanagementCopypasta()">E-form with change&shy;management</button>
+      <button class="buttonDiv" onclick="copypasta1()">Signature</button>
+      <button class="buttonDiv" onclick="copypasta2()">Please allow Azure to sync</button>
+      <button class="buttonDiv" onclick="copypasta3()">SITA please proceed</button>
+      <button class="buttonDiv" onclick="copypasta4()">Both Exchange privileges</button>
+    </div>
+    <div>
+      <input type="text" id="eformCopypastaInput" placeholder="HLSUPPORT">
+    </div>
+  </section>
+
+
+  <!-- -------------------- -->
+  <!-- Mailboxes copypastas -->
+  <!-- -------------------- -->
+
+  <section class="section copypastas">
+    <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
+    
+    <!-- Input panel-->
+    <div class="copypastas__mailboxes__input-panel">
+      <!-- Toggle buttons grid - 4 columns -->
+      <div class="copypastas__mailboxes__input-panel__button-grid">
+
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title grant"><p>GRANT</p></div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-behalf">Send on Behalf</button>  
+
+        <div class="copypastas__mailboxes__input-panel__button-grid__row-title revoke"><p>REVOKE</p></div>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-full">Full Access</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-as">Send As</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-behalf">Send on Behalf</button>
+
+        <input class="copypastas__mailboxes__input-panel__button-grid__alias-window js-alias-input-window" 
+          type="text" placeholder="alias">
+        <!-- span from right -->
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud active">Cloud</button>
+        <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem">On-prem</button>
+
+      </div>
+
+      <!-- Text inputs -->
+      <div>
+        <textarea 
+          class="copypastas__mailboxes__input-panel__text__textarea js-users-input-window" placeholder="users" ></textarea>
+        <button class="js-clear-commands-button">Clear</button>
+      </div>
+    </div> <!-- /copypastas__mailboxes__input-panel -->
+    <div style="clear: both; height: 20px;"></div>
     
 
-  </style>
-</head>
-<body>
+    <!-- Output windows -->
+    <div>
+      <p class="copypastas__mailboxes__output-panel__users js-users-output-window"></p>
+      <textarea class="copypastas__mailboxes__output-panel__commands js-commands-output-window"
+        rows="12" placeholder="commands will appear here..."></textarea>
+      <textarea class="copypastas__mailboxes__output-panel__message js-resolution-message-output-window" 
+        rows="4" readonly placeholder="resolution message will appear here..."></textarea>
+    </div>
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+    // NAMESPACE copypastas
+    class Copypastas {
+      static MailboxesPanelButton = class MailboxesPanelButton {
+        // https://stackoverflow.com/questions/67648500/pre-es6-static-functions-in-a-class
+        // https://stackoverflow.com/questions/55204088/defining-javascript-functions-inside-vs-outside-of-a-class
+        // https://stackoverflow.com/questions/28784375/nested-es6-classes
+        constructor(domObject = null, isActive = false) {
+          this.element = domObject;
+          this.active = isActive;
+        }
+        activate() {
+          this.active = true;
+          if (this.element != null) {
+            this.element.classList.add("active");
+          }
+        }
+        deactivate() {
+          this.active = false;
+          if (this.element != null) {
+            this.element.classList.remove("active");
+          }
+        }
+      } // MailboxesPanelButton
+
+      static Mailboxes = class Mailboxes {
+        constructor() {
+          this.aliasInputWindow = document.querySelector(".js-alias-input-window"),
+          this.usersInputWindow = document.querySelector(".js-users-input-window"),
+          this.usersOutputWindow = document.querySelector(".js-users-output-window"),
+          this.commandsOutputWindow = document.querySelector(".js-commands-output-window"),
+          this.resolutionMessageOutputWindow = document.querySelector(".js-resolution-message-output-window"),
+          this.clearCommandsButton = document.querySelector(".js-clear-commands-button"),
+          /* toggle buttons*/
+          this.buttonMap = new Map([
+            ["js-grant-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-full"), false)],
+            ["js-grant-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-as"), false)],
+            ["js-grant-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-behalf"), false)],
+            ["js-revoke-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-full"), false)],
+            ["js-revoke-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-as"), false)],
+            ["js-revoke-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-behalf"), false)],
+          ]),
+          this.onpremCloudMap = new Map([
+            ["js-onprem", new Copypastas.MailboxesPanelButton(document.querySelector(".js-onprem"), false)],
+            ["js-cloud", new Copypastas.MailboxesPanelButton(document.querySelector(".js-cloud"), true)],
+          ]),
+          /* non-DOM properties */
+          this.usersArray = [],
+          this.readableUsersListString = "",
+          this.#startEventListeners();
+          this.loadState();
+          this.onUsersInputWindowChange();
+        }; // constructor
+
+        /* Event listeners */
+
+        #startEventListeners() {
+          this.eventListeners = new Map([
+            ["js-grant-full", this.buttonMap.get("js-grant-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-grant-as", this.buttonMap.get("js-grant-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-grant-behalf", this.buttonMap.get("js-grant-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-full", this.buttonMap.get("js-revoke-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-as", this.buttonMap.get("js-revoke-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-revoke-behalf", this.buttonMap.get("js-revoke-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
+            ["js-onprem", this.onpremCloudMap.get("js-onprem").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
+            ["js-cloud", this.onpremCloudMap.get("js-cloud").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
+            ["js-alias-input-window", this.aliasInputWindow.addEventListener("change", this.onAliasInputWindowChange.bind(this))],
+            ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
+            ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))],
+          ]);
+        }
+
+        onPrivilegeButtonClick(event) {
+          for (const [key, value] of this.buttonMap) {
+            if (event.target.classList.contains(key)) {
+              this.privilegeToggle(value);
+            }
+          }
+          this.saveState();
+        }
+
+        onOnpremCloudButtonClick(event) {
+          let buttonObject;
+          if (event.target.classList.contains("js-onprem")) {
+            buttonObject = this.onpremCloudMap.get("js-onprem");
+          } else {
+            buttonObject = this.onpremCloudMap.get("js-cloud");
+          }
+          this.onpremCloudToggle(buttonObject);
+          this.saveState();
+        }
+
+        onUsersInputWindowChange() {
+          this.getUsersArray();
+          this.getUsersAsReadableList();
+          this.writeFilteredUsers();
+          this.getCopypasta_commands(); // rebuild commands
+          this.saveState();
+        }
+
+        onAliasInputWindowChange() {
+          this.getCopypasta_commands(); // rebuild commands
+          this.saveState();
+        }
+
+        onClearButtonClick() {
+          this.clear();
+          this.saveState();
+        }
+
+        /* Methods - User list and alias related */
+
+        getUsersArray() {
+          let users = this.usersInputWindow.value.trim();
+          users = users.replaceAll(",", "");
+          users = users.replaceAll("\t", " ");
+          users = users.replaceAll("\r", "");
+          users = users.replaceAll("\n", " ");
+          this.usersArray = users.split(" ");
+          if (this.usersArray.length == 1 && this.usersArray[0] == "") {
+            this.usersArray.splice(0, this.usersArray.length);
+          }
+        }
+        getUsersAsReadableList() {
+          this.readableUsersListString = "";
+          this.usersArray.forEach(element => {
+            this.readableUsersListString += "\"" + element + "\" ";
+          });
+          this.readableUsersListString.trim();
+        }
+        writeFilteredUsers() {
+          this.usersOutputWindow.innerHTML = this.readableUsersListString;
+        }
+
+        /* Methods - Privilege buttons related */
+
+        /** 
+         * Toggles particular privileges buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
+         * Returns nothing.
+        */
+        privilegeToggle(button) {
+          if (button.active) {
+            button.deactivate();
+          } else {
+            button.activate();
+          }
+          this.getCopypasta_commands(); // rebuild commands
+        };
+
+        /** 
+         * Toggles On-prem / Cloud buttons and rebuilds the command list.
+         * @param {Copypastas.MailboxesPanelButton} button - pressed button
+         * Returns nothing.
+        */
+        onpremCloudToggle(button) {
+          this.onpremCloudMap.forEach((buttonObj) => {
+            buttonObj.deactivate();
+          });
+          button.activate()
+          this.getCopypasta_commands(); // rebuild commands
+        };
+
+        /* Commands related */
+
+        /** 
+         * Checks if alias is set, at least one user is set, and at least one privilege is set.
+         * Returns true if all is ok.
+        */
+        testForFields() {
+          let alias = this.aliasInputWindow.value.trim();
+          if (!alias || alias.length == 0) {
+            return false;
+          }
+          if (!this.usersArray || this.usersArray.length == 0) {
+            return false;
+          }
+          let allSet = false;
+          this.buttonMap.forEach((value, key) => {
+            if (value.active == true) {allSet = true; return;}
+          });
+          return allSet; // and also other things work out too
+        };
+
+        /**
+         * Writes generated commands to the output window.
+         * Returns nothing.
+        */
+        getCopypasta_commands() {
+          // test if everything is set
+          if (this.testForFields() == false) {
+            this.commandsOutputWindow.value = "";
+            this.resolutionMessageOutputWindow.value = "";
+            return;
+          }
+          // set cloud / on-prem flag
+          let isCloud = true;
+          if (this.onpremCloudMap.get("js-cloud").active == true) {
+            isCloud = true;
+          } else {
+            isCloud = false;
+          }
+          // getting commands
+          let alias = this.aliasInputWindow.value.trim();
+          let commands = "";
+          this.usersArray.forEach((user) => {
+            this.buttonMap.forEach((value, key) => {
+              if (value.active) {
+                commands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
+              }
+            })
+          });
+          this.commandsOutputWindow.value = commands;
+          // for resolution message
+          let usedActions = [];
+          this.buttonMap.forEach((value, key) => {
+            if (value.active) {
+              usedActions.push(key);
+            }
+          })
+          this.putResolutionMessage(usedActions);
+        };
+
+        /** 
+         * Generates one command line for given parameters.
+         * Returns string.
+        */
+        getCopypasta_getSingleCommand(privilege, alias, user, onCloud) {
+          if (privilege == "js-grant-full") {
+            return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
+          }
+          if (privilege == "js-revoke-full") {
+            return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
+          }
+          if (privilege == "js-grant-as") {
+            if (onCloud) {
+              return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+            } else {
+              return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
+            }
+          }
+          if (privilege == "js-revoke-as") {
+            if (onCloud) {
+              return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
+            } else {
+              return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
+            }
+          }
+          if (privilege == "js-grant-behalf") {
+            return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
+          }
+          if (privilege == "js-revoke-behalf") {
+            return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
+          }
+        };
+
+        putResolutionMessage(actions) {
+          let actionMap = new Map([
+            ['granted', []],
+            ['revoked', []]
+          ])
+          
+          // users part
+          let beginning;
+          if (this.usersArray.length > 1) {
+            beginning = "Users ";
+            this.usersArray.forEach(element => {  
+              beginning += element + ", ";
+            })
+            beginning = beginning.slice(0, beginning.length - 2);
+            beginning += " have been ";
+          } else {
+            beginning = "User " + this.usersArray[0];
+            beginning += " has been ";
+          }
+
+          // action and privileges part
+          let chosenGrant = [];
+          let chosenRevoke = [];
+          let a, b, c;
+          actions.forEach((action) => {
+            [a, b, c] = action.split("-");
+            switch(b) {
+              case "grant":
+                switch(c) {
+                  case "full":
+                    chosenGrant.push("Full Access");
+                    break;
+                  case "as":
+                    chosenGrant.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenGrant.push("Send on Behalf");
+                    break;
+                }
+                break;
+              case "revoke":
+                switch(c) {
+                  case "full":
+                    chosenRevoke.push("Full Access");
+                    break;
+                  case "as":
+                    chosenRevoke.push("Send As");
+                    break;
+                  case "behalf":
+                    chosenRevoke.push("Send on Behalf");
+                    break;
+                }
+                break;
+            }
+          });
+          let granted = "";
+          let revoked = "";
+          if (chosenGrant.length) {
+            granted = beginning + "granted ";
+            chosenGrant.forEach((privilege) => {
+              granted += privilege + " and ";
+            });
+            granted = granted.slice(0, granted.length - 5);
+            granted += " privileges to ";
+          }
+          if (chosenRevoke.length) {
+            revoked = beginning + "revoked ";
+            chosenRevoke.forEach((privilege) => {
+              revoked += privilege + " and ";
+            });
+            revoked = revoked.slice(0, revoked.length - 5);
+            revoked += " privileges to "
+          }
+
+          // mailbox and sync part
+          let alias = this.aliasInputWindow.value.trim();
+          if (granted != "") {
+            granted += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+          if (revoked != "") {
+            revoked += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
+          }
+
+          // final message
+          let message;
+          if (granted == "" || revoked == "") {
+            message = granted + revoked;
+          } else {
+            message = granted + "\r\n" + revoked;
+          }
+          
+          this.resolutionMessageOutputWindow.value = message;
+        };
+
+        /** 
+         * Clears selected privileges, users and alias windows.
+         * Returns nothing.
+        */
+        clear() {
+          this.usersInputWindow.value = "";
+          this.usersOutputWindow.innerHTML = "";
+          this.aliasInputWindow.value = "";
+          this.commandsOutputWindow.value = "";
+          this.usersArray.splice(0, this.usersArray.length);
+          this.readableUsersListString = "";
+          this.buttonMap.forEach((value, key) => {
+            value.deactivate();
+          })
+        };
+
+        /* localStorage */
+        saveState() {
+          let state = {};
+          this.buttonMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          this.onpremCloudMap.forEach((buttonObj, key) => {
+            state[key] = buttonObj.active;
+          });
+          state["users"] = this.usersInputWindow.value;
+          state["alias"] = this.aliasInputWindow.value;
+          localStorage.setItem("copypastasMailboxes", JSON.stringify(state));
+        };
+
+        loadState() {
+          const loadedObject = JSON.parse(localStorage.getItem("copypastasMailboxes"));
+          this.buttonMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.onpremCloudMap.forEach((stateItem, key) => {
+            if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
+          });
+          this.usersInputWindow.value = loadedObject["users"];
+          this.aliasInputWindow.value = loadedObject["alias"];
+        };
+
+        returnStateAsObject() {
+
+        };
+      } // Mailboxes
+    } // Copypastas
+    
+    // Initialize
+    const copypastas = new Copypastas();
+    const mailboxes = new Copypastas.Mailboxes();
+
+    //
+    //  FUNCTIONS (outside Copypastas)
+    //
+    function showSnackbar(text = "Copied") {
+      var x = document.getElementById("snackbar");
+      x.innerHTML = text;
+      x.className = "show";
+      // After 3 seconds, remove the show class from DIV
+      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 400);
+    } 
+    
+    function eformHandledCopypasta() {
+      navigator.clipboard.writeText(
+        "-------------------------\r\nRequest has been handled.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
+      );
+      showSnackbar();
+    }
+
+    function sitaEformHandledCopypasta() {
+      let x = document.getElementById("eformCopypastaInput").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      navigator.clipboard.writeText(
+        "-------------------------\r\nRequest has been forwarded to SITA in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
+      );
+      showSnackbar();
+    }
+
+    function eformWithNumberHandledCopypasta() {
+      let x = document.getElementById("eformCopypastaInput").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      navigator.clipboard.writeText(
+        "-------------------------\r\nRequest has been handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
+      );
+      showSnackbar();
+    }
+
+    function eformWillBeHandledCopypasta() {
+      let x = document.getElementById("eformCopypastaInput").value;
+      let reg = /HLSUPPORT-\d*/i;
+      var matches = x.match(reg);
+      navigator.clipboard.writeText(
+        "-------------------------\r\nRequest will be handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
+      );
+      showSnackbar();
+    }
+
+    function eformByChangemanagementCopypasta() {
+      navigator.clipboard.writeText(
+        "-------------------------\r\nRequest has been forwarded to changemanagement team. Progress will be tracked via email / created Jira ticket\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
+      );
+      showSnackbar();
+    }
+
+    function copypasta1() {
+      navigator.clipboard.writeText(
+        "Kind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd"
+      );
+      showSnackbar();
+    }
+
+    function copypasta2() {
+      navigator.clipboard.writeText(
+        "Please allow Azure ~90 minutes to sync."
+      );
+      showSnackbar();
+    }
+
+    function copypasta3() {
+      navigator.clipboard.writeText(
+        "Dear SITA,\r\n\r\nPlease proceed with the request.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd"
+      );
+      showSnackbar();
+    }
+
+    function copypasta4() {
+      navigator.clipboard.writeText(
+        "Please note that when both Send As and Send on Behalf privileges are granted, only Send As may work."
+      );
+      showSnackbar();
+    }
+  </script>
+</div></section><section id="030_exchange.010_basic_troubleshooting"><div>  <ul>
+    <li>check in OWA</li>
+    <li>new profile</li>
+    <li>delete system32</li>
+  </ul>
+</div></section><section id="030_exchange.015_exchange_2"><div>  <p>Here's the link:</p>
+  <p>link</p>
+  <p>image here</p>
+</div></section><section id="030_exchange.020_exchange_3"><div>  <p>Some exciting news from issues world</p>
 
   
+</div><div>  <p>Interactive</p>
+  <button>hey</button>
+  <button>yo</button>
+</div></section>
+<section id="030_exchange.099_not_existing"><div><p>not-existing</p></div></section>
+<section id="030_exchange.099_not_existing.010_not_existing"><div><p>not-existing nested</p></div></section>
+<section id="030_exchange"></section><section id="032_active_directory.010_ad_groups"><div>  <p>group1</p>
+  <p>group2</p>
+  <p>group3</p>
+</div></section><section id="032_active_directory"><div>  <p>Generally about AD</p>
+</div></section></main>
+
+<script>
+  // NAMESPACE sitenavigation
+  class SiteNavigation {
+    static Navigation = class Navigation {
+      static NavItem = class NavItem {
+        constructor(buttonClass, articleId, children=null, active=false) {
+          this.buttonClass = buttonClass;
+          this.button = document.getElementsByClassName(buttonClass)[0];
+          this.articleId = articleId;
+          this.correspondingArticle = document.getElementById(articleId);
+          this.active = active;
+          if (active == true) {
+            this.button.classList.add("active");
+            this.correspondingArticle.classList.remove("hidden");
+          } else {
+            this.correspondingArticle.classList.add("hidden");
+          }
+          if (children == null) {
+            this.children = [];
+          } else {
+            this.children = children;
+          }
+        } // constructor
+      } // NavItem
+      constructor() { //constructor for Navigation class
+        this.navigationContainer = document.querySelector(".js-site-navigation");
+        this.navigationButtons = [
+          new SiteNavigation.Navigation.NavItem("js-for-020_ticket_tracker", "020_ticket_tracker", null, true),
+          new SiteNavigation.Navigation.NavItem("js-for-025_copypastas", "025_copypastas"),
+          new SiteNavigation.Navigation.NavItem("js-for-030_exchange", "030_exchange", [
+            new SiteNavigation.Navigation.NavItem("js-for-030_exchange.010_basic_troubleshooting", "030_exchange.010_basic_troubleshooting"),
+            new SiteNavigation.Navigation.NavItem("js-for-030_exchange.015_exchange_2", "030_exchange.015_exchange_2"),
+            new SiteNavigation.Navigation.NavItem("js-for-030_exchange.020_exchange_3", "030_exchange.020_exchange_3"),
+            new SiteNavigation.Navigation.NavItem("js-for-030_exchange.099_not_existing", "030_exchange.099_not_existing", [
+              new SiteNavigation.Navigation.NavItem("js-for-030_exchange.099_not_existing.010_not_existing", "030_exchange.099_not_existing.010_not_existing"),
+            ]),
+          ]),
+          new SiteNavigation.Navigation.NavItem("js-for-032_active_directory", "032_active_directory", [
+            new SiteNavigation.Navigation.NavItem("js-for-032_active_directory.010_ad_groups", "032_active_directory.010_ad_groups")
+          ]),
+        ];
+        this.#startEventListeners(this.navigationButtons);
+      } // constructor
+
+      /* Event listeners */
+      #startEventListeners(navItemsList) {
+        navItemsList.forEach((item) => {
+          item.button.addEventListener("click", this.navItemOnClick.bind(this));
+          if (item.children.length > 0) {
+            this.#startEventListeners(item.children);
+          }
+        });
+      }
+
+      navItemOnClick(event, list=null) {
+        if (list == null) {
+          list = this.navigationButtons;
+        }
+        event.target.classList.toggle("active");
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].buttonClass == event.target.classList[1]) {
+            list[i].correspondingArticle.classList.toggle("hidden");
+            break;
+          }
+          if (list[i].children.length > 0) {
+            this.navItemOnClick(event, list[i].children);
+          }
+        }
+        // if it's a collapsible
+        if (event.target.classList.contains("js-nav-expandable")) {
+          let selector = `.${event.target.classList[1]} + div`;
+          this.navigationContainer.querySelector(selector).classList.toggle("hidden");
+        }
+      }
+    } // Navigation
+  } // SiteNavigation
+  // Initialize
+  const siteNavigation = new SiteNavigation.Navigation();
+</script>
 </body>
 </html>

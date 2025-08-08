@@ -31,7 +31,7 @@ class Article:
         self.dom_id = str.join(".", names)
 
     def get_article(self) -> str:
-        result = f"<article id=\"{self.dom_id}\">"
+        result = f"<article id=\"{self.dom_id}\" class='js-nav-article'>"
         for file in self.directory.children:
             result += file.to_string()
         result += "</section>"
