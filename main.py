@@ -2,170 +2,62 @@ import os
 if __name__ == "__main__":
     from sys import path as syspath
     from pathlib import Path
+
+    while "mylib" in os.getcwd():
+        os.chdir("..")
+    syspath.append(str(Path('./mylib/').absolute()))
     syspath.append(str(Path('./mylib/filetypes').absolute()))
-
-class WebpageFile:
-    def __init__(self, path: str, file_type: str):
-        self.path = path
-        self.file_type = file_type
-    
-    def get_file_string(self) -> str:
-        if self.file_type == ".html":
-            return self.__create_div_from_html()
-        if self.file_type == ".css":
-            return self.__create_style_from_css()
-        if self.file_type == ".txt":
-            return ""
-        raise Exception("This file extension is not supported")
-
-    def __create_div_from_html(self) -> str:
-        """For HTML files, only return contents of &lt;body&gt; as is."""
-        result = ""
-        save_flag = False
-        with open(self.path) as f:
-            for line in f:
-                if "<body>" in line:
-                    save_flag = True
-                    continue
-                if "</body>" in line:
-                    break
-                if save_flag:
-                    result += line
-        result = f"<div>{result}</div>"
-        return result
-    
-    def __create_style_from_css(self) -> str:
-        """For CSS files, return whole file but encase it in &lt;style&gt; tags"""
-        result = "<style>\r\n"
-        with open(self.path) as f:
-            for line in f:
-                result += line
-        result += "</style>\r\n"
-        return result
+from structure_reader import StructureReader
+from navigation import Navigation
+from main_builder import MainBuilder
+from filetypes.directory import Directory
+from filetypes.css_file import CSSFile
 
 
-class Section:
-    def __init__(self, webpage_files: list[WebpageFile], id: str):
-        self.webpage_files = webpage_files
-        self.id = id
-        self.parent = None
-        self.children = None
-    
-    def create_section(self) -> str:
-        result = f"<section id=\"{self.id}\">"
-        for file in self.webpage_files:
-            result += file.get_file_string()
-        result += "</section>"
-        return result
+class SiteBuilder:
+    def __init__(self, root_directory_path: Path):
+        self.root_directory_path = root_directory_path
+        self.structure_reader = StructureReader(self.root_directory_path)
+        self.structure_reader.read()
+        self.root_directory: Directory = self.structure_reader.root_node
+        #
+        self.navigation_builder = Navigation(self.root_directory)
+        self.main_builder = MainBuilder(self.root_directory)
+        self.site_code = ""
+        self.indent = ""
 
+    def build(self) -> str:
+        # beginning
+        self.insert_beginning()
+        self.insert_css()
+        self.insert_navigation_html()
 
-class NavigationItem:
-    def __init__(self, title: str, section: list[Section], parent: Section):
-        self.title = title
-        self.section = section
-        self.parent = parent
-        self.children = None
+        return self.site_code
 
-
-class Navigation:
-    def __init__(self, section_list: list[Section]):
-        self.section_list = section_list
-    
-    def get_navigation_html_as_string(self) -> str:
-        """Returns &lt;nav&gt;(all the navigation here)&lt;/nav&gt; as string"""
-        result = "<nav>\r\n"
-        for section in self.section_list:
-            if section.id == "root":
-                continue
-            result += f"<button onclick=\"navigation.show('{section.id}')\">{section.id}</button>"
-        result += "</nav>\r\n"
-        return result
-    
-    def get_navigation_js_as_string(self) -> str:
-        # get sections map
-        js_map = ""
-        for section in self.section_list:
-            if section.id == "root":
-                continue
-            js_map += f"[\"{section.id}\", document.getElementById(\"{section.id}\")],\r\n"
-        # generate result
-        result = """<script>
-  const navigation = {
-    sections: new Map([
-      """ + js_map + """
-    ]),
-    show(section) {
-      this.sections.forEach((sec) => {
-        sec.style.display = "none";
-        if (sec.id == section) {
-          sec.style.display = "block";
-        }
-      });
-    }
-  };
-</script>"""
-        return result        
-
-
-class FileStructureReader:
-    def __init__(self, webpage_sections_folder_path):
-        self.webpage_sections_folder_path = webpage_sections_folder_path
-        self.all_sections: list[Section] = []
-        self.root_section = Section([], "root")
-        self.__get_root_files_and_sections(self.webpage_sections_folder_path, self.root_section)
-
-    def __get_root_files_and_sections(self, path: str, section: Section, parent: Section = None) -> Section:
-        section.parent = parent
-        for node in os.listdir(path):
-            full_path = os.path.join(path, node)
-            if os.path.isfile(full_path):
-                _, extension = os.path.splitext(full_path)
-                section.webpage_files.append(WebpageFile(full_path, extension))
-            else:
-                section.children = self.__get_root_files_and_sections(full_path, Section([], node), section)
-        self.all_sections.append(section)
-
-
-class PageBuilder:
-    def __init__(self, navigation: Navigation, dir_structure: FileStructureReader):
-        self.navigation = navigation
-        self.dir_structure = dir_structure
-
-    def build(self):
-        # get root files - css
-        css = None
-        for file in self.dir_structure.root_section.webpage_files:
-            if file.file_type == ".css":
-                css = file
-        # get page contents
-        page_contents = "<main>\r\n"
-        for section in self.dir_structure.all_sections:
-            if section.id == "root":
-                continue
-            page_contents += section.create_section()
-        page_contents += "</main>\r\n"
-        # generate
-        result = \
-"""<!DOCTYPE html>
+    def insert_beginning(self):
+        self.site_code += '''\
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Newfluence</title>""" + css.get_file_string() + """
-        </head>
-    <body>
-""" + self.navigation.get_navigation_html_as_string() + """
-        <div style="float: left; width: 240px; height: 100%;"></div>""" + page_contents + \
-            self.navigation.get_navigation_js_as_string() + """
-    </body>
-</html>"""
-        return result
-        
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newfluence</title>
+'''
+        self.indent = "    "
+
+    def insert_css(self):
+        for node in self.root_directory.children:
+            if isinstance(node, CSSFile):
+                indented_css = ""
+                for line in node.get_css().splitlines():
+                    indented_css += self.indent + line + "\n"
+                self.site_code += indented_css
+
+    def insert_navigation_html(self):
+        pass
 
 
-structure_reader = FileStructureReader(os.path.join(os.getcwd(), "webpage"))
-navigation = Navigation(structure_reader.all_sections)
-page_builder = PageBuilder(navigation, structure_reader)
+site_builder = SiteBuilder(Path("./webpage"))
 
 with open("newfluence.html", "w") as file:
-    file.write(page_builder.build())
+    file.write(site_builder.build())

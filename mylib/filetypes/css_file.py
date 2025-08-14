@@ -7,17 +7,14 @@ class CSSFile(File):
     def __init__(self, path: Path, parent: Node):
         super().__init__(path, parent)
 
-    def to_string(self) -> str:
+    def get_css(self) -> str:
         """For CSS files, return whole file but encase it in &lt;style&gt; tags"""
-        result = "<style>\r\n"
+        result = "<style>\n"
         with open(self.path) as f:
             for line in f:
-                result += line
-        result += "</style>\r\n"
+                result += "  " + line
+        result += "\n</style>\n"
         return result
-
-    def __str__(self):
-        return self.to_string()
 
 
 if __name__ == "__main__":
