@@ -27,10 +27,11 @@ class SiteBuilder:
         self.indent = ""
 
     def build(self) -> str:
-        # beginning
         self.insert_beginning()
         self.insert_css()
+        self.insert_transition_to_body()
         self.insert_navigation_html()
+        self.insert_main()
 
         return self.site_code
 
@@ -53,8 +54,20 @@ class SiteBuilder:
                     indented_css += self.indent + line + "\n"
                 self.site_code += indented_css
 
+    def insert_transition_to_body(self):
+        self.site_code += f"  </head>\n  <body>\n"
+
     def insert_navigation_html(self):
-        pass
+        # print(self.navigation_builder.get_html(self.root_directory))
+        indented_html = ""
+        for line in self.navigation_builder.get_html(self.root_directory).splitlines():
+            indented_html += self.indent + line + "\n"
+        self.site_code += indented_html
+
+    def insert_main(self):
+        main_code = self.main_builder.get_main(self.root_directory)
+        print(main_code)
+        self.site_code += main_code
 
 
 site_builder = SiteBuilder(Path("./webpage"))

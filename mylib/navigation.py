@@ -9,53 +9,62 @@ if __name__ == "__main__":
     syspath.append(str(Path('./mylib/').absolute()))
     syspath.append(str(Path('./mylib/filetypes').absolute()))
 
-from directory import Directory
+from filetypes.directory import Directory
 from article import Article
 
 
 class Navigation:
     def __init__(self, root_directory: Directory):
         self.root_directory = root_directory
-        self.html_part = ""
+        self.html_part = "<nav class=\"js-site-navigation\">\n  <button class=\"js-site-navigation-showall\">Show all</button>\n"
         self.js_part = ""
-    
-    def get_html(self, directory=None, level=0) -> str:
+        self.indent = "  "
+        self.level = 0
+
+    def nestedness_class(self) -> str:
+        if self.level > 0:
+            return f" nav__nested--{self.level}"
+        else:
+            return ""
+
+    def insert_expandable_html_button_div(self, that_article):
+        self.html_part += f"{self.indent}<div class=\"{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
+        self.html_part += f"{self.indent * 2}<div class=\"nav_button_expand js-nav-expandable\"></div><button class=\"js-nav-button\">{that_article.title}</button>\n"
+        self.html_part += f"{self.indent}</div>\n"
+
+    def insert_nonexpandable_html_button_div(self, that_article):
+        self.html_part += f"{self.indent}<div class=\"{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
+        self.html_part += f"{self.indent * 2}<div class=\"nav_button_nonexpandable_spacing\"></div><button class=\"js-nav-button\">{that_article.title}</button>\n"
+        self.html_part += f"{self.indent}</div>\n"
+
+    def get_html(self, directory=None) -> str:
         """Returns &lt;nav&gt;(all the navigation here)&lt;/nav&gt; as string"""
-        nest_level = level
+
         if directory is None:
             directory = self.root_directory
-        # Open nav element and put the show all button in
-        if self.html_part == "":
-            self.html_part = '''\
 
-<nav class="js-site-navigation">
-  <button class="js-site-navigation-showall">Show all</button>
-'''
         # Append button divs for each article / directory
         for node in directory.children:
             if isinstance(node, Directory):
                 # Append that directory / article
                 that_article = Article(node)
-                if len(node.children) > 0:
-                    spacer_class = "nav_button_expand js-nav-expandable"
+                # Check if it has more directories
+                has_more_directories = False
+                for nested_node in node.children:
+                    if isinstance(nested_node, Directory):
+                        has_more_directories = True
+                        break
+                if has_more_directories:
+                    self.insert_expandable_html_button_div(that_article)
+                    self.level += 1
+                    self.get_html(node)
+                    self.level -= 1
                 else:
-                    spacer_class = "nav_button_nonexpandable_spacing"
-                if nest_level > 0:
-                    nestness_class = f"nav__nested--{nest_level}"
-                else:
-                    nestness_class = ""
-
-                self.html_part += '''\
-  <div class="'''+that_article.dom_id+''' nav_button_item '''+nestness_class+'''">
-    <div class='''+spacer_class+'''></div><button class="js-nav-button">'''+that_article.title+'''</button>
-  </div>
-'''
-                # Then look for nested articles
-                if len(node.children) > 0:
-                    nest_level += 1
-                    self.get_html(node, nest_level)
-        self.html_part += "</nav>"
-        return self.html_part
+                    self.insert_nonexpandable_html_button_div(that_article)
+        if directory is self.root_directory:
+            self.html_part += "</nav>"
+            return self.html_part
+        return ""
 
     def get_js(self, directory: Directory = None) -> str:
         if directory is None:

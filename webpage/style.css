@@ -115,3 +115,29 @@ main {
     width: 100%;
     resize: none;
 }
+
+/* SiteNavigation */
+.nav_button_item {
+    display: flex;
+}
+.nav_button_nonexpandable_spacing {
+    background-color: #333;
+    width: 20px;
+    display: inline-block;
+}
+.js-nav-button {
+    flex-grow: 100;
+}
+.nav_button_expand {
+    background-color: #333;
+    color: #f1f1f1;
+    text-align: center;
+    user-select: none;
+    width: 20px;
+}
+.nav_button_expand.active {
+    background-color: #8F8F9D;
+}
+.nav__nested--1{
+    padding-left: 10px;
+}

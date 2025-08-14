@@ -1,5 +1,5 @@
+from pathlib import Path, PurePath
 if __name__ == "__main__":
-    from pathlib import Path, PurePath
     from sys import path as syspath
     import os
 
@@ -9,6 +9,7 @@ if __name__ == "__main__":
     syspath.append(str(Path('./mylib/filetypes').absolute()))
 from filetypes.directory import Directory
 from filetypes.meta_file import MetaFile
+from filetypes.html_file import HTMLFile
 
 
 class Article:
@@ -29,15 +30,17 @@ class Article:
 
     def get_dom_id(self):
         pure = PurePath(self.directory.path)
-        names = pure.parts[3:0]
+        parts = pure.parts
+        index = parts.index('webpage') + 1
+        names = parts[index:]
         self.dom_id = str.join("-", names)
 
     def get_article(self) -> str:
-        result = f"<article id=\"{self.dom_id}\" class='js-article'>"
+        result = f"<article id=\"{self.dom_id}\" class='js-article'>\n"
         for file in self.directory.children:
-            if not isinstance(file, Directory):
+            if isinstance(file, HTMLFile):
                 result += file.to_string()
-        result += "</article>"
+        result += "</article>\n"
         return result
 
 

@@ -20,7 +20,6 @@ class HTMLFile(File):
                     break
                 if save_flag:
                     result += line
-        result = f"<section>{result}</section>"
         return result
 
     def __str__(self):
