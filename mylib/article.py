@@ -18,6 +18,8 @@ class Article:
         self.directory = directory
         self.title = None
         self.dom_id = None
+        self.get_title()
+        self.get_dom_id()
 
     def get_title(self):
         for file in self.directory.children:
@@ -28,13 +30,14 @@ class Article:
     def get_dom_id(self):
         pure = PurePath(self.directory.path)
         names = pure.parts[3:0]
-        self.dom_id = str.join(".", names)
+        self.dom_id = str.join("-", names)
 
     def get_article(self) -> str:
-        result = f"<article id=\"{self.dom_id}\" class='js-nav-article'>"
+        result = f"<article id=\"{self.dom_id}\" class='js-article'>"
         for file in self.directory.children:
-            result += file.to_string()
-        result += "</section>"
+            if not isinstance(file, Directory):
+                result += file.to_string()
+        result += "</article>"
         return result
 
 

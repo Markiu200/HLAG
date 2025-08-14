@@ -67,6 +67,8 @@ DONE// Better organize layout for mailboxes copypasta
 DONE// Fix date fetcher in ticket copypastas
 
 
+
+
 Ideas:
 Przepisz jakieś pierwsze article (miej je jako <article>) jako podstrony. 
 Mając to, ogarnij nawigację:
