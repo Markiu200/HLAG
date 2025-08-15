@@ -11,7 +11,7 @@
   <div id="snackbar">Copied</div>
 
   <!-- E-form copypasta section -->
-  <section class="section">
+  <section>
     <div style="display: flex;">
       <button class="buttonDiv" onclick="eformHandledCopypasta()">E-form handled</button>
       <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
@@ -33,9 +33,7 @@
   <!-- Mailboxes copypastas -->
   <!-- -------------------- -->
 
-  <section class="section copypastas">
-    <h4 style="position: absolute; top: -20px; left: 1px;">Mailboxes copypasta</h4>
-    
+  <section>
     <!-- Input panel-->
     <div class="copypastas__mailboxes__input-panel">
       <!-- Toggle buttons grid - 4 columns -->
@@ -56,7 +54,6 @@
         <!-- span from right -->
         <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud active">Cloud</button>
         <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem">On-prem</button>
-
       </div>
 
       <!-- Text inputs -->
@@ -68,7 +65,6 @@
     </div> <!-- /copypastas__mailboxes__input-panel -->
     <div style="clear: both; height: 20px;"></div>
     
-
     <!-- Output windows -->
     <div>
       <p class="copypastas__mailboxes__output-panel__users js-users-output-window"></p>
@@ -77,18 +73,7 @@
       <textarea class="copypastas__mailboxes__output-panel__message js-resolution-message-output-window" 
         rows="4" readonly placeholder="resolution message will appear here..."></textarea>
     </div>
-
   </section>
-
-
-
-
-
-
-
-
-
-
 
   <script>
     // NAMESPACE copypastas
