@@ -94,6 +94,18 @@ class Navigation:
             this.children = children;
           }
         } // constructor
+        
+        activate() {
+          this.button.classList.add("active");
+          this.correspondingArticle.classList.remove("hidden");
+          this.active = true;
+        }
+        
+        deactivate() {
+          this.button.classList.remove("active");
+          this.correspondingArticle.classList.add("hidden");
+          this.active = false;
+        }
       } // NavItem
       //
       constructor() { //constructor for Navigation class
@@ -162,7 +174,7 @@ class Navigation:
         this.showAllButton.classList.toggle("active");
         this.isShowAll = !this.isShowAll;
         if (this.isShowAll) {
-          this.showAllShowArticles(this.navigationButtons);
+          this.showAllArticles(this.navigationButtons);
         } else {
           this.showAllHideArticles(this.navigationButtons);
           this.showAllShowArticles(this.displayedArticles);
@@ -201,8 +213,7 @@ class Navigation:
 
       showAllHideArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
-          navItemList[i].correspondingArticle.classList.add("hidden");
-          navItemList[i].button.classList.remove("active");
+          navItemList[i].deactivate()
           if (navItemList[i].children.length > 0) {
             this.showAllHideArticles(navItemList[i].children);
           }
@@ -211,10 +222,15 @@ class Navigation:
 
       showAllShowArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
-          navItemList[i].correspondingArticle.classList.remove("hidden");
-          navItemList[i].button.classList.add("active");
+          navItemList[i].activate()
+        };
+      }
+
+      showAllArticles(navItemList) {
+        for (let i = 0; i < navItemList.length; i++) {
+          navItemList[i].activate()
           if (navItemList[i].children.length > 0) {
-            this.showAllShowArticles(navItemList[i].children);
+            this.showAllArticles(navItemList[i].children);
           }
         };
       }
