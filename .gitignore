@@ -1,5 +1,7 @@
 # Own result files
 newfluence.html
+webpage/
+webpage*/
 
 # macOS settings file 
 .DS_Store
