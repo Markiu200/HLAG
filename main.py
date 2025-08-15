@@ -85,6 +85,7 @@ class SiteBuilder:
         self.site_code += "  </body>\n</html>"
         self.indent = ""
 
+
 site_builder = SiteBuilder(Path("./webpage"))
 
 with open("newfluence.html", "w") as file:

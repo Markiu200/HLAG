@@ -28,12 +28,12 @@ class Navigation:
             return ""
 
     def insert_expandable_html_button_div(self, that_article):
-        self.html_part += f"{self.indent}<div class=\"{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
-        self.html_part += f"{self.indent * 2}<div class=\"nav_button_expand js-nav-expandable\"></div><button class=\"js-nav-button\">{that_article.title}</button>\n"
+        self.html_part += f"{self.indent}<div class=\"js-for-{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
+        self.html_part += f"{self.indent * 2}<div class=\"nav_button_expand js-nav-expandable\">v</div><button class=\"js-nav-button\">{that_article.title}</button>\n"
         self.html_part += f"{self.indent}</div>\n"
 
     def insert_nonexpandable_html_button_div(self, that_article):
-        self.html_part += f"{self.indent}<div class=\"{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
+        self.html_part += f"{self.indent}<div class=\"js-for-{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
         self.html_part += f"{self.indent * 2}<div class=\"nav_button_nonexpandable_spacing\"></div><button class=\"js-nav-button\">{that_article.title}</button>\n"
         self.html_part += f"{self.indent}</div>\n"
 
@@ -109,7 +109,7 @@ class Navigation:
         self.js_part += '''\
         ];
         this.isShowAll = false;
-        this.displayedArticles = [this.navigationButtons[0]];
+        this.displayedArticles = [];
 
         this.#startEventListeners();
       } // constructor

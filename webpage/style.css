@@ -117,6 +117,25 @@ main {
 }
 
 /* SiteNavigation */
+nav {
+    position: fixed;
+    width: 200px;
+    height: 98%;
+    border-style: solid;
+    border-width: 1px;
+}
+nav button.active {
+    background-color: #ffd1d1;
+}
+.hidden {
+  display: none !important;
+}
+.nav_button_expand.hidden {
+  display: none !important;
+}
+.nav_button_expand.hidden * {
+  display: none !important;
+}
 .nav_button_item {
     display: flex;
 }
