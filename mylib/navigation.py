@@ -101,15 +101,12 @@ class Navigation:
         this.allButtons = this.navigationContainer.querySelectorAll(".js-nav-button");
         this.allExpandButtons = this.navigationContainer.querySelectorAll(".js-nav-expandable");
         this.showAllButton = this.navigationContainer.querySelector(".js-site-navigation-showall");
-        this.navigationButtons = ['''
+        this.navigationButtons = [
+'''
 
-        self.get_js_elements_recurse(directory)
+        self.get_js_elements_recurse(directory, "          ")
 
         self.js_part += '''\
-          ]),
-          new SiteNavigation.Navigation.NavItem("js-for-032_active_directory", "032_active_directory", [
-            new SiteNavigation.Navigation.NavItem("js-for-032_active_directory-010_ad_groups", "032_active_directory-010_ad_groups")
-          ]),
         ];
         this.isShowAll = false;
         this.displayedArticles = [this.navigationButtons[0]];
@@ -225,22 +222,21 @@ class Navigation:
   } // SiteNavigation
   // Initialize
   const siteNavigation = new SiteNavigation.Navigation();
-</script>'''
+</script>
+'''
         return self.js_part
 
-    def get_js_elements_recurse(self, directory: Directory, level: str = None):
+    def get_js_elements_recurse(self, directory: Directory, indent: str = None):
         for node in directory.children:
-            if level is None:
-                level = ""
+            if indent is None:
+                indent = ""
             if isinstance(node, Directory):
                 this_article = Article(node)
                 dom_id = this_article.dom_id
                 js_id = f"js-for-{dom_id}"
-                result = ""
-                if len(node.children) > 0:
-                    result += f'{level}new SiteNavigation.Navigation.NavItem("{js_id}", "{dom_id}", ['
-                    self.get_js_elements_recurse(node, level + "  ")
+                if node.check_for_children_directories():
+                    self.js_part += f'{indent}new SiteNavigation.Navigation.NavItem("{js_id}", "{dom_id}", [\n'
+                    self.get_js_elements_recurse(node, indent + "  ")
+                    self.js_part += f"{indent}]),\n"
                 else:
-                    result += f'{level}new SiteNavigation.Navigation.NavItem("{js_id}", "{dom_id}"),'
-                if level != "":
-                    result += "\r\n]),"
+                    self.js_part += f'{indent}new SiteNavigation.Navigation.NavItem("{js_id}", "{dom_id}"),\n'

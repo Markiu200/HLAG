@@ -31,7 +31,10 @@ class SiteBuilder:
         self.insert_css()
         self.insert_transition_to_body()
         self.insert_navigation_html()
+        self.insert_nav_space_allocator()
         self.insert_main()
+        self.insert_navigation_js()
+        self.insert_ending()
 
         return self.site_code
 
@@ -58,17 +61,29 @@ class SiteBuilder:
         self.site_code += f"  </head>\n  <body>\n"
 
     def insert_navigation_html(self):
-        # print(self.navigation_builder.get_html(self.root_directory))
         indented_html = ""
         for line in self.navigation_builder.get_html(self.root_directory).splitlines():
             indented_html += self.indent + line + "\n"
         self.site_code += indented_html
 
-    def insert_main(self):
-        main_code = self.main_builder.get_main(self.root_directory)
-        print(main_code)
-        self.site_code += main_code
+    def insert_nav_space_allocator(self):
+        self.site_code += f"{self.indent}<div style=\"float: left; width: 240px; height: 100%;\"></div>\n"
 
+    def insert_main(self):
+        indented_main = ""
+        for line in self.main_builder.get_main(self.root_directory).splitlines():
+            indented_main += self.indent + line + "\n"
+        self.site_code += indented_main
+
+    def insert_navigation_js(self):
+        indented_js = ""
+        for line in self.navigation_builder.get_js(self.root_directory).splitlines():
+            indented_js += self.indent + line + "\n"
+        self.site_code += indented_js
+
+    def insert_ending(self):
+        self.site_code += "  </body>\n</html>"
+        self.indent = ""
 
 site_builder = SiteBuilder(Path("./webpage"))
 

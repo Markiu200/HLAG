@@ -21,6 +21,3 @@ class HTMLFile(File):
                 if save_flag:
                     result += line
         return result
-
-    def __str__(self):
-        return self.to_string()

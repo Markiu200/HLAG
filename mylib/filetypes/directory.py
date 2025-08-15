@@ -8,3 +8,9 @@ class Directory(Node):
         if children is None:
             children = []
         self.children = children
+
+    def check_for_children_directories(self) -> bool:
+        for node in self.children:
+            if isinstance(node, type(self)):
+                return True
+        return False
