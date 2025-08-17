@@ -12,6 +12,7 @@ class PNGFile(File):
         self.html_tag = ""
         self.read_dimensions = None
         self.file_dimensions = None
+        self.src = None
         #
         self.base64 = None
         self.new_html = ""
@@ -33,17 +34,25 @@ class PNGFile(File):
             width, height = struct.unpack('>ii', head[16:24])
             self.file_dimensions = (width, height)
 
+    def get_src(self):
+        # https://stackoverflow.com/questions/766372/python-non-greedy-regexes
+        src_re = re.search('src="(.*?)"', self.html_tag)
+        if src_re:
+            self.src = src_re.groups(1)[0]
+
     def to_base64(self):
         # https://stackoverflow.com/questions/3715493/encoding-an-image-file-with-base64
         with open(self.path, "rb") as image_file:
-            self.base64 = base64.b64encode(image_file.read())
+            self.base64 = base64.b64encode(image_file.read()).decode('ascii')
 
     def get_base64_img_element(self):
         # https://stackoverflow.com/questions/8499633/how-to-display-base64-images-in-html
         # https://stackoverflow.com/questions/31526085/how-to-encode-an-image-into-an-html-file
         self.to_base64()
         self.get_file_dimensions()
-        self.new_html = f"<img src=\"data:image/png;base64,f{self.base64}\" width=\"{self.file_dimensions[0]}\" height=\"{self.file_dimensions[1]}\"/>"
+        self.get_src()
+        self.new_html = f"<img src=\"data:image/png;base64,{self.base64}\" width=\"{self.file_dimensions[0]}\" height=\"{self.file_dimensions[1]}\"/>\n"
+        print(self.new_html)
         return self.new_html
 
 
@@ -54,4 +63,8 @@ if __name__ == "__main__":
     test_png.html_tag = '<img src="img.png" width="200" height="300">'
     #
     test_png.get_dimensions_from_html()
+    print(test_png.read_dimensions)
     test_png.get_file_dimensions()
+    print(test_png.file_dimensions)
+    test_png.get_src()
+    print(test_png.src)

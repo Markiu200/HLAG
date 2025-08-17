@@ -21,6 +21,7 @@ class Article:
         self.dom_id = None
         self.get_title()
         self.get_dom_id()
+        self.images_to_base64 = True
 
     def get_title(self):
         for file in self.directory.children:
@@ -39,7 +40,11 @@ class Article:
         result = f"<article id=\"{self.dom_id}\" class='js-article'>\n"
         for file in self.directory.children:
             if isinstance(file, HTMLFile):
-                result += file.to_string()
+                if self.images_to_base64:
+                    result += file.to_string()
+                else:
+                    file.images_to_base64 = False
+                    result += file.to_string()
         result += "</article>\n"
         return result
 
