@@ -12,6 +12,7 @@ from filetypes.meta_file import MetaFile
 from filetypes.html_file import HTMLFile
 from filetypes.css_file import CSSFile
 from filetypes.directory import Directory
+from filetypes.png_file import PNGFile
 
 
 class StructureReader:
@@ -40,6 +41,8 @@ class StructureReader:
                     directory.children.append(HTMLFile(abspath, parent=directory))
                 if extension == ".css":
                     directory.children.append(CSSFile(abspath, parent=directory))
+                if extension == ".png":
+                    directory.children.append(PNGFile(abspath, parent=directory))
             #
             if os.path.isdir(abspath):
                 new_children = Directory(abspath, parent=directory)
