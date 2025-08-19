@@ -1,7 +1,7 @@
 import os
 if __name__ == "__main__":
     from sys import path as syspath
-    from pathlib import Path
+    from pathlib import Path, PurePath
 
     while "mylib" in os.getcwd():
         os.chdir("..")
@@ -10,6 +10,7 @@ if __name__ == "__main__":
 from structure_reader import StructureReader
 from navigation import Navigation
 from main_builder import MainBuilder
+from images_folder import ImagesFolder
 from filetypes.directory import Directory
 from filetypes.css_file import CSSFile
 
@@ -24,6 +25,7 @@ class SiteBuilder:
         self.navigation_builder = Navigation(self.root_directory)
         self.images_to_base64 = images_to_base64
         self.main_builder = MainBuilder(self.root_directory, images_to_base64=True)
+        self.images_folder = ImagesFolder(Path(PurePath(self.root_directory_path).parent / "webpage_images"))
         self.site_code = ""
         self.indent = ""
 
@@ -36,6 +38,9 @@ class SiteBuilder:
         self.insert_main()
         self.insert_navigation_js()
         self.insert_ending()
+
+        if not self.images_to_base64:
+            self.images_folder.copy_images_to_folder()
 
         return self.site_code
 

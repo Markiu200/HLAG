@@ -13,7 +13,7 @@ class ImagesFolder:
         return os.path.exists(self.folder_path)
 
     def get_new_path(self, image: PNGFile) -> Path:
-        return self.folder_path / image.src
+        return self.folder_path / image.unique_filename
 
     def check_if_image_already_in_folder(self, image: PNGFile) -> bool:
         return os.path.exists(self.get_new_path(image))
