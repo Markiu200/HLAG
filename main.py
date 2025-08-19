@@ -1,7 +1,7 @@
 import os
 if __name__ == "__main__":
     from sys import path as syspath
-    from pathlib import Path
+    from pathlib import Path, PurePath
 
     while "mylib" in os.getcwd():
         os.chdir("..")
@@ -10,21 +10,29 @@ if __name__ == "__main__":
 from structure_reader import StructureReader
 from navigation import Navigation
 from main_builder import MainBuilder
+from images_folder import ImagesFolder
 from filetypes.directory import Directory
 from filetypes.css_file import CSSFile
+from filetypes.html_file import HTMLFile
 
 
 class SiteBuilder:
-    def __init__(self, root_directory_path: Path):
+    def __init__(self, root_directory_path: Path, images_as_base64: bool):
         self.root_directory_path = root_directory_path
+        self.images_folder = ImagesFolder(Path(PurePath(self.root_directory_path).parent / "webpage_images"))
+        #
         self.structure_reader = StructureReader(self.root_directory_path)
         self.structure_reader.read()
         self.root_directory: Directory = self.structure_reader.root_node
         #
         self.navigation_builder = Navigation(self.root_directory)
         self.main_builder = MainBuilder(self.root_directory)
+        #
         self.site_code = ""
         self.indent = ""
+        #
+        HTMLFile.images_folder = self.images_folder
+        HTMLFile.images_as_base64 = images_as_base64
 
     def build(self) -> str:
         self.insert_beginning()
@@ -35,6 +43,8 @@ class SiteBuilder:
         self.insert_main()
         self.insert_navigation_js()
         self.insert_ending()
+
+        self.images_folder.copy_images_to_folder()
 
         return self.site_code
 
@@ -86,7 +96,7 @@ class SiteBuilder:
         self.indent = ""
 
 
-site_builder = SiteBuilder(Path("./webpage"))
+site_builder = SiteBuilder(root_directory_path=Path("./webpage"), images_as_base64=False)
 
 with open("newfluence.html", "w") as file:
     file.write(site_builder.build())

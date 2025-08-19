@@ -1,14 +1,25 @@
+if __name__ == "__main__":
+    import os
+    from sys import path as syspath
+    from pathlib import Path
+
+    while "mylib" in os.getcwd():
+        os.chdir("..")
+    syspath.append(str(Path('./mylib/').absolute()))
 import re
 from pathlib import Path
 from file import File
 from node import Node
 from png_file import PNGFile
+from images_folder import ImagesFolder
 
 
 class HTMLFile(File):
-    def __init__(self, path: Path, parent: Node, images_to_base64 = True):
+    images_as_base64 = True
+    images_folder = None
+
+    def __init__(self, path: Path, parent: Node):
         super().__init__(path, parent)
-        self.images_to_base64 = images_to_base64
 
     def to_string(self) -> str:
         """For HTML files, only return contents of &lt;body&gt; as is, but as &lt;section&gt."""
@@ -27,11 +38,12 @@ class HTMLFile(File):
 
     def parse_line(self, line):
         if re.match("^ *<img ", line):
-            if self.images_to_base64:
-                image_file = self.get_corresponding_image_file(line)
+            image_file = self.get_corresponding_image_file(line)
+            if HTMLFile.images_as_base64:
                 return image_file.get_base64_img_element()
             else:
-                return line
+                HTMLFile.images_folder.registered_images.append(image_file)
+                return image_file.get_folder_img_element()
         else:
             return line
 

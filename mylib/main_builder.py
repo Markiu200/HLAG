@@ -1,5 +1,4 @@
 from filetypes.directory import Directory
-from filetypes.html_file import HTMLFile
 from article import Article
 
 
