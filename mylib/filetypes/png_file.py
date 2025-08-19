@@ -67,11 +67,11 @@ class PNGFile(File):
 
     def get_folder_img_element(self) -> str:
         if self.read_dimensions:
-            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\" width=\"{self.read_dimensions[0]}\" height=\"{self.read_dimensions[1]}\">"
+            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\" width=\"{self.read_dimensions[0]}\" height=\"{self.read_dimensions[1]}\">\n"
         elif self.file_dimensions:
-            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\" width=\"{self.file_dimensions[0]}\" height=\"{self.file_dimensions[1]}\">"
+            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\" width=\"{self.file_dimensions[0]}\" height=\"{self.file_dimensions[1]}\">\n"
         else:
-            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\">"
+            self.new_html = f"<img src=\"webpage_images/{self.unique_filename}\">\n"
         return self.new_html
 
 

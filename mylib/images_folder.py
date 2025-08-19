@@ -21,7 +21,7 @@ class ImagesFolder:
     def copy_image_to_folder(self, image: PNGFile):
         # https://stackoverflow.com/questions/123198/how-do-i-copy-a-file
         if not self.check_if_image_already_in_folder(image):
-            shutil.copy(self.get_new_path(image), self.folder_path)
+            shutil.copy(image.path, self.get_new_path(image))
 
     def copy_images_to_folder(self):
         if not self.check_if_images_folder_exist():
