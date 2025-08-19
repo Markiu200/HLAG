@@ -15,13 +15,13 @@ from filetypes.html_file import HTMLFile
 class Article:
     """Cratfs entire article consisting of one or more HTML files (or no files at all).
     Gives them id for DOM and display title from meta.txt file"""
-    def __init__(self, directory: Directory):
+    def __init__(self, directory: Directory, images_to_base64: bool = True):
         self.directory = directory
         self.title = None
         self.dom_id = None
         self.get_title()
         self.get_dom_id()
-        self.images_to_base64 = True
+        self.images_to_base64 = images_to_base64
 
     def get_title(self):
         for file in self.directory.children:

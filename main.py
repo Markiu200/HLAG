@@ -15,14 +15,15 @@ from filetypes.css_file import CSSFile
 
 
 class SiteBuilder:
-    def __init__(self, root_directory_path: Path):
+    def __init__(self, root_directory_path: Path, images_to_base64: bool = True):
         self.root_directory_path = root_directory_path
         self.structure_reader = StructureReader(self.root_directory_path)
         self.structure_reader.read()
         self.root_directory: Directory = self.structure_reader.root_node
         #
         self.navigation_builder = Navigation(self.root_directory)
-        self.main_builder = MainBuilder(self.root_directory)
+        self.images_to_base64 = images_to_base64
+        self.main_builder = MainBuilder(self.root_directory, images_to_base64=True)
         self.site_code = ""
         self.indent = ""
 
@@ -86,7 +87,7 @@ class SiteBuilder:
         self.indent = ""
 
 
-site_builder = SiteBuilder(Path("./webpage"))
+site_builder = SiteBuilder(Path("./webpage"), images_to_base64=True)
 
 with open("newfluence.html", "w") as file:
     file.write(site_builder.build())

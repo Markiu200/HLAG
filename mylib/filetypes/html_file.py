@@ -9,6 +9,7 @@ class HTMLFile(File):
     def __init__(self, path: Path, parent: Node, images_to_base64 = True):
         super().__init__(path, parent)
         self.images_to_base64 = images_to_base64
+        self.found_images = []
 
     def to_string(self) -> str:
         """For HTML files, only return contents of &lt;body&gt; as is, but as &lt;section&gt."""
@@ -29,6 +30,7 @@ class HTMLFile(File):
         if re.match("^ *<img ", line):
             if self.images_to_base64:
                 image_file = self.get_corresponding_image_file(line)
+                self.found_images.append(image_file)
                 return image_file.get_base64_img_element()
             else:
                 return line
