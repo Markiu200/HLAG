@@ -11,7 +11,6 @@ from pathlib import Path
 from file import File
 from node import Node
 from png_file import PNGFile
-from images_folder import ImagesFolder
 
 
 class HTMLFile(File):

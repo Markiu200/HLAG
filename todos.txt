@@ -70,18 +70,6 @@ DONE// Fix date fetcher in ticket copypastas
 
 
 Ideas:
-Teraz inna kwestia obrazków, bo nie wiem czy ja chcę obrazki base64 inline czy osobno pliki w folderze, może both?
- - dodaj jakąś globalną zmienną do ustawiania czy mają być tak czy tak
- - żeby stronę dało się w edycji podglądać, obrazki musiałyby być w HTMLach jako <img> poprawny, dopiero podczas przetwarzania 
-   ten element byłby podmieniany na jakby cały w base64 albo tylko src poprawiony,
- - no i kwestia czy zgodnie z "dobrymi praktykami" rezerwować diva o stałej wielkości - jeśli tak, to jak parser ma to zrobić
-  - albo sprawdzić czy img ma ustawione wielkości, a jeśli ma to nie ruszać
-  - albo jak nie ma, to Python zczytuje z metadanych plików jakie są rozmiary i dodać taką właśnie rezerwację
-   - może data- żeby wskazać parserowi że ma nie ruszać parametrów img?
-A w związku z tym:
- - jeśli nie chcę PILa, a chyba nie chcę, to dodać metody w Pythonie żeby zczytywać metadane z png i zczytywał wielkości, poza
-   tym to w zasadzie nic więcej nie potrzebuję (base64 widać ma osobny include)
-
 Oraz ticket-tracker. Mamy już zapisywanie stanu bieżącego, a w marzeniach jest jeszcze zapisywanie tych tixów w jakiejś liście,
 nie mówiąc już o eksportowaniu tego jakoś i importowaniu.
  - jeśli eksportować, to chyba jako JSON.strigify? Bo to do pliku. Chyba że uda się generować plik przeglądarką (do sprawdzenia).
@@ -155,9 +143,20 @@ Mając to, ogarnij nawigację:
 Co do zagnieżdżania:
  - na razie olej jakieś 'konspekty' w wielokrotnie zagnieżdzaniu. Nie ma tego w mainie, to niech nie ma wszędzie indziej
 
- 
 Teraz kwestia reorganizacji istniejącego kodu. Wszystko jest teraz w jednym pliku, ale może wywalić każde klasy do swojego pliku.
  - każda klasa do swojego pliku
 Główny plik miałby globalne zmienne w razie W (a przydałabysię do ustawiania trybu obrazków). Plus zamknąć to w main i móc odpalać
 to z argumentami co do trybu obrazków.
 Rozważam też olać koncept XMLowy i trzymać się HTMLów ze stylami. Jak się je dobrze zrobi to XML się pewnie nawet nie przyda.
+
+Teraz inna kwestia obrazków, bo nie wiem czy ja chcę obrazki base64 inline czy osobno pliki w folderze, może both?
+ - dodaj jakąś globalną zmienną do ustawiania czy mają być tak czy tak
+ - żeby stronę dało się w edycji podglądać, obrazki musiałyby być w HTMLach jako <img> poprawny, dopiero podczas przetwarzania 
+   ten element byłby podmieniany na jakby cały w base64 albo tylko src poprawiony,
+ - no i kwestia czy zgodnie z "dobrymi praktykami" rezerwować diva o stałej wielkości - jeśli tak, to jak parser ma to zrobić
+  - albo sprawdzić czy img ma ustawione wielkości, a jeśli ma to nie ruszać
+  - albo jak nie ma, to Python zczytuje z metadanych plików jakie są rozmiary i dodać taką właśnie rezerwację
+   - może data- żeby wskazać parserowi że ma nie ruszać parametrów img?
+A w związku z tym:
+ - jeśli nie chcę PILa, a chyba nie chcę, to dodać metody w Pythonie żeby zczytywać metadane z png i zczytywał wielkości, poza
+   tym to w zasadzie nic więcej nie potrzebuję (base64 widać ma osobny include)
