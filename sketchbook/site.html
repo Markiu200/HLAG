@@ -1,11 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      place-content: center;
+      margin: 0;
+      min-block-size: 100vh;
+      font-family: sans-serif;
+      background: linear-gradient(32deg, hsl(193 6 76), hsl(196 9 69) 50%);
+    }
+
+    .site-navigation {
+      display: flex;
+      inline-size: var(--expanded);
+      margin-block: 5vmin;
+      
+      --bg--primary: hsl(203, 7%, 92%);
+      --bg--active: hsla(203, 86%, 93%, 0.7);
+      --bg--hover: hsl(200, 7%, 84%);
+      --bg--focus: hsl(203, 100%, 100%);
+      --gray--primary: hsl(200, 10%, 50%);
+      --gray--secondary: hsl(200, 14%, 30%);
+
+      --dark--primary: hsl(203, 13%, 14%);
+      --dark--secondary: hsl(203, 4%, 29%);
+
+      --accent--primary: hsl(206, 90%, 56%);
+      --accent--secondary: hsl(206, 79%, 58%);
+
+      --expanded: 16.875rem;
+      --collapsed: 3.25rem;
+      --svg: 1.125rem;
+      --item: 2.25rem;
+      --brad-outer: 0.75rem;
+      --frame-space: 0.5rem;
+      --brad-inner: calc(var(--brad-outer) - var(--frame-space));
+    }
+
+    .site-navigation label {
+      cursor: pointer;
+    }
+
+    .site-navigation figure {
+      margin-inline: 0;
+      margin-block: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      container-type: inline-size;
+      gap: 0.375rem;
+    }
+
+    .site-navigation figcaption {
+      text-align: center;
+    }
+
+    .site-navigation input[type="checkbox"] {
+      display: none;
+    }
+
+    .site-navigation nav {
+      background: var(--bg--primary);
+      display: flex;
+      flex-flow: column;
+      min-width: var(--collapsed);
+      border-radius: var(--brad-outer);
+      flex: 0 0 auto;
+      transition: flex-basis 300ms ease-out;
+      will-change: flex-basis;
+      padding: var(--frame-space);
+      box-shadow: 0 3px 5px #1233, 0 5px 17px #0003;
+    }
+
+    .site-navigation header {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .site-navigation :checked~nav {
+      flex-basis: var(--expanded);
+    }
+
+    .site-navigation :not(:checked)~nav {
+      flex-basis: var(--collapsed);
+    }
+
+    .site-navigation .sidebar__toggle-container {
+      block-size: var(--item);
+      display: flex;
+      justify-content: end;
+    }
+
+    .site-navigation .nav__toggle {
+      block-size: 100%;
+      background: none;
+      transition: all 233ms ease-in;
+      border-radius: var(--brad-inner);
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+      overflow: hidden;
+    }
+
+    .site-navigation .toggle--icons {
+      block-size: inherit;
+      aspect-ratio: 1;
+      display: inline-grid;
+      place-content: center;
+      grid-template-areas: "svg";
+      z-index: 10;
+    }
+
+    .site-navigation .toggle-svg-icon {
+      grid-area: svg;
+      fill: var(--gray--primary);
+      transition: fill 233ms ease-in;
+    }
+
+    .site-navigation .nav__toggle:hover {
+      outline: 2px solid var(--accent--primary);
+    }
+
+    .site-navigation .toggle--icons:hover .toggle-svg-icon {
+      fill: var(--dark--primary);
+    }
+
+    .site-navigation .user-id {
+      font-size: 1.0625rem;
+      font-weight: 500;
+      margin-block-end: 0.25rem;
+      color: var(--gray--secondary);
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .site-navigation .user-role {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray--primary);
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .site-navigation .sidebar__wrapper {
+      --list-gap: 0.5rem;
+      display: flex;
+      flex-flow: column;
+      gap: var(--list-gap);
+    }
+
+    .site-navigation .sidebar__list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-flow: column;
+      gap: 0.125rem;
+      overflow: hidden;
+    }
+
+    .site-navigation .sidebar__item {
+      block-size: var(--item);
+      border-radius: var(--brad-inner);
+    }
+
+    .site-navigation .sidebar__link {
+      display: flex;
+      text-decoration: none;
+      block-size: 100%;
+      align-items: center;
+      gap: 0.5rem;
+      outline: 2px solid transparent;
+      border-radius: inherit;
+    }
+
+    .site-navigation .icon {
+      aspect-ratio: 1;
+      block-size: 100%;
+      display: inline-grid;
+
+      svg {
+        place-self: center;
+        inline-size: var(--svg);
+        block-size: var(--svg);
+        fill: var(--gray--primary);
+      }
+    }
+
+    .site-navigation .text {
+      pointer-events: none;
+      color: var(--gray--secondary);
+      font-size: 0.875em;
+      font-weight: 500;
+      transition: color 266ms ease-out;
+    }
+
+    .site-navigation .sidebar__link:hover {
+      background: var(--bg--hover);
+
+      .icon svg {
+        fill: var(--accent--primary);
+      }
+
+      .text {
+        color: var(--dark--primary);
+      }
+    }
+
+    .site-navigation .sidebar__link:focus {
+      outline: 2px solid var(--accent--secondary);
+      outline-offset: -2px;
+      background: var(--bg--focus);
+
+      .icon svg {
+        fill: var(--accent--primary);
+      }
+    }
+
+    .site-navigation .sidebar__link:active {
+      background-color: var(--bg--active);
+    }
+
+    aside.site-navigation:not(:has(:checked)) .toggle--open,
+    aside.site-navigation:has(:checked) .toggle--close {
+      opacity: 0;
+    }
+
+    aside.site-navigation:not(:has(:checked)) :where(figcaption, .item--heading) {
+      opacity: 0;
+    }
+
+    aside.site-navigation:has(:checked) :where(figcaption, .item--heading) {
+      transition: opacity 300ms ease-in 200ms;
+    }
+
+    .site-navigation [data-tooltip]::before {
+      content: attr(data-tooltip);
+      position: fixed;
+      translate: calc(var(--item) * 1.5) calc(var(--item) * 0.125);
+      border-radius: var(--brad-inner);
+      padding: 0.125rem 0.5rem;
+      color: #ddd;
+      background-color: hsl(198 16 30);
+      box-shadow: 0 6px 12px -6px #0003;
+      opacity: 0;
+      pointer-events: none;
+      scale: 0 0;
+      z-index: 999;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 350ms ease-out;
+    }
+
+    aside.site-navigation:not(:has(:checked)) .sidebar__link:where(:hover, :focus-visible)[data-tooltip]::before {
+      opacity: 1;
+      scale: 1;
+    }
+  </style>
 </head>
+
 <body>
-  <img src="data:image/png;base64,fb'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'" width="316" height="99"/>
+  <aside class="js-site-navigation site-navigation">
+    <input type="checkbox" role="switch" id="checkbox-input" class="checkbox-input" checked />
+    <nav>
+      <!-- Top bit -->
+      <header>
+        <div class="sidebar__toggle-container"> 
+          <label tabindex="0" for="checkbox-input" id="label-for-checkbox-input" class="nav__toggle"> 
+            <span class="toggle--icons" aria-hidden="true"> 
+              <svg width="24" height="24" viewBox="0 0 24 24" class="toggle-svg-icon toggle--close">
+                <path d="M3 5a1 1 0 1 0 0 2h18a1 1 0 1 0 0-2zM2 12a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1M2 18a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1"></path>
+              </svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" class="toggle-svg-icon toggle--open">
+                <path d="M18.707 6.707a1 1 0 0 0-1.414-1.414L12 10.586 6.707 5.293a1 1 0 0 0-1.414 1.414L10.586 12l-5.293 5.293a1 1 0 1 0 1.414 1.414L12 13.414l5.293 5.293a1 1 0 0 0 1.414-1.414L13.414 12z"></path>
+              </svg>
+            </span>
+          </label>
+        </div>
+        <figure>
+          <figcaption>
+            <p class="user-id">Newfluence</p>
+            <p class="user-role">&nbsp;</p>
+          </figcaption>
+        </figure>
+      </header> <!-- /Top bit -->
+      <section class="sidebar__wrapper">
+        <!-- Actual buttons -->
+        <ul class="sidebar__list list--primary">
+          <li class="js-for-020_ticket_tracker sidebar__item"> 
+            <div class="sidebar__link" data-tooltip="Ticket tracker">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Ticket tracker</span>
+            </div>
+          </li>
+          <li class="js-for-025_copypastas sidebar__item">
+            <div class="sidebar__link" data-tooltip="Copypastas">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Copypastas</span>
+            </div>
+          </li>
+          <li class="js-for-030_exchange sidebar__item">
+            <div class="sidebar__link" data-tooltip="Exchange">
+              <span class="js-nav-expandable icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Exchange</span>
+            </div>
+          </li>
+          <li class="js-for-030_exchange-010_basic_troubleshooting nav__nested--1 sidebar__item">
+            <div class="sidebar__link" data-tooltip="Basic Troubleshooting">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Basic Troubleshooting</span>
+            </div>
+          </li>
+          <li class="js-for-030_exchange-015_exchange_2 nav__nested--1 sidebar__item">
+            <div class="sidebar__link" data-tooltip="Exchange 2">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Exchange 2</span>
+            </div>
+          </li>
+          <li class="js-for-030_exchange-020_exchange_3 nav__nested--1 sidebar__item">
+            <div class="sidebar__link" data-tooltip="Exchange 3">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Exchange 3</span>
+            </div>
+          </li>
+          <li class="js-for-032_active_directory sidebar__item">
+            <div class="sidebar__link" data-tooltip="Active Directory">
+              <span class="js-nav-expandable icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">Active Directory</span>
+            </div>
+          </li>
+          <li class="js-for-032_active_directory-010_ad_groups nav__nested--1 sidebar__item">
+            <div class="sidebar__link" data-tooltip="AD groups">
+              <span class="icon">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                </svg>
+              </span>
+              <span class="js-nav-button text">AD groups</span>
+            </div>
+          </li>
+        </ul> <!-- /Actual buttons -->
+      </section>
+    </nav>
+  </aside>
 </body>
+
 </html>
