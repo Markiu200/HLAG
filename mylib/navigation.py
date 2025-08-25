@@ -16,9 +16,20 @@ from article import Article
 class Navigation:
     def __init__(self, root_directory: Directory):
         self.root_directory = root_directory
-        self.html_part = "<nav class=\"js-site-navigation\">\n  <button class=\"js-site-navigation-showall\">Show all</button>\n"
+        # self.html_part = "<nav class=\"js-site-navigation\">\n  <button class=\"js-site-navigation-showall\">Show all</button>\n"
+        self.html_part = '''\
+<aside class="js-site-navigation site-navigation">
+  <nav>
+    <!-- Top bit -->
+    <header>
+      <p class="title">Newfluence</p>
+    </header> <!-- /Top bit -->
+    <section class="sidebar__wrapper">
+      <!-- Actual buttons -->
+      <ul class="sidebar__list list--primary">
+'''
         self.js_part = ""
-        self.indent = "  "
+        self.indent = "        "
         self.level = 0
 
     def nestedness_class(self) -> str:
@@ -28,14 +39,31 @@ class Navigation:
             return ""
 
     def insert_expandable_html_button_div(self, that_article):
-        self.html_part += f"{self.indent}<div class=\"js-for-{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
-        self.html_part += f"{self.indent * 2}<div class=\"nav_button_expand js-nav-expandable\">v</div><button class=\"js-nav-button\">{that_article.title}</button>\n"
-        self.html_part += f"{self.indent}</div>\n"
+        self.html_part += f'{self.indent}<li class="js-for-{that_article.dom_id} js-nav-item sidebar__item{self.nestedness_class()}">\n'
+        self.html_part += f'{self.indent + "  "}<div class="sidebar__link">\n'
+        self.html_part += f'{self.indent + "    "}<div class="js-nav-expandable expandable icon active">\n'
+        self.html_part += f'{self.indent + "      "}<svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">\n'
+        self.html_part += f'{self.indent + "        "}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>\n'
+        self.html_part += f'{self.indent + "      "}</svg>\n'
+        self.html_part += f'{self.indent + "      "}<svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">\n'
+        self.html_part += f'{self.indent + "        "}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>\n'
+        self.html_part += f'{self.indent + "      "}</svg>\n'
+        self.html_part += f'{self.indent + "    "}</div>\n'
+        self.html_part += f'{self.indent + "    "}<div class="js-nav-button text">{that_article.title}</div>\n'
+        self.html_part += f'{self.indent + "  "}</div>\n'
+        self.html_part += f'{self.indent}</li>\n'
 
     def insert_nonexpandable_html_button_div(self, that_article):
-        self.html_part += f"{self.indent}<div class=\"js-for-{that_article.dom_id} nav_button_item{self.nestedness_class()}\">\n"
-        self.html_part += f"{self.indent * 2}<div class=\"nav_button_nonexpandable_spacing\"></div><button class=\"js-nav-button\">{that_article.title}</button>\n"
-        self.html_part += f"{self.indent}</div>\n"
+        self.html_part += f'{self.indent}<li class="js-for-{that_article.dom_id} js-nav-item sidebar__item{self.nestedness_class()}">\n'
+        self.html_part += f'{self.indent + "  "}<div class="sidebar__link">\n'
+        self.html_part += f'{self.indent + "    "}<div class="icon">\n'
+        self.html_part += f'{self.indent + "      "}<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">\n'
+        self.html_part += f'{self.indent + "        "}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>\n'
+        self.html_part += f'{self.indent + "      "}</svg>\n'
+        self.html_part += f'{self.indent + "    "}</div>\n'
+        self.html_part += f'{self.indent + "    "}<div class="js-nav-button text">{that_article.title}</div>\n'
+        self.html_part += f'{self.indent + "  "}</div>\n'
+        self.html_part += f'{self.indent}</li>\n'
 
     def get_html(self, directory=None) -> str:
         """Returns &lt;nav&gt;(all the navigation here)&lt;/nav&gt; as string"""
@@ -62,7 +90,13 @@ class Navigation:
                 else:
                     self.insert_nonexpandable_html_button_div(that_article)
         if directory is self.root_directory:
-            self.html_part += "</nav>"
+            # self.html_part += "</nav>"
+            self.html_part += '''\
+            </ul> <!-- /Actual buttons -->
+          </section>
+        </nav>
+      </aside>
+'''
             return self.html_part
         return ""
 
@@ -78,7 +112,7 @@ class Navigation:
         constructor(buttonClass, articleId, children=null, active=false) {
           this.buttonClass = buttonClass;
           this.buttonDiv = document.getElementsByClassName(buttonClass)[0];
-          this.button = this.buttonDiv.children[1];
+          this.button = this.buttonDiv.children[0].children[1];
           this.articleId = articleId;
           this.correspondingArticle = document.getElementById(articleId);
           this.active = active;
@@ -110,6 +144,7 @@ class Navigation:
       //
       constructor() { //constructor for Navigation class
         this.navigationContainer = document.querySelector(".js-site-navigation");
+        this.allButtonContainers = this.navigationContainer.querySelectorAll(".js-nav-item");
         this.allButtons = this.navigationContainer.querySelectorAll(".js-nav-button");
         this.allExpandButtons = this.navigationContainer.querySelectorAll(".js-nav-expandable");
         this.showAllButton = this.navigationContainer.querySelector(".js-site-navigation-showall");
@@ -129,12 +164,12 @@ class Navigation:
       /* Event listeners */
       #startEventListeners() {
         this.allButtons.forEach((item) => {
-          item.addEventListener("click", this.navItemOnClick.bind(this), true);
+          item.addEventListener("click", this.navItemOnClick.bind(this));
         });
         this.allExpandButtons.forEach((item) => {
-          item.addEventListener("click", this.expandButtonOnClick.bind(this), true);
+          item.addEventListener("click", this.expandButtonOnClick.bind(this));
         });
-        this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
+        //this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
       }
 
       navItemOnClick(event, list=null) {
@@ -143,7 +178,7 @@ class Navigation:
         }
 
         for (let i = 0; i < list.length; i++) {
-          if (list[i].buttonClass == event.target.parentElement.classList[0]) {
+          if (list[i].buttonClass == event.target.parentElement.parentElement.classList[0]) {
             this.toggleArticle(list[i]);
             break;
           }
@@ -153,20 +188,39 @@ class Navigation:
         }
       }
 
-      expandButtonOnClick(event, list=null) {
+      expandButtonOnClick(event, list=null, containerFound=false) {
+        // Get the container element
+        let containerElement = event.target;
+        let isContainer = containerFound;
+        while (!isContainer) {
+          for (let i = 0; i < this.allButtonContainers.length; i++) {
+            if (this.allButtonContainers[i] == containerElement) {
+              isContainer = true;
+              break;
+            }
+          }
+          if (isContainer) {
+            break;
+          } else if (containerElement.parentElement) {
+            containerElement = containerElement.parentElement
+          } else {
+            return;
+          }
+        }
+
         if (list == null) {
           list = this.navigationButtons;
-          event.target.classList.toggle("active");
+          containerElement.children[0].children[0].classList.toggle("active");
         }
 
         for (let i = 0; i < list.length; i++) {
-          if (list[i].buttonClass == event.target.parentElement.classList[0]) {
+          if (list[i].buttonClass == containerElement.classList[0]) {
             this.toggleExpand(list[i]);
             break;
           }
-          if (list[i].children.length > 0) {
-            this.expandButtonOnClick(event, list[i].children);
-          }
+          // if (list[i].children.length > 0) {
+          //   this.expandButtonOnClick(event, list[i].children, true);
+          // }
         }
       }
 
@@ -184,9 +238,9 @@ class Navigation:
       /* Methods */
       toggleExpand(parentButton) {
         parentButton.children.forEach((item) => {
-          if (item.children > 0) {
-            this.toggleExpand(item);
-          }
+          // if (item.children > 0) {
+          //   this.toggleExpand(item);
+          // }
           item.buttonDiv.classList.toggle("hidden");
         });
       }

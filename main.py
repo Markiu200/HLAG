@@ -39,7 +39,7 @@ class SiteBuilder:
         self.insert_css()
         self.insert_transition_to_body()
         self.insert_navigation_html()
-        self.insert_nav_space_allocator()
+        # self.insert_nav_space_allocator()
         self.insert_main()
         self.insert_navigation_js()
         self.insert_ending()
