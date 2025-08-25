@@ -11,12 +11,34 @@
   </style>
 </head>
 <body>
-  <div class="myclass">
-    Hey
-    <div>
-      hey
-    </div>
-  </div>
-  
+  <ul class="sidebar__list list--primary">
+    <li class="js-for-020_ticket_tracker sidebar__item"> 
+      <div class="sidebar__link" data-tooltip="Ticket tracker">
+        <span class="icon">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+          </svg>
+        </span>
+        <span class="js-nav-button text">Ticket tracker</span>
+      </div>
+    </li>
+  </ul>
+  <script>
+    class MyClass {
+      constructor() {
+        this.button = document.querySelector(".js-nav-button");
+        this.startListeners()
+      }
+
+      startListeners() {
+        this.button.addEventListener("click", this.navItemOnClick.bind(this));
+      }
+
+      navItemOnClick() {
+        console.log("hey");
+      }
+    }
+    const myClass = new MyClass();
+  </script>
 </body>
 </html>
