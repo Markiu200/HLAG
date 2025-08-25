@@ -227,7 +227,19 @@
           place-self: center;
           inline-size: var(--svg);
           block-size: var(--svg);
-          fill: var(--gray--primary);
+          /* fill: var(--gray--primary); */
+        }
+      }
+
+      .site-navigation .icon.active {
+        .collapsed {
+          display: none;
+        }
+      }
+
+      .site-navigation .icon:not(.active) {
+        .expanded {
+          display: none;
         }
       }
 
@@ -305,9 +317,12 @@
             </li>
             <li class="js-for-030_exchange js-nav-item sidebar__item">
               <div class="sidebar__link" data-tooltip="Exchange">
-                <div class="js-nav-expandable expandable icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                   </svg>
                 </div>
                 <div class="js-nav-button text">Exchange</div>
@@ -345,9 +360,12 @@
             </li>
             <li class="js-for-032_active_directory js-nav-item sidebar__item">
               <div class="sidebar__link" data-tooltip="Active Directory">
-                <div class="js-nav-expandable expandable icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                   </svg>
                 </div>
                 <div class="js-nav-button text">Active Directory</div>
@@ -1192,7 +1210,7 @@
 
             if (list == null) {
               list = this.navigationButtons;
-              event.target.classList.toggle("active");
+              containerElement.children[0].children[0].classList.toggle("active");
             }
     
             for (let i = 0; i < list.length; i++) {
