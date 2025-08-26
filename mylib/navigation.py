@@ -25,6 +25,10 @@ class Navigation:
       <p class="title">Newfluence</p>
     </header> <!-- /Top bit -->
     <section class="sidebar__wrapper">
+      <!-- Show all button-->
+      <div class="nav__steering_wrapper">
+        <div class="js-site-navigation-showall nav__steering_item">Show all</div>
+      </div> <!-- /Show all button-->
       <!-- Actual buttons -->
       <ul class="sidebar__list list--primary">
 '''
@@ -169,7 +173,7 @@ class Navigation:
         this.allExpandButtons.forEach((item) => {
           item.addEventListener("click", this.expandButtonOnClick.bind(this));
         });
-        //this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
+        this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
       }
 
       navItemOnClick(event, list=null) {
