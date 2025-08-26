@@ -43,8 +43,8 @@ class Navigation:
             return ""
 
     def insert_expandable_html_button_div(self, that_article):
-        self.html_part += f'{self.indent}<li class="js-for-{that_article.dom_id} js-nav-item sidebar__item{self.nestedness_class()}">\n'
-        self.html_part += f'{self.indent + "  "}<div class="sidebar__link">\n'
+        self.html_part += f'{self.indent}<li class="sidebar__item">\n'
+        self.html_part += f'{self.indent + "  "}<div class="js-for-{that_article.dom_id} js-nav-item sidebar__link{self.nestedness_class()}">\n'
         self.html_part += f'{self.indent + "    "}<div class="js-nav-expandable expandable icon active">\n'
         self.html_part += f'{self.indent + "      "}<svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">\n'
         self.html_part += f'{self.indent + "        "}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>\n'
@@ -58,8 +58,8 @@ class Navigation:
         self.html_part += f'{self.indent}</li>\n'
 
     def insert_nonexpandable_html_button_div(self, that_article):
-        self.html_part += f'{self.indent}<li class="js-for-{that_article.dom_id} js-nav-item sidebar__item{self.nestedness_class()}">\n'
-        self.html_part += f'{self.indent + "  "}<div class="sidebar__link">\n'
+        self.html_part += f'{self.indent}<li class="sidebar__item">\n'
+        self.html_part += f'{self.indent + "  "}<div class="js-for-{that_article.dom_id} js-nav-item sidebar__link{self.nestedness_class()}">\n'
         self.html_part += f'{self.indent + "    "}<div class="icon">\n'
         self.html_part += f'{self.indent + "      "}<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">\n'
         self.html_part += f'{self.indent + "        "}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>\n'
@@ -113,34 +113,29 @@ class Navigation:
   class SiteNavigation {
     static Navigation = class Navigation {
       static NavItem = class NavItem {
-        constructor(buttonClass, articleId, children=null, active=false) {
-          this.buttonClass = buttonClass;
-          this.buttonDiv = document.getElementsByClassName(buttonClass)[0];
-          this.button = this.buttonDiv.children[0].children[1];
+        constructor(jsForClassName, articleId, children=null) {
+          this.jsForClassName = jsForClassName;
           this.articleId = articleId;
+          this.containerElement = document.getElementsByClassName(jsForClassName)[0];
           this.correspondingArticle = document.getElementById(articleId);
-          this.active = active;
-          if (active == true) {
-            this.button.classList.add("active");
-            this.correspondingArticle.classList.remove("hidden");
-          } else {
-            this.correspondingArticle.classList.add("hidden");
-          }
+          this.titleElement = this.containerElement.children[1];
+          this.iconElement = this.containerElement.children[0];
           if (children == null) {
             this.children = [];
           } else {
             this.children = children;
           }
+          this.correspondingArticle.classList.add("hidden");
         } // constructor
         
         activate() {
-          this.button.classList.add("active");
+          this.titleElement.classList.add("active");
           this.correspondingArticle.classList.remove("hidden");
           this.active = true;
         }
         
         deactivate() {
-          this.button.classList.remove("active");
+          this.titleElement.classList.remove("active");
           this.correspondingArticle.classList.add("hidden");
           this.active = false;
         }
@@ -161,6 +156,7 @@ class Navigation:
         ];
         this.isShowAll = false;
         this.displayedArticles = [];
+        this.collapsedNavItems = []; // as all are assumed uncollapsed at start
 
         this.#startEventListeners();
       } // constructor
@@ -182,7 +178,7 @@ class Navigation:
         }
 
         for (let i = 0; i < list.length; i++) {
-          if (list[i].buttonClass == event.target.parentElement.parentElement.classList[0]) {
+          if (list[i].jsForClassName == event.target.parentElement.classList[0]) {
             this.toggleArticle(list[i]);
             break;
           }
@@ -192,40 +188,15 @@ class Navigation:
         }
       }
 
-      expandButtonOnClick(event, list=null, containerFound=false) {
-        // Get the container element
+      expandButtonOnClick(event) {
+        // Get the container element (it should have 'js-for' class in it)
         let containerElement = event.target;
-        let isContainer = containerFound;
-        while (!isContainer) {
-          for (let i = 0; i < this.allButtonContainers.length; i++) {
-            if (this.allButtonContainers[i] == containerElement) {
-              isContainer = true;
-              break;
-            }
-          }
-          if (isContainer) {
-            break;
-          } else if (containerElement.parentElement) {
-            containerElement = containerElement.parentElement
-          } else {
-            return;
-          }
+        while (!containerElement.classList.contains("js-nav-item")) {
+          containerElement = containerElement.parentElement;
         }
-
-        if (list == null) {
-          list = this.navigationButtons;
-          containerElement.children[0].children[0].classList.toggle("active");
-        }
-
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].buttonClass == containerElement.classList[0]) {
-            this.toggleExpand(list[i]);
-            break;
-          }
-          // if (list[i].children.length > 0) {
-          //   this.expandButtonOnClick(event, list[i].children, true);
-          // }
-        }
+        // When element is found
+        let navItemElement = this.findButtonByJsClassName(containerElement.classList[0]);
+        this.toggleExpand(navItemElement);
       }
 
       showAllButtonOnClick(event) {
@@ -234,18 +205,72 @@ class Navigation:
         if (this.isShowAll) {
           this.showAllArticles(this.navigationButtons);
         } else {
-          this.showAllHideArticles(this.navigationButtons);
-          this.showAllShowArticles(this.displayedArticles);
+          this.hideAllArticles(this.navigationButtons);
+          this.showAllSavedArticles(this.displayedArticles);
         }
       }
 
       /* Methods */
-      toggleExpand(parentButton) {
-        parentButton.children.forEach((item) => {
-          // if (item.children > 0) {
-          //   this.toggleExpand(item);
-          // }
-          item.buttonDiv.classList.toggle("hidden");
+      findButtonByJsClassName(className, navButtonList_=null) {
+        let navButtonList = null;
+        if (navButtonList_ != null) {
+          navButtonList = navButtonList_;
+        } else {
+          navButtonList = this.navigationButtons;
+        }
+        let found = null;
+        for (let i = 0; i < navButtonList.length; i++) {
+          if (navButtonList[i].jsForClassName == className) {
+            return navButtonList[i];
+          }
+          if (navButtonList[i].children.length > 0) {
+            found = this.findButtonByJsClassName(className, navButtonList[i].children)
+            if (found != null) {
+              return found;
+            }
+          }
+        }
+        return found;
+      }
+
+      toggleExpand(navItemElement) {
+        if (navItemElement.iconElement.classList.contains("active")) {
+          // deactivate
+          this.collapsedNavItems.push(navItemElement);
+          this.hideNavItemElements(navItemElement);
+        } else {
+          // activate
+          this.collapsedNavItems.forEach((element, index) => {
+            if (element == navItemElement) {
+              this.collapsedNavItems.splice(index, 1);
+            }
+          });
+          this.showNavItemElements(navItemElement);
+        }
+        navItemElement.iconElement.classList.toggle("active");
+      }
+
+      hideNavItemElements(navItemElement) {
+        if (navItemElement.children.length == 0) {
+          throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
+        }
+        navItemElement.children.forEach((element) => {
+          element.containerElement.parentElement.classList.add("hidden");
+          if (element.children.length > 0) {
+            this.hideNavItemElements(element);
+          }
+        });
+      }
+
+      showNavItemElements(navItemElement) {
+        if (navItemElement.children.length == 0) {
+          throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
+        }
+        navItemElement.children.forEach((element) => {
+          element.containerElement.parentElement.classList.remove("hidden");
+          if (element.children.length > 0 && !this.collapsedNavItems.includes(element)) {
+            this.showNavItemElements(element);
+          }
         });
       }
 
@@ -255,7 +280,7 @@ class Navigation:
         }
         if (navItem.active) {
           navItem.correspondingArticle.classList.add("hidden");
-          navItem.button.classList.remove("active");
+          navItem.titleElement.classList.remove("active");
           this.displayedArticles.forEach((element, index) => {
             if (element == navItem) {
               this.displayedArticles.splice(index, 1);
@@ -263,22 +288,22 @@ class Navigation:
           });
         } else {
           navItem.correspondingArticle.classList.remove("hidden");
-          navItem.button.classList.add("active");
+          navItem.titleElement.classList.add("active");
           this.displayedArticles.push(navItem);
         }
         navItem.active = !navItem.active;
       }
 
-      showAllHideArticles(navItemList) {
+      hideAllArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
           navItemList[i].deactivate()
           if (navItemList[i].children.length > 0) {
-            this.showAllHideArticles(navItemList[i].children);
+            this.hideAllArticles(navItemList[i].children);
           }
         }
       }
 
-      showAllShowArticles(navItemList) {
+      showAllSavedArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
           navItemList[i].activate()
         };

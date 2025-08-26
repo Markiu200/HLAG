@@ -289,9 +289,17 @@
         background-color: var(--bg--active);
       }
       
-      /* old css */
       .nav__nested--1{
-          padding-left: 10px;
+        padding-left: 10px;
+      }
+      .nav__nested--2{
+        padding-left: 20px;
+      }
+      .nav__nested--3{
+        padding-left: 30px;
+      }
+      .nav__nested--4{
+        padding-left: 40px;
       }
     </style>
   </head>
@@ -309,28 +317,18 @@
           </div> <!-- /Show all button-->
           <!-- Actual buttons -->
           <ul class="sidebar__list list--primary">
-            <li class="js-for-020_ticket_tracker js-nav-item sidebar__item">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-010_first_non_nested js-nav-item sidebar__link">
                 <div class="icon">
                   <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">Ticket tracker</div>
+                <div class="js-nav-button text">First non-nested</div>
               </div>
             </li>
-            <li class="js-for-025_copypastas js-nav-item sidebar__item">
-              <div class="sidebar__link">
-                <div class="icon">
-                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
-                  </svg>
-                </div>
-                <div class="js-nav-button text">Copypastas</div>
-              </div>
-            </li>
-            <li class="js-for-030_exchange js-nav-item sidebar__item">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-015_nested js-nav-item sidebar__link">
                 <div class="js-nav-expandable expandable icon active">
                   <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
@@ -339,41 +337,31 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">Exchange</div>
+                <div class="js-nav-button text">Nested base</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-010_basic_troubleshooting js-nav-item sidebar__item nav__nested--1">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-015_nested-010_nested_in_nested js-nav-item sidebar__link nav__nested--1">
                 <div class="icon">
                   <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">Basic Troubleshooting</div>
+                <div class="js-nav-button text">Nested in Nested</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-015_exchange_2 js-nav-item sidebar__item nav__nested--1">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-015_nested-015_nested_in_nested_2 js-nav-item sidebar__link nav__nested--1">
                 <div class="icon">
                   <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">Exchange 2</div>
+                <div class="js-nav-button text">Nested in Nested 2</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-020_exchange_3 js-nav-item sidebar__item nav__nested--1">
-              <div class="sidebar__link">
-                <div class="icon">
-                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
-                  </svg>
-                </div>
-                <div class="js-nav-button text">Exchange 3</div>
-              </div>
-            </li>
-            <li class="js-for-032_active_directory js-nav-item sidebar__item">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested js-nav-item sidebar__link">
                 <div class="js-nav-expandable expandable icon active">
                   <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
@@ -382,17 +370,70 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">Active Directory</div>
+                <div class="js-nav-button text">Nested base 2</div>
               </div>
             </li>
-            <li class="js-for-032_active_directory-010_ad_groups js-nav-item sidebar__item nav__nested--1">
-              <div class="sidebar__link">
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_a js-nav-item sidebar__link nav__nested--1">
                 <div class="icon">
                   <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
-                <div class="js-nav-button text">AD groups</div>
+                <div class="js-nav-button text">Nested level 1 a</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b js-nav-item sidebar__link nav__nested--1">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 1 b</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_a js-nav-item sidebar__link nav__nested--2">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 2 a</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_b js-nav-item sidebar__link nav__nested--2">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 2 b</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_c js-nav-item sidebar__link nav__nested--1">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 1 c</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-025_last_non_nested js-nav-item sidebar__link">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Last non-nested</div>
               </div>
             </li>
                 </ul> <!-- /Actual buttons -->
@@ -400,716 +441,40 @@
             </nav>
           </aside>
     <main>
-      <article id="020_ticket_tracker" class='js-article'>
-        <section class="section">
-          <input type="text" id="generalUrl" placeholder="Ticket URL..." size="80" oninput="ticketCopypasta.parseLink()" tabindex="1">
-          <div class="inputWithCopyWrapper">
-            <input type="text" readonly id="generalUrl_ticketNumber">
-            <button onclick="ticketCopypasta.saveTicketNumber()" tabindex="-1">&#x2398;</button>
-          </div>
-          <div style="margin-top: 8px;">
-            <input type="text" id="ticketSummary" placeholder="Ticket summary..." size="80" tabindex="2">
-          </div>
-          <div style="margin-top: 8px;">
-            <textarea rows="2" cols="83" style="resize: none;" id="excelComment" tabindex="3"></textarea>
-          </div>
-      
-          <!-- Copy to my / their excel -->
-          <div style="display: flex;">
-            <button class="buttonDiv" onclick="ticketCopypasta.copyToMyExcel()">Copy to my Excel</button>
-            <button class="buttonDiv" onclick="ticketCopypasta.copyToTheirExcel()">Copy to their Excel</button>
-            <button class="buttonDiv" onclick="ticketCopypasta.clear()">Clear</button>
-            <button class="buttonDiv" onclick="ticketCopypasta.clearAll()">Clear All</button>
-          </div>
-      
-          <select name="status" id="ticketStatusDropdown" tabindex="4">
-            <option value="resolved">resolved</option>
-            <option value="waiting">waiting</option>
-            <option value="transferred">transferred</option>
-            <option value="inprog">inprog</option>
-            <option value="queued">queued</option>
-            <option value="assist">assist</option>
-            <option value="hold">hold</option>
-            <option value="vendor">vendor</option>
-          </select>
-      
-          <select name="source" id="ticketSourceDropdown" tabindex="5">
-            <option value="MemoReg queue">MemoReg queue</option>
-            <option value="Email">Email</option>
-            <option value="Backdesk queue">Backdesk queue</option>
-            <option value="Hardware queue">Hardware queue</option>
-            <option value="transferred to Backdesk">transferred to Backdesk</option>
-          </select>
-        </section>
-      
-      
-      
-        <script>
-          const constDate = new Date();
-          let generalUrl_ticketNumber = document.getElementById("generalUrl_ticketNumber");
-          generalUrl_ticketNumber.addEventListener('focus', () => generalUrl_ticketNumber.select());
-      
-          /* ticketCopypasta */
-          let ticketCopypasta = {
-            urlInput: document.getElementById("generalUrl"),
-            ticketField: document.getElementById("generalUrl_ticketNumber"),
-            summaryInput: document.getElementById("ticketSummary"),
-            commentInput: document.getElementById("excelComment"),
-            statusDropdown: document.getElementById("ticketStatusDropdown"),
-            sourceDropdown: document.getElementById("ticketSourceDropdown"),
-      
-            saveTicketNumber() {
-              navigator.clipboard.writeText(this.ticketField.value);
-              showSnackbar();
-            },
-      
-            parseLink() {
-              let reg = /HLSUPPORT-\d*/i;
-              var matches = this.urlInput.value.match(reg);
-              if (matches && matches.length) {
-                document.getElementById("generalUrl_ticketNumber").value = matches[0];
-                document.getElementById("eformCopypastaInput").value = matches[0];
-              }
-            },
-      
-            copyToMyExcel() {
-              let url = this.urlInput.value;
-              let summary = this.summaryInput.value;
-              let status = this.statusDropdown.value;
-              if (status == "hold") {status = "waiting";}
-              if (status == "vendor") {status = "waiting";}
-              let comment = this.commentInput.value;
-              navigator.clipboard.writeText(`${url}\t${summary}\t${status}\t${comment}`);
-              showSnackbar();
-            },
-      
-            copyToTheirExcel() {
-              // Generate date
-              let hours = constDate.getHours();
-              let year = constDate.getFullYear();
-              let month = hours <= 6 && constDate.getDate() == 1 ? constDate.getMonth() : constDate.getMonth() + 1;
-              let day = hours <= 6 ? constDate.getDate() - 1 : constDate.getDate();
-              
-              day = day.toString().padStart(2, '0');
-              month = month.toString().padStart(2, '0');
-      
-              let ticketNumber = this.ticketField.value;
-              let date = `${year}.${month}.${day}`;
-              let summary = this.summaryInput.value;
-              let source = this.sourceDropdown.value;
-              let status = this.statusDropdown.value;
-              if (status == "resolved") {status = "Resolved.";}
-              if (status == "waiting") {status = "Waiting for Customer";}
-              if (status == "transferred") {status = "Transferred";}
-              if (status == "inprog") {status = "In progres";}
-              if (status == "queued") {status = "Open";}
-              if (status == "assist") {status = "In progres";}
-              if (status == "hold") {status = "Hold";}
-              if (status == "vendor") {status = "Pending on Vendor";}
-              let comment = this.commentInput.value;
-              navigator.clipboard.writeText(`${ticketNumber}\t${date}\t${summary}\t${source}\t${status}\t${comment}`);
-              showSnackbar();
-            },
-      
-            clear() {
-              this.urlInput.value = "";
-              this.ticketField.value = "";
-              this.summaryInput.value = "";
-              this.commentInput.value = "";
-              document.getElementById("eformCopypastaInput").value = "";
-            },
-      
-            clearAll() {
-              this.clear();
-              mailboxesCopypasta.clear();
-            }
-          }
-        </script>
-      
+      <article id="010_first_non_nested" class='js-article'>
+        <p>First non-nested</p>
+      <img src="webpage_images/010_first_non_nested_img.png" width="316" height="99">
       </article>
-      <article id="025_copypastas" class='js-article'>
-        <!-- The copypasta snackbar -->
-        <div id="snackbar">Copied</div>
-      
-        <!-- E-form copypasta section -->
-        <section>
-          <div style="display: flex;">
-            <button class="buttonDiv" onclick="eformHandledCopypasta()">E-form handled</button>
-            <button class="buttonDiv" onclick="eformWithNumberHandledCopypasta()">E-form handled with number</button>
-            <button class="buttonDiv" onclick="eformWillBeHandledCopypasta()">E-form will be handled</button>
-            <button class="buttonDiv" onclick="sitaEformHandledCopypasta()">SITA E-form handled</button>
-            <button class="buttonDiv" onclick="eformByChangemanagementCopypasta()">E-form with change&shy;management</button>
-            <button class="buttonDiv" onclick="copypasta1()">Signature</button>
-            <button class="buttonDiv" onclick="copypasta2()">Please allow Azure to sync</button>
-            <button class="buttonDiv" onclick="copypasta3()">SITA please proceed</button>
-            <button class="buttonDiv" onclick="copypasta4()">Both Exchange privileges</button>
-          </div>
-          <div>
-            <input type="text" id="eformCopypastaInput" placeholder="HLSUPPORT">
-          </div>
-        </section>
-      
-      
-        <!-- -------------------- -->
-        <!-- Mailboxes copypastas -->
-        <!-- -------------------- -->
-      
-        <section>
-          <!-- Input panel-->
-          <div class="copypastas__mailboxes__input-panel">
-            <!-- Toggle buttons grid - 4 columns -->
-            <div class="copypastas__mailboxes__input-panel__button-grid">
-      
-              <div class="copypastas__mailboxes__input-panel__button-grid__row-title grant"><p>GRANT</p></div>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-full">Full Access</button>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-as">Send As</button>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-grant-behalf">Send on Behalf</button>  
-      
-              <div class="copypastas__mailboxes__input-panel__button-grid__row-title revoke"><p>REVOKE</p></div>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-full">Full Access</button>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-as">Send As</button>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-revoke-behalf">Send on Behalf</button>
-      
-              <input class="copypastas__mailboxes__input-panel__button-grid__alias-window js-alias-input-window" 
-                type="text" placeholder="alias">
-              <!-- span from right -->
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-cloud active">Cloud</button>
-              <button class="copypastas__mailboxes__input-panel__button-grid__button js-onprem">On-prem</button>
-            </div>
-      
-            <!-- Text inputs -->
-            <div>
-              <textarea 
-                class="copypastas__mailboxes__input-panel__text__textarea js-users-input-window" placeholder="users" ></textarea>
-              <button class="js-clear-commands-button">Clear</button>
-            </div>
-          </div> <!-- /copypastas__mailboxes__input-panel -->
-          <div style="clear: both; height: 20px;"></div>
-          
-          <!-- Output windows -->
-          <div>
-            <p class="copypastas__mailboxes__output-panel__users js-users-output-window"></p>
-            <textarea class="copypastas__mailboxes__output-panel__commands js-commands-output-window"
-              rows="12" placeholder="commands will appear here..."></textarea>
-            <textarea class="copypastas__mailboxes__output-panel__message js-resolution-message-output-window" 
-              rows="4" readonly placeholder="resolution message will appear here..."></textarea>
-          </div>
-        </section>
-      
-        <script>
-          // NAMESPACE copypastas
-          class Copypastas {
-            static MailboxesPanelButton = class MailboxesPanelButton {
-              // https://stackoverflow.com/questions/67648500/pre-es6-static-functions-in-a-class
-              // https://stackoverflow.com/questions/55204088/defining-javascript-functions-inside-vs-outside-of-a-class
-              // https://stackoverflow.com/questions/28784375/nested-es6-classes
-              constructor(domObject = null, isActive = false) {
-                this.element = domObject;
-                this.active = isActive;
-              }
-              activate() {
-                this.active = true;
-                if (this.element != null) {
-                  this.element.classList.add("active");
-                }
-              }
-              deactivate() {
-                this.active = false;
-                if (this.element != null) {
-                  this.element.classList.remove("active");
-                }
-              }
-            } // MailboxesPanelButton
-      
-            static Mailboxes = class Mailboxes {
-              constructor() {
-                this.aliasInputWindow = document.querySelector(".js-alias-input-window"),
-                this.usersInputWindow = document.querySelector(".js-users-input-window"),
-                this.usersOutputWindow = document.querySelector(".js-users-output-window"),
-                this.commandsOutputWindow = document.querySelector(".js-commands-output-window"),
-                this.resolutionMessageOutputWindow = document.querySelector(".js-resolution-message-output-window"),
-                this.clearCommandsButton = document.querySelector(".js-clear-commands-button"),
-                /* toggle buttons*/
-                this.buttonMap = new Map([
-                  ["js-grant-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-full"), false)],
-                  ["js-grant-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-as"), false)],
-                  ["js-grant-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-grant-behalf"), false)],
-                  ["js-revoke-full", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-full"), false)],
-                  ["js-revoke-as", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-as"), false)],
-                  ["js-revoke-behalf", new Copypastas.MailboxesPanelButton(document.querySelector(".js-revoke-behalf"), false)],
-                ]),
-                this.onpremCloudMap = new Map([
-                  ["js-onprem", new Copypastas.MailboxesPanelButton(document.querySelector(".js-onprem"), false)],
-                  ["js-cloud", new Copypastas.MailboxesPanelButton(document.querySelector(".js-cloud"), true)],
-                ]),
-                /* non-DOM properties */
-                this.usersArray = [],
-                this.readableUsersListString = "",
-                this.#startEventListeners();
-                this.loadState();
-                this.onUsersInputWindowChange();
-              }; // constructor
-      
-              /* Event listeners */
-      
-              #startEventListeners() {
-                this.eventListeners = new Map([
-                  ["js-grant-full", this.buttonMap.get("js-grant-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-grant-as", this.buttonMap.get("js-grant-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-grant-behalf", this.buttonMap.get("js-grant-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-revoke-full", this.buttonMap.get("js-revoke-full").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-revoke-as", this.buttonMap.get("js-revoke-as").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-revoke-behalf", this.buttonMap.get("js-revoke-behalf").element.addEventListener("click", this.onPrivilegeButtonClick.bind(this))],
-                  ["js-onprem", this.onpremCloudMap.get("js-onprem").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
-                  ["js-cloud", this.onpremCloudMap.get("js-cloud").element.addEventListener("click", this.onOnpremCloudButtonClick.bind(this))],
-                  ["js-alias-input-window", this.aliasInputWindow.addEventListener("change", this.onAliasInputWindowChange.bind(this))],
-                  ["js-users-input-window", this.usersInputWindow.addEventListener("change", this.onUsersInputWindowChange.bind(this))],
-                  ["js-clear-commands-button", this.clearCommandsButton.addEventListener("click", this.onClearButtonClick.bind(this))],
-                ]);
-              }
-      
-              onPrivilegeButtonClick(event) {
-                for (const [key, value] of this.buttonMap) {
-                  if (event.target.classList.contains(key)) {
-                    this.privilegeToggle(value);
-                  }
-                }
-                this.saveState();
-              }
-      
-              onOnpremCloudButtonClick(event) {
-                let buttonObject;
-                if (event.target.classList.contains("js-onprem")) {
-                  buttonObject = this.onpremCloudMap.get("js-onprem");
-                } else {
-                  buttonObject = this.onpremCloudMap.get("js-cloud");
-                }
-                this.onpremCloudToggle(buttonObject);
-                this.saveState();
-              }
-      
-              onUsersInputWindowChange() {
-                this.getUsersArray();
-                this.getUsersAsReadableList();
-                this.writeFilteredUsers();
-                this.getCopypasta_commands(); // rebuild commands
-                this.saveState();
-              }
-      
-              onAliasInputWindowChange() {
-                this.getCopypasta_commands(); // rebuild commands
-                this.saveState();
-              }
-      
-              onClearButtonClick() {
-                this.clear();
-                this.saveState();
-              }
-      
-              /* Methods - User list and alias related */
-      
-              getUsersArray() {
-                let users = this.usersInputWindow.value.trim();
-                users = users.replaceAll(",", "");
-                users = users.replaceAll("\t", " ");
-                users = users.replaceAll("\r", "");
-                users = users.replaceAll("\n", " ");
-                this.usersArray = users.split(" ");
-                if (this.usersArray.length == 1 && this.usersArray[0] == "") {
-                  this.usersArray.splice(0, this.usersArray.length);
-                }
-              }
-              getUsersAsReadableList() {
-                this.readableUsersListString = "";
-                this.usersArray.forEach(element => {
-                  this.readableUsersListString += "\"" + element + "\" ";
-                });
-                this.readableUsersListString.trim();
-              }
-              writeFilteredUsers() {
-                this.usersOutputWindow.innerHTML = this.readableUsersListString;
-              }
-      
-              /* Methods - Privilege buttons related */
-      
-              /** 
-               * Toggles particular privileges buttons and rebuilds the command list.
-               * @param {Copypastas.MailboxesPanelButton} button - pressed button
-               * Returns nothing.
-              */
-              privilegeToggle(button) {
-                if (button.active) {
-                  button.deactivate();
-                } else {
-                  button.activate();
-                }
-                this.getCopypasta_commands(); // rebuild commands
-              };
-      
-              /** 
-               * Toggles On-prem / Cloud buttons and rebuilds the command list.
-               * @param {Copypastas.MailboxesPanelButton} button - pressed button
-               * Returns nothing.
-              */
-              onpremCloudToggle(button) {
-                this.onpremCloudMap.forEach((buttonObj) => {
-                  buttonObj.deactivate();
-                });
-                button.activate()
-                this.getCopypasta_commands(); // rebuild commands
-              };
-      
-              /* Commands related */
-      
-              /** 
-               * Checks if alias is set, at least one user is set, and at least one privilege is set.
-               * Returns true if all is ok.
-              */
-              testForFields() {
-                let alias = this.aliasInputWindow.value.trim();
-                if (!alias || alias.length == 0) {
-                  return false;
-                }
-                if (!this.usersArray || this.usersArray.length == 0) {
-                  return false;
-                }
-                let allSet = false;
-                this.buttonMap.forEach((value, key) => {
-                  if (value.active == true) {allSet = true; return;}
-                });
-                return allSet; // and also other things work out too
-              };
-      
-              /**
-               * Writes generated commands to the output window.
-               * Returns nothing.
-              */
-              getCopypasta_commands() {
-                // test if everything is set
-                if (this.testForFields() == false) {
-                  this.commandsOutputWindow.value = "";
-                  this.resolutionMessageOutputWindow.value = "";
-                  return;
-                }
-                // set cloud / on-prem flag
-                let isCloud = true;
-                if (this.onpremCloudMap.get("js-cloud").active == true) {
-                  isCloud = true;
-                } else {
-                  isCloud = false;
-                }
-                // getting commands
-                let alias = this.aliasInputWindow.value.trim();
-                let commands = "";
-                this.usersArray.forEach((user) => {
-                  this.buttonMap.forEach((value, key) => {
-                    if (value.active) {
-                      commands += this.getCopypasta_getSingleCommand(key, alias, user, isCloud);
-                    }
-                  })
-                });
-                this.commandsOutputWindow.value = commands;
-                // for resolution message
-                let usedActions = [];
-                this.buttonMap.forEach((value, key) => {
-                  if (value.active) {
-                    usedActions.push(key);
-                  }
-                })
-                this.putResolutionMessage(usedActions);
-              };
-      
-              /** 
-               * Generates one command line for given parameters.
-               * Returns string.
-              */
-              getCopypasta_getSingleCommand(privilege, alias, user, onCloud) {
-                if (privilege == "js-grant-full") {
-                  return `Add-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -AutoMapping:$false -Confirm:$false\r\n`;
-                }
-                if (privilege == "js-revoke-full") {
-                  return `Remove-MailboxPermission -Identity '${alias}' -User '${user}' -AccessRights 'FullAccess' -Confirm:$false\r\n`;
-                }
-                if (privilege == "js-grant-as") {
-                  if (onCloud) {
-                    return `Add-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-                  } else {
-                    return `Get-Mailbox '${alias}' | Add-ADPermission -User '${user}' -ExtendedRights 'Send As' -Confirm:$false\r\n`;
-                  }
-                }
-                if (privilege == "js-revoke-as") {
-                  if (onCloud) {
-                    return `Remove-RecipientPermission '${alias}' -Trustee '${user}' -AccessRights 'SendAs' -confirm:$false\r\n`;
-                  } else {
-                    return `Get-Mailbox '${alias}' | Remove-ADPermission -User '${user}' -ExtendedRights 'Send As' -confirm:$false\r\n`;
-                  }
-                }
-                if (privilege == "js-grant-behalf") {
-                  return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{add='${user}'} -confirm:$false\r\n`;
-                }
-                if (privilege == "js-revoke-behalf") {
-                  return `Set-Mailbox '${alias}' -Grantsendonbehalfto @{remove='${user}'} -confirm:$false\r\n`;
-                }
-              };
-      
-              putResolutionMessage(actions) {
-                let actionMap = new Map([
-                  ['granted', []],
-                  ['revoked', []]
-                ])
-                
-                // users part
-                let beginning;
-                if (this.usersArray.length > 1) {
-                  beginning = "Users ";
-                  this.usersArray.forEach(element => {  
-                    beginning += element + ", ";
-                  })
-                  beginning = beginning.slice(0, beginning.length - 2);
-                  beginning += " have been ";
-                } else {
-                  beginning = "User " + this.usersArray[0];
-                  beginning += " has been ";
-                }
-      
-                // action and privileges part
-                let chosenGrant = [];
-                let chosenRevoke = [];
-                let a, b, c;
-                actions.forEach((action) => {
-                  [a, b, c] = action.split("-");
-                  switch(b) {
-                    case "grant":
-                      switch(c) {
-                        case "full":
-                          chosenGrant.push("Full Access");
-                          break;
-                        case "as":
-                          chosenGrant.push("Send As");
-                          break;
-                        case "behalf":
-                          chosenGrant.push("Send on Behalf");
-                          break;
-                      }
-                      break;
-                    case "revoke":
-                      switch(c) {
-                        case "full":
-                          chosenRevoke.push("Full Access");
-                          break;
-                        case "as":
-                          chosenRevoke.push("Send As");
-                          break;
-                        case "behalf":
-                          chosenRevoke.push("Send on Behalf");
-                          break;
-                      }
-                      break;
-                  }
-                });
-                let granted = "";
-                let revoked = "";
-                if (chosenGrant.length) {
-                  granted = beginning + "granted ";
-                  chosenGrant.forEach((privilege) => {
-                    granted += privilege + " and ";
-                  });
-                  granted = granted.slice(0, granted.length - 5);
-                  granted += " privileges to ";
-                }
-                if (chosenRevoke.length) {
-                  revoked = beginning + "revoked ";
-                  chosenRevoke.forEach((privilege) => {
-                    revoked += privilege + " and ";
-                  });
-                  revoked = revoked.slice(0, revoked.length - 5);
-                  revoked += " privileges to "
-                }
-      
-                // mailbox and sync part
-                let alias = this.aliasInputWindow.value.trim();
-                if (granted != "") {
-                  granted += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
-                }
-                if (revoked != "") {
-                  revoked += alias + " mailbox. Please allow Azure ~90 minutes to sync.";
-                }
-      
-                // final message
-                let message;
-                if (granted == "" || revoked == "") {
-                  message = granted + revoked;
-                } else {
-                  message = granted + "\r\n" + revoked;
-                }
-                
-                this.resolutionMessageOutputWindow.value = message;
-              };
-      
-              /** 
-               * Clears selected privileges, users and alias windows.
-               * Returns nothing.
-              */
-              clear() {
-                this.usersInputWindow.value = "";
-                this.usersOutputWindow.innerHTML = "";
-                this.aliasInputWindow.value = "";
-                this.commandsOutputWindow.value = "";
-                this.usersArray.splice(0, this.usersArray.length);
-                this.readableUsersListString = "";
-                this.buttonMap.forEach((value, key) => {
-                  value.deactivate();
-                })
-              };
-      
-              /* localStorage */
-              saveState() {
-                let state = {};
-                this.buttonMap.forEach((buttonObj, key) => {
-                  state[key] = buttonObj.active;
-                });
-                this.onpremCloudMap.forEach((buttonObj, key) => {
-                  state[key] = buttonObj.active;
-                });
-                state["users"] = this.usersInputWindow.value;
-                state["alias"] = this.aliasInputWindow.value;
-                localStorage.setItem("copypastasMailboxes", JSON.stringify(state));
-              };
-      
-              loadState() {
-                const loadedObject = JSON.parse(localStorage.getItem("copypastasMailboxes"));
-                this.buttonMap.forEach((stateItem, key) => {
-                  if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
-                });
-                this.onpremCloudMap.forEach((stateItem, key) => {
-                  if (loadedObject[key]) {stateItem.activate()} else {stateItem.deactivate()}
-                });
-                this.usersInputWindow.value = loadedObject["users"];
-                this.aliasInputWindow.value = loadedObject["alias"];
-              };
-      
-              returnStateAsObject() {
-      
-              };
-            } // Mailboxes
-          } // Copypastas
-          
-          // Initialize
-          const copypastas = new Copypastas();
-          const mailboxes = new Copypastas.Mailboxes();
-      
-          //
-          //  FUNCTIONS (outside Copypastas)
-          //
-          function showSnackbar(text = "Copied") {
-            var x = document.getElementById("snackbar");
-            x.innerHTML = text;
-            x.className = "show";
-            // After 3 seconds, remove the show class from DIV
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 400);
-          } 
-          
-          function eformHandledCopypasta() {
-            navigator.clipboard.writeText(
-              "-------------------------\r\nRequest has been handled.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
-            );
-            showSnackbar();
-          }
-      
-          function sitaEformHandledCopypasta() {
-            let x = document.getElementById("eformCopypastaInput").value;
-            let reg = /HLSUPPORT-\d*/i;
-            var matches = x.match(reg);
-            navigator.clipboard.writeText(
-              "-------------------------\r\nRequest has been forwarded to SITA in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
-            );
-            showSnackbar();
-          }
-      
-          function eformWithNumberHandledCopypasta() {
-            let x = document.getElementById("eformCopypastaInput").value;
-            let reg = /HLSUPPORT-\d*/i;
-            var matches = x.match(reg);
-            navigator.clipboard.writeText(
-              "-------------------------\r\nRequest has been handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
-            );
-            showSnackbar();
-          }
-      
-          function eformWillBeHandledCopypasta() {
-            let x = document.getElementById("eformCopypastaInput").value;
-            let reg = /HLSUPPORT-\d*/i;
-            var matches = x.match(reg);
-            navigator.clipboard.writeText(
-              "-------------------------\r\nRequest will be handled in "+matches[0].toUpperCase()+".\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
-            );
-            showSnackbar();
-          }
-      
-          function eformByChangemanagementCopypasta() {
-            navigator.clipboard.writeText(
-              "-------------------------\r\nRequest has been forwarded to changemanagement team. Progress will be tracked via email / created Jira ticket\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd\r\n-------------------------"
-            );
-            showSnackbar();
-          }
-      
-          function copypasta1() {
-            navigator.clipboard.writeText(
-              "Kind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd"
-            );
-            showSnackbar();
-          }
-      
-          function copypasta2() {
-            navigator.clipboard.writeText(
-              "Please allow Azure ~90 minutes to sync."
-            );
-            showSnackbar();
-          }
-      
-          function copypasta3() {
-            navigator.clipboard.writeText(
-              "Dear SITA,\r\n\r\nPlease proceed with the request.\r\n\r\nKind regards\r\nMarcin Kazmierczak\r\nITSD Hapag Lloyd"
-            );
-            showSnackbar();
-          }
-      
-          function copypasta4() {
-            navigator.clipboard.writeText(
-              "Please note that when both Send As and Send on Behalf privileges are granted, only Send As may work."
-            );
-            showSnackbar();
-          }
-        </script>
+      <article id="015_nested" class='js-article'>
+        <p>Nested base</p>
       </article>
-      <article id="030_exchange" class='js-article'>
+      <article id="015_nested-010_nested_in_nested" class='js-article'>
+        <p>Nested in Nested</p>
       </article>
-      <article id="030_exchange-010_basic_troubleshooting" class='js-article'>
-        <ul>
-          <li>check in OWA</li>
-          <li>new profile</li>
-          <li>delete system32</li>
-        </ul>
-      <img src="webpage_images/030_exchange_010_basic_troubleshooting_img.png" width="316" height="99">
+      <article id="015_nested-015_nested_in_nested_2" class='js-article'>
+        <p>Nested in Nested 2</p>
       </article>
-      <article id="030_exchange-015_exchange_2" class='js-article'>
-        <p>Here's the link:</p>
-        <p>link</p>
-        <p>image here</p>
+      <article id="020_double_nested" class='js-article'>
+        <p>Nested base 2</p>
       </article>
-      <article id="030_exchange-020_exchange_3" class='js-article'>
-        <p>Some exciting news from issues world</p>
-        <p>Interactive</p>
-        <button>hey</button>
-        <button>yo</button>
+      <article id="020_double_nested-010_nested_level_1_a" class='js-article'>
+        <p>Nested level 1 a</p>
       </article>
-      <article id="032_active_directory" class='js-article'>
-        <p>Generally about AD</p>
+      <article id="020_double_nested-010_nested_level_1_b" class='js-article'>
+        <p>Nested level 1 b</p>
       </article>
-      <article id="032_active_directory-010_ad_groups" class='js-article'>
-        <p>group1</p>
-        <p>group2</p>
-        <p>group3</p>
+      <article id="020_double_nested-010_nested_level_1_b-010_nested_level_2_a" class='js-article'>
+        <p>Nested level 2 a</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_b-010_nested_level_2_b" class='js-article'>
+        <p>Nested level 2 b</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_c" class='js-article'>
+        <p>Nested level 1 c</p>
+      </article>
+      <article id="025_last_non_nested" class='js-article'>
+        <p>Last non-nested</p>
+      <img src="webpage_images/025_last_non_nested_img.png" width="316" height="99">
       </article>
     </main>
     <script>
@@ -1117,34 +482,29 @@
       class SiteNavigation {
         static Navigation = class Navigation {
           static NavItem = class NavItem {
-            constructor(buttonClass, articleId, children=null, active=false) {
-              this.buttonClass = buttonClass;
-              this.buttonDiv = document.getElementsByClassName(buttonClass)[0];
-              this.button = this.buttonDiv.children[0].children[1];
+            constructor(jsForClassName, articleId, children=null) {
+              this.jsForClassName = jsForClassName;
               this.articleId = articleId;
+              this.containerElement = document.getElementsByClassName(jsForClassName)[0];
               this.correspondingArticle = document.getElementById(articleId);
-              this.active = active;
-              if (active == true) {
-                this.button.classList.add("active");
-                this.correspondingArticle.classList.remove("hidden");
-              } else {
-                this.correspondingArticle.classList.add("hidden");
-              }
+              this.titleElement = this.containerElement.children[1];
+              this.iconElement = this.containerElement.children[0];
               if (children == null) {
                 this.children = [];
               } else {
                 this.children = children;
               }
+              this.correspondingArticle.classList.add("hidden");
             } // constructor
             
             activate() {
-              this.button.classList.add("active");
+              this.titleElement.classList.add("active");
               this.correspondingArticle.classList.remove("hidden");
               this.active = true;
             }
             
             deactivate() {
-              this.button.classList.remove("active");
+              this.titleElement.classList.remove("active");
               this.correspondingArticle.classList.add("hidden");
               this.active = false;
             }
@@ -1157,19 +517,24 @@
             this.allExpandButtons = this.navigationContainer.querySelectorAll(".js-nav-expandable");
             this.showAllButton = this.navigationContainer.querySelector(".js-site-navigation-showall");
             this.navigationButtons = [
-              new SiteNavigation.Navigation.NavItem("js-for-020_ticket_tracker", "020_ticket_tracker"),
-              new SiteNavigation.Navigation.NavItem("js-for-025_copypastas", "025_copypastas"),
-              new SiteNavigation.Navigation.NavItem("js-for-030_exchange", "030_exchange", [
-                new SiteNavigation.Navigation.NavItem("js-for-030_exchange-010_basic_troubleshooting", "030_exchange-010_basic_troubleshooting"),
-                new SiteNavigation.Navigation.NavItem("js-for-030_exchange-015_exchange_2", "030_exchange-015_exchange_2"),
-                new SiteNavigation.Navigation.NavItem("js-for-030_exchange-020_exchange_3", "030_exchange-020_exchange_3"),
+              new SiteNavigation.Navigation.NavItem("js-for-010_first_non_nested", "010_first_non_nested"),
+              new SiteNavigation.Navigation.NavItem("js-for-015_nested", "015_nested", [
+                new SiteNavigation.Navigation.NavItem("js-for-015_nested-010_nested_in_nested", "015_nested-010_nested_in_nested"),
+                new SiteNavigation.Navigation.NavItem("js-for-015_nested-015_nested_in_nested_2", "015_nested-015_nested_in_nested_2"),
               ]),
-              new SiteNavigation.Navigation.NavItem("js-for-032_active_directory", "032_active_directory", [
-                new SiteNavigation.Navigation.NavItem("js-for-032_active_directory-010_ad_groups", "032_active_directory-010_ad_groups"),
+              new SiteNavigation.Navigation.NavItem("js-for-020_double_nested", "020_double_nested", [
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_a", "020_double_nested-010_nested_level_1_a"),
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b", "020_double_nested-010_nested_level_1_b", [
+                  new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_a", "020_double_nested-010_nested_level_1_b-010_nested_level_2_a"),
+                  new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_b", "020_double_nested-010_nested_level_1_b-010_nested_level_2_b"),
+                ]),
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_c", "020_double_nested-010_nested_level_1_c"),
               ]),
+              new SiteNavigation.Navigation.NavItem("js-for-025_last_non_nested", "025_last_non_nested"),
             ];
             this.isShowAll = false;
             this.displayedArticles = [];
+            this.collapsedNavItems = []; // as all are assumed uncollapsed at start
     
             this.#startEventListeners();
           } // constructor
@@ -1191,7 +556,7 @@
             }
     
             for (let i = 0; i < list.length; i++) {
-              if (list[i].buttonClass == event.target.parentElement.parentElement.classList[0]) {
+              if (list[i].jsForClassName == event.target.parentElement.classList[0]) {
                 this.toggleArticle(list[i]);
                 break;
               }
@@ -1201,40 +566,15 @@
             }
           }
     
-          expandButtonOnClick(event, list=null, containerFound=false) {
-            // Get the container element
+          expandButtonOnClick(event) {
+            // Get the container element (it should have 'js-for' class in it)
             let containerElement = event.target;
-            let isContainer = containerFound;
-            while (!isContainer) {
-              for (let i = 0; i < this.allButtonContainers.length; i++) {
-                if (this.allButtonContainers[i] == containerElement) {
-                  isContainer = true;
-                  break;
-                }
-              }
-              if (isContainer) {
-                break;
-              } else if (containerElement.parentElement) {
-                containerElement = containerElement.parentElement
-              } else {
-                return;
-              }
+            while (!containerElement.classList.contains("js-nav-item")) {
+              containerElement = containerElement.parentElement;
             }
-    
-            if (list == null) {
-              list = this.navigationButtons;
-              containerElement.children[0].children[0].classList.toggle("active");
-            }
-    
-            for (let i = 0; i < list.length; i++) {
-              if (list[i].buttonClass == containerElement.classList[0]) {
-                this.toggleExpand(list[i]);
-                break;
-              }
-              // if (list[i].children.length > 0) {
-              //   this.expandButtonOnClick(event, list[i].children, true);
-              // }
-            }
+            // When element is found
+            let navItemElement = this.findButtonByJsClassName(containerElement.classList[0]);
+            this.toggleExpand(navItemElement);
           }
     
           showAllButtonOnClick(event) {
@@ -1243,28 +583,82 @@
             if (this.isShowAll) {
               this.showAllArticles(this.navigationButtons);
             } else {
-              this.showAllHideArticles(this.navigationButtons);
-              this.showAllShowArticles(this.displayedArticles);
+              this.hideAllArticles(this.navigationButtons);
+              this.showAllSavedArticles(this.displayedArticles);
             }
           }
     
           /* Methods */
-          toggleExpand(parentButton) {
-            parentButton.children.forEach((item) => {
-              // if (item.children > 0) {
-              //   this.toggleExpand(item);
-              // }
-              item.buttonDiv.classList.toggle("hidden");
-            });
+          findButtonByJsClassName(className, navButtonList_=null) {
+            let navButtonList = null;
+            if (navButtonList_ != null) {
+              navButtonList = navButtonList_;
+            } else {
+              navButtonList = this.navigationButtons;
+            }
+            let found = null;
+            for (let i = 0; i < navButtonList.length; i++) {
+              if (navButtonList[i].jsForClassName == className) {
+                return navButtonList[i];
+              }
+              if (navButtonList[i].children.length > 0) {
+                found = this.findButtonByJsClassName(className, navButtonList[i].children)
+                if (found != null) {
+                  return found;
+                }
+              }
+            }
+            return found;
+          }
+
+          toggleExpand(navItemElement) {
+            if (navItemElement.iconElement.classList.contains("active")) {
+              // deactivate
+              this.collapsedNavItems.push(navItemElement);
+              this.hideNavItemElements(navItemElement);
+            } else {
+              // activate
+              this.collapsedNavItems.forEach((element, index) => {
+                if (element == navItemElement) {
+                  this.collapsedNavItems.splice(index, 1);
+                }
+              });
+              this.showNavItemElements(navItemElement);
+            }
+            navItemElement.iconElement.classList.toggle("active");
           }
     
+          hideNavItemElements(navItemElement) {
+            if (navItemElement.children.length == 0) {
+              throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
+            }
+            navItemElement.children.forEach((element) => {
+              element.containerElement.parentElement.classList.add("hidden");
+              if (element.children.length > 0) {
+                this.hideNavItemElements(element);
+              }
+            });
+          }
+
+          showNavItemElements(navItemElement) {
+            if (navItemElement.children.length == 0) {
+              throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
+            }
+            navItemElement.children.forEach((element) => {
+              element.containerElement.parentElement.classList.remove("hidden");
+              if (element.children.length > 0 && !this.collapsedNavItems.includes(element)) {
+                this.showNavItemElements(element);
+              }
+            });
+          }
+
           toggleArticle(navItem) {
             if (this.isShowAll) {
               return;
             }
             if (navItem.active) {
               navItem.correspondingArticle.classList.add("hidden");
-              navItem.button.classList.remove("active");
+              navItem.titleElement.classList.remove("active");
               this.displayedArticles.forEach((element, index) => {
                 if (element == navItem) {
                   this.displayedArticles.splice(index, 1);
@@ -1272,22 +666,22 @@
               });
             } else {
               navItem.correspondingArticle.classList.remove("hidden");
-              navItem.button.classList.add("active");
+              navItem.titleElement.classList.add("active");
               this.displayedArticles.push(navItem);
             }
             navItem.active = !navItem.active;
           }
     
-          showAllHideArticles(navItemList) {
+          hideAllArticles(navItemList) {
             for (let i = 0; i < navItemList.length; i++) {
               navItemList[i].deactivate()
               if (navItemList[i].children.length > 0) {
-                this.showAllHideArticles(navItemList[i].children);
+                this.hideAllArticles(navItemList[i].children);
               }
             }
           }
     
-          showAllShowArticles(navItemList) {
+          showAllSavedArticles(navItemList) {
             for (let i = 0; i < navItemList.length; i++) {
               navItemList[i].activate()
             };
