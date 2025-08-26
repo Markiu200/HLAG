@@ -13,14 +13,10 @@
         --bg--focus: hsl(203, 100%, 100%);
         --gray--primary: hsl(200, 10%, 50%);
         --gray--secondary: hsl(200, 14%, 30%);
-        --gray--tertiary: hsl(200, 14%, 90%);
-
         --dark--primary: hsl(203, 13%, 14%);
         --dark--secondary: hsl(203, 4%, 29%);
-
         --accent--primary: hsl(206, 90%, 56%);
         --accent--secondary: hsl(206, 79%, 58%);
-
         --expanded: 16.875rem;
         --collapsed: 3.25rem;
         --svg: 1.125rem;
@@ -48,7 +44,6 @@
         border-width: 1px;
         border-color: gray; */
         margin-bottom: 8px;
-
         background: var(--bg--primary);
         border-radius: var(--brad-outer);
         box-shadow: 0 3px 5px #1233, 0 5px 17px #0003;
@@ -158,17 +153,17 @@
         margin-right: 10px;
         /* flex-basis: var(--expanded); */
       }
-
+      
       .site-navigation header {
         display: flex;
         justify-content: center;
       }
-
+      
       .site-navigation .nav__steering_wrapper {
         flex-grow: 1;
         border-radius: var(--brad-inner);
       }
-
+      
       .site-navigation .nav__steering_item {
         /* flex-grow: 1; */
         padding: 0.7em;
@@ -180,7 +175,7 @@
         font-weight: 500;
         color: var(--gray--secondary);
       }
-
+      
       .site-navigation .title {
         user-select: none;
         font-size: 1.0625rem;
@@ -192,7 +187,7 @@
         text-align: center;
         padding: 12px;
       }
-
+      
       .site-navigation nav {
         display: flex;
         flex-flow: column;
@@ -203,14 +198,14 @@
         border-radius: var(--brad-outer);
         box-shadow: 0 3px 5px #1233, 0 5px 17px #0003;
       }
-
+      
       .site-navigation .sidebar__wrapper {
         --list-gap: 0.5rem;
         display: flex;
         flex-flow: column;
         gap: var(--list-gap);
       }
-
+      
       .site-navigation .sidebar__list {
         margin: 0;
         padding: 0;
@@ -220,12 +215,12 @@
         gap: 0.125rem;
         overflow: hidden;
       }
-
+      
       .site-navigation .sidebar__item {
         block-size: var(--item);
         border-radius: var(--brad-inner);
       }
-
+      
       .site-navigation .sidebar__link {
         display: flex;
         text-decoration: none;
@@ -234,13 +229,13 @@
         outline: 2px solid transparent;
         border-radius: inherit;
       }
-
+      
       .site-navigation .icon {
         aspect-ratio: 1;
         block-size: 100%;
         display: inline-grid;
         border-radius: var(--brad-inner);
-
+      
         svg {
           place-self: center;
           inline-size: var(--svg);
@@ -248,19 +243,19 @@
           /* fill: var(--gray--primary); */
         }
       }
-
+      
       .site-navigation .icon.active {
         .collapsed {
           display: none;
         }
       }
-
+      
       .site-navigation .icon:not(.active) {
         .expanded {
           display: none;
         }
       }
-
+      
       .site-navigation .text {
         user-select: none;
         border-radius: var(--brad-inner);
@@ -271,29 +266,29 @@
         font-size: 0.875em;
         font-weight: 500;
       }
-
+      
       .site-navigation .text:hover,
       .site-navigation .expandable:hover,
       .site-navigation .nav__steering_item:hover {
         background: var(--bg--hover);
         color: var(--dark--primary);
       }
-
+      
       /* May be used for activated style */
       .site-navigation .active {
         outline: 2px solid var(--accent--secondary);
         outline-offset: -2px;
         background: var(--bg--focus);
-
+      
         .icon svg {
           fill: var(--accent--primary);
         }
       }
-
+      
       .site-navigation .text:active {
         background-color: var(--bg--active);
       }
-
+      
       /* old css */
       .nav__nested--1{
           padding-left: 10px;
@@ -309,15 +304,15 @@
         </header> <!-- /Top bit -->
         <section class="sidebar__wrapper">
           <!-- Show all button-->
-            <div class="nav__steering_wrapper">
-              <div class="js-site-navigation-showall nav__steering_item">Show all</div>
-            </div> <!-- /Show all button-->
+          <div class="nav__steering_wrapper">
+            <div class="js-site-navigation-showall nav__steering_item">Show all</div>
+          </div> <!-- /Show all button-->
           <!-- Actual buttons -->
           <ul class="sidebar__list list--primary">
-            <li class="js-for-020_ticket_tracker js-nav-item sidebar__item"> 
-              <div class="sidebar__link" data-tooltip="Ticket tracker">
+            <li class="js-for-020_ticket_tracker js-nav-item sidebar__item">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
@@ -325,9 +320,9 @@
               </div>
             </li>
             <li class="js-for-025_copypastas js-nav-item sidebar__item">
-              <div class="sidebar__link" data-tooltip="Copypastas">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
@@ -335,7 +330,7 @@
               </div>
             </li>
             <li class="js-for-030_exchange js-nav-item sidebar__item">
-              <div class="sidebar__link" data-tooltip="Exchange">
+              <div class="sidebar__link">
                 <div class="js-nav-expandable expandable icon active">
                   <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
@@ -347,30 +342,30 @@
                 <div class="js-nav-button text">Exchange</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-010_basic_troubleshooting js-nav-item nav__nested--1 sidebar__item">
-              <div class="sidebar__link" data-tooltip="Basic Troubleshooting">
+            <li class="js-for-030_exchange-010_basic_troubleshooting js-nav-item sidebar__item nav__nested--1">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
                 <div class="js-nav-button text">Basic Troubleshooting</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-015_exchange_2 js-nav-item nav__nested--1 sidebar__item">
-              <div class="sidebar__link" data-tooltip="Exchange 2">
+            <li class="js-for-030_exchange-015_exchange_2 js-nav-item sidebar__item nav__nested--1">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
                 <div class="js-nav-button text">Exchange 2</div>
               </div>
             </li>
-            <li class="js-for-030_exchange-020_exchange_3 js-nav-item nav__nested--1 sidebar__item">
-              <div class="sidebar__link" data-tooltip="Exchange 3">
+            <li class="js-for-030_exchange-020_exchange_3 js-nav-item sidebar__item nav__nested--1">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
@@ -378,7 +373,7 @@
               </div>
             </li>
             <li class="js-for-032_active_directory js-nav-item sidebar__item">
-              <div class="sidebar__link" data-tooltip="Active Directory">
+              <div class="sidebar__link">
                 <div class="js-nav-expandable expandable icon active">
                   <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
@@ -390,21 +385,20 @@
                 <div class="js-nav-button text">Active Directory</div>
               </div>
             </li>
-            <li class="js-for-032_active_directory-010_ad_groups js-nav-item nav__nested--1 sidebar__item">
-              <div class="sidebar__link" data-tooltip="AD groups">
+            <li class="js-for-032_active_directory-010_ad_groups js-nav-item sidebar__item nav__nested--1">
+              <div class="sidebar__link">
                 <div class="icon">
-                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
                   </svg>
                 </div>
                 <div class="js-nav-button text">AD groups</div>
               </div>
             </li>
-          </ul> <!-- /Actual buttons -->
-        </section>
-      </nav>
-    </aside>
-    <!-- <div style="float: left; width: 240px; height: 100%;"></div> -->
+                </ul> <!-- /Actual buttons -->
+              </section>
+            </nav>
+          </aside>
     <main>
       <article id="020_ticket_tracker" class='js-article'>
         <section class="section">
@@ -1226,7 +1220,7 @@
                 return;
               }
             }
-
+    
             if (list == null) {
               list = this.navigationButtons;
               containerElement.children[0].children[0].classList.toggle("active");
