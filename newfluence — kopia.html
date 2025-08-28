@@ -304,6 +304,47 @@
     </style>
   </head>
   <body>
+    <script>
+      // NAMESPACE StateManager
+      class StateManagerNamespace {
+        static StateManager = class StateManager {
+          constructor() {
+            this.registeredStatefulEntities = [];
+          }
+
+          register(name_, saveMethod_, loadMethod_) {
+            let isRegistered = false;
+            this.registeredStatefulEntities.forEach((entity) => {
+              if (entity.name == name_) {
+                isRegistered = true;
+              }
+            });
+            if (isRegistered == false) {
+              this.registeredStatefulEntities.push(
+                {
+                  name: name_,
+                  saveMethod: saveMethod_,
+                  loadMethod: loadMethod_
+                }
+              );
+            }
+          }
+
+          load() {
+            this.registeredStatefulEntities.forEach((entity) => {
+              entity.loadMethod();
+            });
+          }
+
+          save() {
+            this.registeredStatefulEntities.forEach((entity) => {
+              entity.saveMethod();
+            });
+          }
+        } // StateManager
+      } // StateManager namespace
+      const stateManager = new StateManagerNamespace.StateManager(); // initialize
+    </script>
     <aside class="js-site-navigation site-navigation">
       <nav>
         <!-- Top bit -->
@@ -768,6 +809,19 @@
       } // SiteNavigation namespace
       // Initialize
       const siteNavigation = new SiteNavigation.Navigation();
+      stateManager.register(
+        "siteNavigation", 
+        siteNavigation.saveState.bind(siteNavigation), 
+        siteNavigation.loadState.bind(siteNavigation)
+      );
+    </script>
+    <script>
+      window.addEventListener("load", (event) => {
+        stateManager.load();
+      });
+      window.addEventListener("beforeunload", (event) => {
+        stateManager.save();
+      });
     </script>
   </body>
 </html>
