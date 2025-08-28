@@ -533,11 +533,13 @@
               ]),
               new SiteNavigation.Navigation.NavItem("js-for-025_last_non_nested", "025_last_non_nested"),
             ];
+            this.allNavItems = [];
+            this.allCollapsibles = [];
+            // to be saved as a state
             this.isShowAll = false;
             this.checkedArticles = [];
             this.collapsedNavItems = []; // as all are assumed uncollapsed at start (by default)
-            this.allNavItems = [];
-            this.allCollapsibles = [];
+            //
             this.#startEventListeners();
             this.#getAllNavItems(this.navigationElementsTree);
             this.#getAllCollapsibles();
@@ -719,6 +721,46 @@
             // Handling collapsibles
             this.collapseAllCollapsibles();
             this.expandNonCollapsed();
+          }
+
+          /* State */
+          saveState() {
+            let checkedArticlesStrings = [];
+            this.checkedArticles.forEach((navItem) => {
+              checkedArticlesStrings.push(navItem.jsForClassName);
+            });
+            let collapsedNavItemsStrings = [];
+            this.collapsedNavItems.forEach((navItem) => {
+              collapsedNavItemsStrings.push(navItem.jsForClassName);
+            });
+            const stateObject = {
+              isShowAll: this.isShowAll,
+              checkedArticlesStrings: checkedArticlesStrings,
+              collapsedNavItemsStrings: collapsedNavItemsStrings
+            }
+            console.log(stateObject);
+            localStorage.setItem("siteNavigation", JSON.stringify(stateObject));
+          }
+          //
+          loadState() {
+            const loadedStateObject = JSON.parse(localStorage.getItem("siteNavigation"));
+            console.log(loadedStateObject);
+            // checked articles
+            this.checkedArticles = [];
+            loadedStateObject.checkedArticlesStrings.forEach((jsName) => {
+              this.checkedArticles.push(this.findButtonByJsClassName(jsName));
+            });
+            // collapsed NavItems
+            this.collapsedNavItems = [];
+            loadedStateObject.collapsedNavItemsStrings.forEach((jsName) => {
+              this.collapsedNavItems.push(this.findButtonByJsClassName(jsName));
+            });
+            //
+            this.renderPage();
+            if (this.isShowAll != loadedStateObject.isShowAll) {
+              this.isShowAll = !loadedStateObject.isShowAll;
+              this.toggleShowAll();
+            }
           }
         } // Navigation
       } // SiteNavigation namespace
