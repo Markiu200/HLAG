@@ -125,7 +125,8 @@ class Navigation:
           } else {
             this.children = children;
           }
-          this.correspondingArticle.classList.add("hidden");
+          this.active = false;
+          this.deactivate();
         } // constructor
         
         activate() {
@@ -147,19 +148,42 @@ class Navigation:
         this.allButtons = this.navigationContainer.querySelectorAll(".js-nav-button");
         this.allExpandButtons = this.navigationContainer.querySelectorAll(".js-nav-expandable");
         this.showAllButton = this.navigationContainer.querySelector(".js-site-navigation-showall");
-        this.navigationButtons = [
+        this.navigationElementsTree = [
 '''
 
         self.get_js_elements_recurse(directory, "          ")
 
         self.js_part += '''\
         ];
+        this.allNavItems = [];
+        this.allCollapsibles = [];
+        // to be saved as a state
         this.isShowAll = false;
-        this.displayedArticles = [];
-        this.collapsedNavItems = []; // as all are assumed uncollapsed at start
-
+        this.checkedArticles = [];
+        this.collapsedNavItems = []; // as all are assumed uncollapsed at start (by default)
+        //
         this.#startEventListeners();
+        this.#getAllNavItems(this.navigationElementsTree);
+        this.#getAllCollapsibles();
       } // constructor
+
+      /* contructor single use methods */
+      #getAllNavItems(navItemList) {
+        navItemList.forEach((navItem) => {
+          this.allNavItems.push(navItem);
+          if (navItem.children.length > 0) {
+            this.#getAllNavItems(navItem.children);
+          }
+        });
+      }
+      //
+      #getAllCollapsibles() {
+        this.allNavItems.forEach((navItem) => {
+          if (navItem.children.length > 0) {
+            this.allCollapsibles.push(navItem);
+          }
+        });
+      }
 
       /* Event listeners */
       #startEventListeners() {
@@ -171,52 +195,38 @@ class Navigation:
         });
         this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
       }
-
-      navItemOnClick(event, list=null) {
-        if (list == null) {
-          list = this.navigationButtons;
+      //
+      navItemOnClick(event) {
+        let navItemElement = this.findButtonByJsClassName(event.target.parentElement.classList[0]);
+        if (!navItemElement) {
+          throw new Error("Pressed navigation item is not found in a list of registered navItems.");
         }
-
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].jsForClassName == event.target.parentElement.classList[0]) {
-            this.toggleArticle(list[i]);
-            break;
-          }
-          if (list[i].children.length > 0) {
-            this.navItemOnClick(event, list[i].children);
-          }
-        }
+        this.toggleArticle(navItemElement);
       }
-
+      //
       expandButtonOnClick(event) {
         // Get the container element (it should have 'js-for' class in it)
         let containerElement = event.target;
         while (!containerElement.classList.contains("js-nav-item")) {
-          containerElement = containerElement.parentElement;
+          containerElement = containerElement.parentElement; // "js-nav-item has also js-for at classList[0]"
         }
         // When element is found
         let navItemElement = this.findButtonByJsClassName(containerElement.classList[0]);
         this.toggleExpand(navItemElement);
       }
-
+      //
       showAllButtonOnClick(event) {
-        this.showAllButton.classList.toggle("active");
-        this.isShowAll = !this.isShowAll;
-        if (this.isShowAll) {
-          this.showAllArticles(this.navigationButtons);
-        } else {
-          this.hideAllArticles(this.navigationButtons);
-          this.showAllSavedArticles(this.displayedArticles);
-        }
+        this.toggleShowAll();
       }
 
       /* Methods */
+      // utility methods
       findButtonByJsClassName(className, navButtonList_=null) {
         let navButtonList = null;
         if (navButtonList_ != null) {
           navButtonList = navButtonList_;
         } else {
-          navButtonList = this.navigationButtons;
+          navButtonList = this.navigationElementsTree;
         }
         let found = null;
         for (let i = 0; i < navButtonList.length; i++) {
@@ -233,67 +243,70 @@ class Navigation:
         return found;
       }
 
-      toggleExpand(navItemElement) {
-        if (navItemElement.iconElement.classList.contains("active")) {
-          // deactivate
-          this.collapsedNavItems.push(navItemElement);
-          this.hideNavItemElements(navItemElement);
-        } else {
-          // activate
+      // related to handling expand tree part of navItems
+      toggleExpand(navItem) {
+        if (this.collapsedNavItems.includes(navItem)) {
           this.collapsedNavItems.forEach((element, index) => {
-            if (element == navItemElement) {
+            if (element == navItem) {
               this.collapsedNavItems.splice(index, 1);
             }
           });
-          this.showNavItemElements(navItemElement);
+        } else {
+          this.collapsedNavItems.push(navItem);
         }
-        navItemElement.iconElement.classList.toggle("active");
+        this.renderPage();
       }
-
-      hideNavItemElements(navItemElement) {
-        if (navItemElement.children.length == 0) {
-          throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
-        }
-        navItemElement.children.forEach((element) => {
-          element.containerElement.parentElement.classList.add("hidden");
-          if (element.children.length > 0) {
-            this.hideNavItemElements(element);
+      //
+      collapseAllCollapsibles() {
+        this.allCollapsibles.forEach((navItem) => {
+          navItem.iconElement.classList.remove("active");
+          navItem.children.forEach((el) => {
+            el.containerElement.parentElement.classList.add("hidden");
+          });
+        });
+      }
+      //
+      expandNonCollapsed(navItemList_=null) {
+        let navItemList = null;
+        if (navItemList_ != null) {navItemList = navItemList_;} else {navItemList = this.navigationElementsTree;}
+        navItemList.forEach((navItem) => {
+          navItem.containerElement.parentElement.classList.remove("hidden");
+          if (navItem.children.length > 0 && this.collapsedNavItems.includes(navItem) == false) {
+            navItem.iconElement.classList.add("active");
+            this.expandNonCollapsed(navItem.children);
           }
         });
       }
 
-      showNavItemElements(navItemElement) {
-        if (navItemElement.children.length == 0) {
-          throw new Error(`Element ${navItemElement} has no children, whereas it would be expected to.`);
-        }
-        navItemElement.children.forEach((element) => {
-          element.containerElement.parentElement.classList.remove("hidden");
-          if (element.children.length > 0 && !this.collapsedNavItems.includes(element)) {
-            this.showNavItemElements(element);
-          }
-        });
-      }
-
+      // related to pressing navItems title parts
       toggleArticle(navItem) {
         if (this.isShowAll) {
           return;
         }
-        if (navItem.active) {
-          navItem.correspondingArticle.classList.add("hidden");
-          navItem.titleElement.classList.remove("active");
-          this.displayedArticles.forEach((element, index) => {
+        if (this.checkedArticles.includes(navItem)) {
+          this.checkedArticles.forEach((element, index) => {
             if (element == navItem) {
-              this.displayedArticles.splice(index, 1);
+              this.checkedArticles.splice(index, 1);
             }
           });
         } else {
-          navItem.correspondingArticle.classList.remove("hidden");
-          navItem.titleElement.classList.add("active");
-          this.displayedArticles.push(navItem);
+          this.checkedArticles.push(navItem);
         }
-        navItem.active = !navItem.active;
+        this.renderPage();
       }
 
+      // related to 'Show all' button
+      toggleShowAll() {
+        this.showAllButton.classList.toggle("active");
+        this.isShowAll = !this.isShowAll;
+        if (this.isShowAll) {
+          this.showAllArticles(this.navigationElementsTree);
+        } else {
+          this.hideAllArticles(this.navigationElementsTree);
+          this.showAllSavedArticles(this.checkedArticles);
+        }
+      }
+      //
       hideAllArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
           navItemList[i].deactivate()
@@ -302,13 +315,13 @@ class Navigation:
           }
         }
       }
-
+      //
       showAllSavedArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
           navItemList[i].activate()
         };
       }
-
+      //
       showAllArticles(navItemList) {
         for (let i = 0; i < navItemList.length; i++) {
           navItemList[i].activate()
@@ -317,8 +330,62 @@ class Navigation:
           }
         };
       }
+
+      // related to refreshing nav
+      renderPage() {
+        // Deactivate all navItems and activate only checked ones
+        this.allNavItems.forEach((navItem) => {
+          navItem.deactivate();
+        });
+        this.checkedArticles.forEach((navItem) => {
+          navItem.activate();
+        });
+        // Handling collapsibles
+        this.collapseAllCollapsibles();
+        this.expandNonCollapsed();
+      }
+
+      /* State */
+      saveState() {
+        let checkedArticlesStrings = [];
+        this.checkedArticles.forEach((navItem) => {
+          checkedArticlesStrings.push(navItem.jsForClassName);
+        });
+        let collapsedNavItemsStrings = [];
+        this.collapsedNavItems.forEach((navItem) => {
+          collapsedNavItemsStrings.push(navItem.jsForClassName);
+        });
+        const stateObject = {
+          isShowAll: this.isShowAll,
+          checkedArticlesStrings: checkedArticlesStrings,
+          collapsedNavItemsStrings: collapsedNavItemsStrings
+        }
+        console.log(stateObject);
+        localStorage.setItem("siteNavigation", JSON.stringify(stateObject));
+      }
+      //
+      loadState() {
+        const loadedStateObject = JSON.parse(localStorage.getItem("siteNavigation"));
+        console.log(loadedStateObject);
+        // checked articles
+        this.checkedArticles = [];
+        loadedStateObject.checkedArticlesStrings.forEach((jsName) => {
+          this.checkedArticles.push(this.findButtonByJsClassName(jsName));
+        });
+        // collapsed NavItems
+        this.collapsedNavItems = [];
+        loadedStateObject.collapsedNavItemsStrings.forEach((jsName) => {
+          this.collapsedNavItems.push(this.findButtonByJsClassName(jsName));
+        });
+        //
+        this.renderPage();
+        if (this.isShowAll != loadedStateObject.isShowAll) {
+          this.isShowAll = !loadedStateObject.isShowAll;
+          this.toggleShowAll();
+        }
+      }
     } // Navigation
-  } // SiteNavigation
+  } // SiteNavigation namespace
   // Initialize
   const siteNavigation = new SiteNavigation.Navigation();
 </script>
