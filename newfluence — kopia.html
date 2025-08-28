@@ -712,12 +712,14 @@
           // related to refreshing nav
           renderPage() {
             // Deactivate all navItems and activate only checked ones
-            this.allNavItems.forEach((navItem) => {
-              navItem.deactivate();
-            });
-            this.checkedArticles.forEach((navItem) => {
-              navItem.activate();
-            });
+            if (this.isShowAll == false) {
+              this.allNavItems.forEach((navItem) => {
+                navItem.deactivate();
+              });
+              this.checkedArticles.forEach((navItem) => {
+                navItem.activate();
+              });
+            }
             // Handling collapsibles
             this.collapseAllCollapsibles();
             this.expandNonCollapsed();
