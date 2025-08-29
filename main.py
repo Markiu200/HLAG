@@ -14,6 +14,7 @@ from images_folder import ImagesFolder
 from filetypes.directory import Directory
 from filetypes.css_file import CSSFile
 from filetypes.html_file import HTMLFile
+from filetypes.js_file import JSFile
 
 
 class SiteBuilder:
@@ -24,6 +25,7 @@ class SiteBuilder:
         self.structure_reader = StructureReader(self.root_directory_path)
         self.structure_reader.read()
         self.root_directory: Directory = self.structure_reader.root_node
+        self.config_dir: Directory = self.structure_reader.config_dir
         #
         self.navigation_builder = Navigation(self.root_directory)
         self.main_builder = MainBuilder(self.root_directory)
@@ -38,10 +40,12 @@ class SiteBuilder:
         self.insert_beginning()
         self.insert_css()
         self.insert_transition_to_body()
+        self.insert_body_prepends()
         self.insert_navigation_html()
         # self.insert_nav_space_allocator()
         self.insert_main()
         self.insert_navigation_js()
+        self.insert_body_appends()
         self.insert_ending()
 
         self.images_folder.copy_images_to_folder()
@@ -70,6 +74,16 @@ class SiteBuilder:
     def insert_transition_to_body(self):
         self.site_code += f"  </head>\n  <body>\n"
 
+    def insert_body_prepends(self):
+        for node in self.config_dir.children:
+            if PurePath(node.path).name == "body_prepend":
+                for prepend_node in node.children:
+                    indented_code = ""
+                    if isinstance(prepend_node, JSFile):
+                        for line in prepend_node.to_string().splitlines():
+                            indented_code += self.indent + line + "\n"
+                        self.site_code += indented_code
+
     def insert_navigation_html(self):
         indented_html = ""
         for line in self.navigation_builder.get_html(self.root_directory).splitlines():
@@ -90,6 +104,16 @@ class SiteBuilder:
         for line in self.navigation_builder.get_js(self.root_directory).splitlines():
             indented_js += self.indent + line + "\n"
         self.site_code += indented_js
+
+    def insert_body_appends(self):
+        for node in self.config_dir.children:
+            if PurePath(node.path).name == "body_append":
+                for append_node in node.children:
+                    indented_code = ""
+                    if isinstance(append_node, JSFile):
+                        for line in append_node.to_string().splitlines():
+                            indented_code += self.indent + line + "\n"
+                        self.site_code += indented_code
 
     def insert_ending(self):
         self.site_code += "  </body>\n</html>"

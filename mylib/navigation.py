@@ -16,7 +16,6 @@ from article import Article
 class Navigation:
     def __init__(self, root_directory: Directory):
         self.root_directory = root_directory
-        # self.html_part = "<nav class=\"js-site-navigation\">\n  <button class=\"js-site-navigation-showall\">Show all</button>\n"
         self.html_part = '''\
 <aside class="js-site-navigation site-navigation">
   <nav>
@@ -390,6 +389,11 @@ class Navigation:
   } // SiteNavigation namespace
   // Initialize
   const siteNavigation = new SiteNavigation.Navigation();
+  stateManager.register(
+    "siteNavigation", 
+    siteNavigation.saveState.bind(siteNavigation), 
+    siteNavigation.loadState.bind(siteNavigation)
+  );
 </script>
 '''
         return self.js_part

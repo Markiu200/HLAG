@@ -13,12 +13,14 @@ from filetypes.html_file import HTMLFile
 from filetypes.css_file import CSSFile
 from filetypes.directory import Directory
 from filetypes.png_file import PNGFile
+from filetypes.js_file import JSFile
 
 
 class StructureReader:
     def __init__(self, site_files_folder_path: Path):
         self.site_files_folder_path = site_files_folder_path
         self.root_node: Directory = Directory(self.site_files_folder_path, parent=None)
+        self.config_dir: Directory | None = None
 
     def read(self, directory=None) -> None:
         in_root = False
@@ -28,6 +30,11 @@ class StructureReader:
 
         for pathstr in os.listdir(directory.path):
             abspath = directory.path / pathstr
+            # global folder
+            if pathstr.startswith("_global"):
+                self.config_dir = Directory(path=abspath, parent=directory)
+                self.read(self.config_dir)
+                continue
             #
             if os.path.isfile(abspath):
                 if pathstr == "meta.txt":
@@ -43,6 +50,8 @@ class StructureReader:
                     directory.children.append(CSSFile(abspath, parent=directory))
                 if extension == ".png":
                     directory.children.append(PNGFile(abspath, parent=directory))
+                if extension == ".js":
+                    directory.children.append(JSFile(abspath, parent=directory))
             #
             if os.path.isdir(abspath):
                 new_children = Directory(abspath, parent=directory)
@@ -62,3 +71,7 @@ class StructureReader:
 if __name__ == "__main__":
     structure_reader = StructureReader(Path("./webpage").absolute())
     structure_reader.read()
+    print("this is config_dir")
+    print(structure_reader.config_dir.children)
+    print("this is root:")
+    print(structure_reader.root_node.children)
