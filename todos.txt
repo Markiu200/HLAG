@@ -36,7 +36,7 @@ done// - show parsed users
 done// multiselect for privileges modified
 done// multiselect for cloud / onprem
 done// copypasta - for ticket resolution
-	//  - also with "wait 90 min" version
+done//  - also with "wait 90 min" version
 done// window to see actual commands
 
  -- // AD groups
@@ -47,9 +47,9 @@ done// window to see actual commands
 	//  - also with "wait 90 min" version	
  
  -- // Nav
-	// make it so you can have more sections on screen than one
-	// nested sections
-	// "display all sections" to make all contents searchable
+done// make it so you can have more sections on screen than one
+done// nested sections
+done// "display all sections" to make all contents searchable
 
  -- // Ticket tracking
 	// make interactive elemenets pluggable to ticket tracker

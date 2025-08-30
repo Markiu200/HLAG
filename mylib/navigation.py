@@ -367,7 +367,10 @@ class Navigation:
       //
       loadState() {
         const loadedStateObject = JSON.parse(localStorage.getItem("siteNavigation"));
-        console.log(loadedStateObject);
+        if (!loadedStateObject) {
+          console.log("No loaded state for 'siteNavigation'");
+          return;
+        }
         // checked articles
         this.checkedArticles = [];
         loadedStateObject.checkedArticlesStrings.forEach((jsName) => {
