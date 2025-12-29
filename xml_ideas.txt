@@ -1,0 +1,19 @@
+Instead of having to write everything in HTML, XML markup can be used to generate pages.
+
+
+For articles
+<article>
+<\article>
+
+For checklists
+<checklist>
+    <step>
+        <title>Step 1</title>
+        <instructions>Plain text...<\instructions>
+    <\step>
+    ...
+    <step>
+        <title>Step N</title>
+        <instructions link="filename"><\instructions>
+    <\step>
+<\checklist>

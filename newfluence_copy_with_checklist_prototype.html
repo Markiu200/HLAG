@@ -301,6 +301,60 @@
       .nav__nested--4{
         padding-left: 40px;
       }
+
+      /* Steps */
+      .article__steps {
+        display: flex;
+        .list {
+          user-select: none;
+          order: 1;
+          border-radius: 0.6rem;
+          color: white;
+          background-color: #152D38;
+          padding: 6px;
+          /* #425D66 #3B9BBB #22B5E6 */
+          /* #e6af2e */
+          flex-grow: 0;
+          flex-basis: 300px;
+          .list--items {
+            margin-top: 10px;
+            .item {
+              display: flex;
+              border-radius: 0.2rem;
+              color: white;
+              margin: 3px;
+              padding: 6px;
+              background-color: #4C6978;
+              .checkbox {
+                width: 20px;
+                height: 20px;
+                background-color: white;
+                border-radius: 0.2rem;
+                svg {
+                  color: black;
+                }
+              }
+              .checkbox:not(.active) {
+                svg {
+                  display: none;
+                }
+              }
+              .text {
+                margin-left: 6px;
+              }
+            }
+          }
+        }
+        .instructions {
+          flex-grow: 1;
+          div {
+            display: none;
+          }
+          div.active {
+            display: block;
+          }
+        }
+      }
     </style>
   </head>
   <body>
@@ -309,37 +363,37 @@
       class StateManagerNamespace {
         static StateManager = class StateManager {
           constructor() {
-            this.registeredStatefulEntities = [];
+        	  this.registeredStatefulEntities = [];
           }
-
+        
           register(name_, saveMethod_, loadMethod_) {
-            let isRegistered = false;
-            this.registeredStatefulEntities.forEach((entity) => {
-              if (entity.name == name_) {
-                isRegistered = true;
-              }
-            });
-            if (isRegistered == false) {
-              this.registeredStatefulEntities.push(
-                {
-                  name: name_,
-                  saveMethod: saveMethod_,
-                  loadMethod: loadMethod_
-                }
-              );
-            }
+        	  let isRegistered = false;
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    if (entity.name == name_) {
+        	  	isRegistered = true;
+        	    }
+        	  });
+        	  if (isRegistered == false) {
+        	    this.registeredStatefulEntities.push(
+        	  	{
+        	  	  name: name_,
+        	  	  saveMethod: saveMethod_,
+        	  	  loadMethod: loadMethod_
+        	  	}
+        	    );
+        	  }
           }
-
+        
           load() {
-            this.registeredStatefulEntities.forEach((entity) => {
-              entity.loadMethod();
-            });
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    entity.loadMethod();
+        	  });
           }
-
+        
           save() {
-            this.registeredStatefulEntities.forEach((entity) => {
-              entity.saveMethod();
-            });
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    entity.saveMethod();
+        	  });
           }
         } // StateManager
       } // StateManager namespace
@@ -491,6 +545,113 @@
       </article>
       <article id="015_nested-010_nested_in_nested" class='js-article'>
         <p>Nested in Nested</p>
+        <p>Send ticket to @exchange_team</p>
+        <!-- Steps example -->
+        <div class="article__steps">
+          <div class="list">
+            <div class="list--steering">
+              <div class="button">clear</div>
+            </div>
+            <div class="list--items">
+              <div class="item">
+                <div class="checkbox">
+                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                  </svg>
+                </div>
+                <div class="text">step 1</div>
+              </div>
+              <div class="item">
+                <div class="checkbox">
+                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                  </svg>
+                </div>
+                <div class="text">step 2</div>
+              </div>
+              <div class="item">
+                <div class="checkbox">
+                  <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+                  </svg>
+                </div>
+                <div class="text">step 3</div>
+              </div>
+            </div>
+          </div>
+          <div class="instructions">
+            <div><p>Go to c:\windows\</p></div>
+            <div><p>select system32</p></div>
+            <div><p>delete it</p></div>
+          </div>
+        </div>
+        <script>
+          // NAMESPACE Steps
+          class StepsNamespace {
+            static StepItem = class StepItem {
+              constructor(parentElement, id, parentObject) {
+                this.id = id;
+                this.parentObject = parentObject;
+                this.root = parentElement
+                this.checkboxElement = this.root.getElementsByClassName("checkbox")[0];
+                this.isChecked = false;
+                this.#startEventListeners()
+              }
+              #startEventListeners() {
+                this.checkboxElement.addEventListener("click", this.toggleCheck.bind(this));
+                this.root.addEventListener("click", this.show.bind(this));
+              }
+              toggleCheck(event) {
+                this.isChecked ? this.uncheck() : this.check();
+                // https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling
+                event.stopPropagation();
+              }
+              check() {
+                this.checkboxElement.classList.add("active");
+                this.isChecked = true;
+              }
+              uncheck() {
+                this.checkboxElement.classList.remove("active");
+                this.isChecked = false;
+              }
+              show() {
+                this.parentObject.showStep(this.id);
+              }
+            } // StepItem
+            static StepsInstance = class StepsInstance {
+              constructor(parentElement) {
+                this.root = parentElement;
+                this.stepItemElements = this.root.getElementsByClassName("item");
+                this.stepItemObjects = [];
+                for (let i = 0; i < this.stepItemElements.length; i++) {
+                  this.stepItemObjects.push(new StepsNamespace.StepItem(this.stepItemElements[i], i, this));
+                }
+                this.instructionElements = this.root.getElementsByClassName("instructions")[0].getElementsByTagName("div");
+              }
+              showStep(id) {
+                for (let instruction of this.instructionElements) {
+                  instruction.classList.remove("active");
+                }
+                this.instructionElements[id].classList.add("active");
+              }
+            } // StepsInstance
+            static StepsEngine = class StepsEngine {
+              constructor() {
+                this.stepsInstancesElements = document.getElementsByClassName("article__steps");
+                this.stepsInstancesObjects = [];
+                for (let element of this.stepsInstancesElements) {
+                  let id = this.getUniqueId(element);
+                  this.stepsInstancesObjects.push(new StepsNamespace.StepsInstance(element));
+                }
+              }
+              getUniqueId(element) {
+                console.log(element);
+              }
+            } // StepsEngine
+          } // StepsNamespace
+          const stepsEngine = new StepsNamespace.StepsEngine();
+        </script>
+        <!---->
       </article>
       <article id="015_nested-015_nested_in_nested_2" class='js-article'>
         <p>Nested in Nested 2</p>
@@ -603,7 +764,7 @@
               }
             });
           }
-
+    
           /* Event listeners */
           #startEventListeners() {
             this.allButtons.forEach((item) => {
@@ -661,7 +822,7 @@
             }
             return found;
           }
-
+    
           // related to handling expand tree part of navItems
           toggleExpand(navItem) {
             if (this.collapsedNavItems.includes(navItem)) {
@@ -696,7 +857,7 @@
               }
             });
           }
-
+    
           // related to pressing navItems title parts
           toggleArticle(navItem) {
             if (this.isShowAll) {
@@ -749,7 +910,7 @@
               }
             };
           }
-
+    
           // related to refreshing nav
           renderPage() {
             // Deactivate all navItems and activate only checked ones
@@ -765,7 +926,7 @@
             this.collapseAllCollapsibles();
             this.expandNonCollapsed();
           }
-
+    
           /* State */
           saveState() {
             let checkedArticlesStrings = [];
@@ -787,7 +948,10 @@
           //
           loadState() {
             const loadedStateObject = JSON.parse(localStorage.getItem("siteNavigation"));
-            console.log(loadedStateObject);
+            if (!loadedStateObject) {
+              console.log("No loaded state for 'siteNavigation'");
+              return;
+            }
             // checked articles
             this.checkedArticles = [];
             loadedStateObject.checkedArticlesStrings.forEach((jsName) => {

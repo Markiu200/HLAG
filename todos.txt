@@ -70,6 +70,29 @@ DONE// Fix date fetcher in ticket copypastas
 
 
 Ideas:
+css nesting
+factory thing
+step lists
+also make css nested
+
+config file for setting up behaviours
+xmls
+
+Modułowe elementy. Program uruchamiany przez plik - podajesz ścieżkę co ma czytać. Zakładamy że podana ścieżka to root.
+#
+JavaScriptowe kawałki będą w osobnych modułach, a poszczególne strony będą "importować" moduły
+* HTML w head
+* XML w tagach
+Potem analizujemy co jest:
+* opcja bare: Tylko pliki - generowany jest HTML bez nawigacji. Moduły ładowane zgodnie z czym wymaga root
+* są foldery - dodawana jest nawigacja
+* folder "_global/prepend / append" - dodaje w body przed/po zawartość
+* folder "_global/dictionaries" - dodaje słowniki do podkładania tekstu
+* folder "_global/head" - dodaje elementy do head
+
+========================================================================================================================
+
+On hold ideas:
 Oraz ticket-tracker. Mamy już zapisywanie stanu bieżącego, a w marzeniach jest jeszcze zapisywanie tych tixów w jakiejś liście,
 nie mówiąc już o eksportowaniu tego jakoś i importowaniu.
  - jeśli eksportować, to chyba jako JSON.strigify? Bo to do pliku. Chyba że uda się generować plik przeglądarką (do sprawdzenia).
@@ -89,18 +112,14 @@ A jeśli tak, to nie ucieknę od kwesti jak łączyć tixy z artykułami.
     można by usuwać te elementy
 W zasadzie podobnie jak ticket-tracker teraz, wszystkie interaktywne elementy zapamiętywałyby swój stan,
 ALBO - walić zapamiętywanie stanów tak po prostu (jak dla copypastów) i mieć to wyłącznie przy ticket trackerze.
-
-Wczytywanie tixa wtedy musiałoby przywracać wszystkim interaktywnym elementom ich stan (więc musiałyby one mieć metodę do 
+#
+Wczytywanie tixa wtedy musiałoby przywracać wszystkim interaktywnym elementom ich stan (więc musiałyby one mieć metodę do
 ładowania stanu).
 
+========================================================================================================================
 
-
-
-
-
-
- Done ideas:
- na podstawie zagnizdzonej strukturze folderow budowany bedzie navigator
+Done ideas:
+na podstawie zagnizdzonej strukturze folderow budowany bedzie navigator
 same strony beda wszystkie na tym samym poziomie - ich widocznosc bedzie sterowana z navigatora - tylko pozorne zagniezdzenie
 
 struktura - kazdy folder w webpage_location to pozycja w nawigatorze
