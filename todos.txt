@@ -1,3 +1,6 @@
+used links:
+https://www.pythontutorial.net/tkinter/
+
 Wymagania funkcjonalne:
  -- // Global
 done// feedback snackbar after successful copy to clipboard
@@ -68,6 +71,8 @@ DONE// Fix date fetcher in ticket copypastas
 
 
 
+Todo plan:
+* przeczytaj o pathlib bo chyba mają tam coś co zczytuje całą strukturę katalogową
 
 Ideas:
 css nesting
