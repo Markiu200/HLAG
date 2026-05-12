@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newfluence</title>
+    <style>
+      * {box-sizing: border-box;}
+      :root {
+        --bg--primary: hsl(203, 7%, 92%);
+        --bg--active: hsla(203, 86%, 93%, 0.7);
+        --bg--hover: hsl(200, 7%, 84%);
+        --bg--focus: hsl(203, 100%, 100%);
+        --gray--primary: hsl(200, 10%, 50%);
+        --gray--secondary: hsl(200, 14%, 30%);
+        --dark--primary: hsl(203, 13%, 14%);
+        --dark--secondary: hsl(203, 4%, 29%);
+        --accent--primary: hsl(206, 90%, 56%);
+        --accent--secondary: hsl(206, 79%, 58%);
+        --expanded: 16.875rem;
+        --collapsed: 3.25rem;
+        --svg: 1.125rem;
+        --item: 2.25rem;
+        --brad-outer: 0.75rem;
+        --frame-space: 0.5rem;
+        --brad-inner: calc(var(--brad-outer) - var(--frame-space));
+      }
+      body {
+        display: flex;
+        margin: 0;
+        min-block-size: 100vh;
+        padding: var(--frame-space);
+        background: linear-gradient(32deg, hsl(193 6 76), hsl(196 9 69) 50%);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      main {
+        display: flex;
+        flex-flow: column;
+        flex: 1 0 auto;
+      }
+      article {
+        padding: 30px; 
+        /* border-style: solid; 
+        border-width: 1px;
+        border-color: gray; */
+        margin-bottom: 8px;
+        background: var(--bg--primary);
+        border-radius: var(--brad-outer);
+        box-shadow: 0 3px 5px #1233, 0 5px 17px #0003;
+      }
+      #snackbar {
+          visibility: hidden; /* Hidden by default. Visible on click */
+          min-width: 250px; /* Set a default minimum width */
+          margin-left: -125px; /* Divide value of min-width by 2 */
+          background-color: #333; /* Black background color */
+          color: #fff; /* White text color */
+          text-align: center; /* Centered text */
+          border-radius: 2px; /* Rounded borders */
+          padding: 16px; /* Padding */
+          position: fixed; /* Sit on top of the screen */
+          z-index: 1; /* Add a z-index if needed */
+          left: 50%; /* Center the snackbar */
+          bottom: 30px; /* 30px from the bottom */
+      }
+      #snackbar.show {
+          visibility: visible; /* Show the snackbar */
+      }
+      
+      /* Copypastas */
+      .inputWithCopyWrapper {
+          position: relative;
+          display: inline;
+      }
+      .inputWithCopyWrapper input {
+          height: 22px;
+      }
+      .inputWithCopyWrapper button {
+          position: absolute;
+          top: -2px;
+          right: -16px;
+          width: 40px;
+          height: 22px;
+      }
+      .buttonDiv {
+          width: 80px; 
+          height: 40px; 
+          border-radius: 10px;
+          margin: 5px;
+          font-size: x-small;
+      }
+      .copypastas__mailboxes__input-panel {
+          display: flex;
+      }
+      .copypastas__mailboxes__input-panel__button-grid {
+          display: grid;
+          border: 1px solid #ccc;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+      .copypastas__mailboxes__input-panel__text__textarea {
+          resize: horizontal;
+          height: 99%;
+      }
+      .copypastas__mailboxes__input-panel__button-grid__row-title {
+          font-family: Arial, Helvetica, sans-serif;
+          font-weight: bold;
+          padding-right: 15px;;
+          text-align: right;
+          vertical-align: middle;
+      }
+      .copypastas__mailboxes__input-panel__button-grid__button {
+          display: inline-block;
+          background-color: #f1f1f1;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          height: 50px;
+      }
+      .copypastas__mailboxes__input-panel__button-grid__row-title.grant {background-color: #d1ffe6;}
+      .copypastas__mailboxes__input-panel__button-grid__row-title.revoke {background-color: #ffd1d1;}
+      .copypastas__mailboxes__input-panel__button-grid__button:hover {
+          background-color: #ddd;
+      }
+      .copypastas__mailboxes__input-panel__button-grid__button.active {
+          background-color: #ccc;
+      }
+      .copypastas__mailboxes__input-panel__button-grid__alias-window {
+          grid-column: 1 / span 2;
+      }
+      .copypastas__mailboxes__output-panel__users {
+          font-size: small;
+          border: #8F8F9D 1px solid;
+          padding: 2px;
+      }
+      .copypastas__mailboxes__output-panel__commands {
+          width: 100%; 
+          resize: vertical;
+      }
+      .copypastas__mailboxes__output-panel__message {
+          width: 100%;
+          resize: none;
+      }
+      
+      /* SiteNavigation */
+      .hidden {
+        display: none !important;
+      }
+      
+      .site-navigation {
+        display: flex;
+        flex-shrink: 0;
+        /* inline-size: var(--expanded); */
+        /* margin-block: 1vmin; */
+        margin-right: 10px;
+        /* flex-basis: var(--expanded); */
+      }
+      
+      .site-navigation header {
+        display: flex;
+        justify-content: center;
+      }
+      
+      .site-navigation .nav__steering_wrapper {
+        flex-grow: 1;
+        border-radius: var(--brad-inner);
+      }
+      
+      .site-navigation .nav__steering_item {
+        /* flex-grow: 1; */
+        padding: 0.7em;
+        text-align: center;
+        border-radius: inherit;
+        /* border: 1px solid var(--gray--tertiary); */
+        user-select: none;
+        font-size: 0.875em;
+        font-weight: 500;
+        color: var(--gray--secondary);
+      }
+      
+      .site-navigation .title {
+        user-select: none;
+        font-size: 1.0625rem;
+        font-weight: 500;
+        margin-block-end: 0.25rem;
+        color: var(--gray--secondary);
+        margin: 0;
+        line-height: 1.1;
+        text-align: center;
+        padding: 12px;
+      }
+      
+      .site-navigation nav {
+        display: flex;
+        flex-flow: column;
+        flex: 0 0 auto;
+        min-width: var(--collapsed);
+        padding: var(--frame-space);
+        background: var(--bg--primary);
+        border-radius: var(--brad-outer);
+        box-shadow: 0 3px 5px #1233, 0 5px 17px #0003;
+      }
+      
+      .site-navigation .sidebar__wrapper {
+        --list-gap: 0.5rem;
+        display: flex;
+        flex-flow: column;
+        gap: var(--list-gap);
+      }
+      
+      .site-navigation .sidebar__list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-flow: column;
+        gap: 0.125rem;
+        overflow: hidden;
+      }
+      
+      .site-navigation .sidebar__item {
+        block-size: var(--item);
+        border-radius: var(--brad-inner);
+      }
+      
+      .site-navigation .sidebar__link {
+        display: flex;
+        text-decoration: none;
+        block-size: 100%;
+        align-items: center;
+        outline: 2px solid transparent;
+        border-radius: inherit;
+      }
+      
+      .site-navigation .icon {
+        aspect-ratio: 1;
+        block-size: 100%;
+        display: inline-grid;
+        border-radius: var(--brad-inner);
+      
+        svg {
+          place-self: center;
+          inline-size: var(--svg);
+          block-size: var(--svg);
+          /* fill: var(--gray--primary); */
+        }
+      }
+      
+      .site-navigation .icon.active {
+        .collapsed {
+          display: none;
+        }
+      }
+      
+      .site-navigation .icon:not(.active) {
+        .expanded {
+          display: none;
+        }
+      }
+      
+      .site-navigation .text {
+        user-select: none;
+        border-radius: var(--brad-inner);
+        height: 100%;
+        padding: 0.7em;
+        flex-grow: 1;
+        color: var(--gray--secondary);
+        font-size: 0.875em;
+        font-weight: 500;
+      }
+      
+      .site-navigation .text:hover,
+      .site-navigation .expandable:hover,
+      .site-navigation .nav__steering_item:hover {
+        background: var(--bg--hover);
+        color: var(--dark--primary);
+      }
+      
+      /* May be used for activated style */
+      .site-navigation .active {
+        outline: 2px solid var(--accent--secondary);
+        outline-offset: -2px;
+        background: var(--bg--focus);
+      
+        .icon svg {
+          fill: var(--accent--primary);
+        }
+      }
+      
+      .site-navigation .text:active {
+        background-color: var(--bg--active);
+      }
+      
+      .nav__nested--1{
+        padding-left: 10px;
+      }
+      .nav__nested--2{
+        padding-left: 20px;
+      }
+      .nav__nested--3{
+        padding-left: 30px;
+      }
+      .nav__nested--4{
+        padding-left: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // NAMESPACE StateManager
+      class StateManagerNamespace {
+        static StateManager = class StateManager {
+          constructor() {
+        	  this.registeredStatefulEntities = [];
+          }
+        
+          register(name_, saveMethod_, loadMethod_) {
+        	  let isRegistered = false;
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    if (entity.name == name_) {
+        	  	isRegistered = true;
+        	    }
+        	  });
+        	  if (isRegistered == false) {
+        	    this.registeredStatefulEntities.push(
+        	  	{
+        	  	  name: name_,
+        	  	  saveMethod: saveMethod_,
+        	  	  loadMethod: loadMethod_
+        	  	}
+        	    );
+        	  }
+          }
+        
+          load() {
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    entity.loadMethod();
+        	  });
+          }
+        
+          save() {
+        	  this.registeredStatefulEntities.forEach((entity) => {
+        	    entity.saveMethod();
+        	  });
+          }
+        } // StateManager
+      } // StateManager namespace
+      const stateManager = new StateManagerNamespace.StateManager(); // initialize
+    </script>
+    <aside class="js-site-navigation site-navigation">
+      <nav>
+        <!-- Top bit -->
+        <header>
+          <p class="title">Newfluence</p>
+        </header> <!-- /Top bit -->
+        <section class="sidebar__wrapper">
+          <!-- Show all button-->
+          <div class="nav__steering_wrapper">
+            <div class="js-site-navigation-showall nav__steering_item">Show all</div>
+          </div> <!-- /Show all button-->
+          <!-- Actual buttons -->
+          <ul class="sidebar__list list--primary">
+            <li class="sidebar__item">
+              <div class="js-for-010_first_non_nested js-nav-item sidebar__link">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">First non-nested</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-015_nested js-nav-item sidebar__link">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested base</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-015_nested-010_nested_in_nested js-nav-item sidebar__link nav__nested--1">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested in Nested</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-015_nested-015_nested_in_nested_2 js-nav-item sidebar__link nav__nested--1">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested in Nested 2</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested js-nav-item sidebar__link">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested base 2</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_a js-nav-item sidebar__link nav__nested--1">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 1 a</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b js-nav-item sidebar__link nav__nested--1">
+                <div class="js-nav-expandable expandable icon active">
+                  <svg class="expanded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                  </svg>
+                  <svg class="collapsed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 1 b</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_a js-nav-item sidebar__link nav__nested--2">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 2 a</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_b js-nav-item sidebar__link nav__nested--2">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 2 b</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-020_double_nested-010_nested_level_1_c js-nav-item sidebar__link nav__nested--1">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Nested level 1 c</div>
+              </div>
+            </li>
+            <li class="sidebar__item">
+              <div class="js-for-025_last_non_nested js-nav-item sidebar__link">
+                <div class="icon">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"/>
+                  </svg>
+                </div>
+                <div class="js-nav-button text">Last non-nested</div>
+              </div>
+            </li>
+                </ul> <!-- /Actual buttons -->
+              </section>
+            </nav>
+          </aside>
+    <main>
+      <article id="010_first_non_nested" class='js-article'>
+        <p>First non-nested</p>
+      <img src="webpage_images/010_first_non_nested_img.png" width="316" height="99">
+      </article>
+      <article id="015_nested" class='js-article'>
+        <p>Nested base</p>
+      </article>
+      <article id="015_nested-010_nested_in_nested" class='js-article'>
+        <p>Nested in Nested</p>
+        <p>Send ticket to @exchange_team</p>
+      </article>
+      <article id="015_nested-015_nested_in_nested_2" class='js-article'>
+        <p>Nested in Nested 2</p>
+      </article>
+      <article id="020_double_nested" class='js-article'>
+        <p>Nested base 2</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_a" class='js-article'>
+        <p>Nested level 1 a</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_b" class='js-article'>
+        <p>Nested level 1 b</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_b-010_nested_level_2_a" class='js-article'>
+        <p>Nested level 2 a</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_b-010_nested_level_2_b" class='js-article'>
+        <p>Nested level 2 b</p>
+      </article>
+      <article id="020_double_nested-010_nested_level_1_c" class='js-article'>
+        <p>Nested level 1 c</p>
+      </article>
+      <article id="025_last_non_nested" class='js-article'>
+        <p>Last non-nested</p>
+      <img src="webpage_images/025_last_non_nested_img.png" width="316" height="99">
+      </article>
+    </main>
+    <script>
+      // NAMESPACE SiteNavigation
+      class SiteNavigation {
+        static Navigation = class Navigation {
+          static NavItem = class NavItem {
+            constructor(jsForClassName, articleId, children=null) {
+              this.jsForClassName = jsForClassName;
+              this.articleId = articleId;
+              this.containerElement = document.getElementsByClassName(jsForClassName)[0];
+              this.correspondingArticle = document.getElementById(articleId);
+              this.titleElement = this.containerElement.children[1];
+              this.iconElement = this.containerElement.children[0];
+              if (children == null) {
+                this.children = [];
+              } else {
+                this.children = children;
+              }
+              this.active = false;
+              this.deactivate();
+            } // constructor
+            
+            activate() {
+              this.titleElement.classList.add("active");
+              this.correspondingArticle.classList.remove("hidden");
+              this.active = true;
+            }
+            
+            deactivate() {
+              this.titleElement.classList.remove("active");
+              this.correspondingArticle.classList.add("hidden");
+              this.active = false;
+            }
+          } // NavItem
+          //
+          constructor() { //constructor for Navigation class
+            this.navigationContainer = document.querySelector(".js-site-navigation");
+            this.allButtonContainers = this.navigationContainer.querySelectorAll(".js-nav-item");
+            this.allButtons = this.navigationContainer.querySelectorAll(".js-nav-button");
+            this.allExpandButtons = this.navigationContainer.querySelectorAll(".js-nav-expandable");
+            this.showAllButton = this.navigationContainer.querySelector(".js-site-navigation-showall");
+            this.navigationElementsTree = [
+              new SiteNavigation.Navigation.NavItem("js-for-010_first_non_nested", "010_first_non_nested"),
+              new SiteNavigation.Navigation.NavItem("js-for-015_nested", "015_nested", [
+                new SiteNavigation.Navigation.NavItem("js-for-015_nested-010_nested_in_nested", "015_nested-010_nested_in_nested"),
+                new SiteNavigation.Navigation.NavItem("js-for-015_nested-015_nested_in_nested_2", "015_nested-015_nested_in_nested_2"),
+              ]),
+              new SiteNavigation.Navigation.NavItem("js-for-020_double_nested", "020_double_nested", [
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_a", "020_double_nested-010_nested_level_1_a"),
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b", "020_double_nested-010_nested_level_1_b", [
+                  new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_a", "020_double_nested-010_nested_level_1_b-010_nested_level_2_a"),
+                  new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_b-010_nested_level_2_b", "020_double_nested-010_nested_level_1_b-010_nested_level_2_b"),
+                ]),
+                new SiteNavigation.Navigation.NavItem("js-for-020_double_nested-010_nested_level_1_c", "020_double_nested-010_nested_level_1_c"),
+              ]),
+              new SiteNavigation.Navigation.NavItem("js-for-025_last_non_nested", "025_last_non_nested"),
+            ];
+            this.allNavItems = [];
+            this.allCollapsibles = [];
+            // to be saved as a state
+            this.isShowAll = false;
+            this.checkedArticles = [];
+            this.collapsedNavItems = []; // as all are assumed uncollapsed at start (by default)
+            //
+            this.#startEventListeners();
+            this.#getAllNavItems(this.navigationElementsTree);
+            this.#getAllCollapsibles();
+          } // constructor
+    
+          /* contructor single use methods */
+          #getAllNavItems(navItemList) {
+            navItemList.forEach((navItem) => {
+              this.allNavItems.push(navItem);
+              if (navItem.children.length > 0) {
+                this.#getAllNavItems(navItem.children);
+              }
+            });
+          }
+          //
+          #getAllCollapsibles() {
+            this.allNavItems.forEach((navItem) => {
+              if (navItem.children.length > 0) {
+                this.allCollapsibles.push(navItem);
+              }
+            });
+          }
+    
+          /* Event listeners */
+          #startEventListeners() {
+            this.allButtons.forEach((item) => {
+              item.addEventListener("click", this.navItemOnClick.bind(this));
+            });
+            this.allExpandButtons.forEach((item) => {
+              item.addEventListener("click", this.expandButtonOnClick.bind(this));
+            });
+            this.showAllButton.addEventListener("click", this.showAllButtonOnClick.bind(this));
+          }
+          //
+          navItemOnClick(event) {
+            let navItemElement = this.findButtonByJsClassName(event.target.parentElement.classList[0]);
+            if (!navItemElement) {
+              throw new Error("Pressed navigation item is not found in a list of registered navItems.");
+            }
+            this.toggleArticle(navItemElement);
+          }
+          //
+          expandButtonOnClick(event) {
+            // Get the container element (it should have 'js-for' class in it)
+            let containerElement = event.target;
+            while (!containerElement.classList.contains("js-nav-item")) {
+              containerElement = containerElement.parentElement; // "js-nav-item has also js-for at classList[0]"
+            }
+            // When element is found
+            let navItemElement = this.findButtonByJsClassName(containerElement.classList[0]);
+            this.toggleExpand(navItemElement);
+          }
+          //
+          showAllButtonOnClick(event) {
+            this.toggleShowAll();
+          }
+    
+          /* Methods */
+          // utility methods
+          findButtonByJsClassName(className, navButtonList_=null) {
+            let navButtonList = null;
+            if (navButtonList_ != null) {
+              navButtonList = navButtonList_;
+            } else {
+              navButtonList = this.navigationElementsTree;
+            }
+            let found = null;
+            for (let i = 0; i < navButtonList.length; i++) {
+              if (navButtonList[i].jsForClassName == className) {
+                return navButtonList[i];
+              }
+              if (navButtonList[i].children.length > 0) {
+                found = this.findButtonByJsClassName(className, navButtonList[i].children)
+                if (found != null) {
+                  return found;
+                }
+              }
+            }
+            return found;
+          }
+    
+          // related to handling expand tree part of navItems
+          toggleExpand(navItem) {
+            if (this.collapsedNavItems.includes(navItem)) {
+              this.collapsedNavItems.forEach((element, index) => {
+                if (element == navItem) {
+                  this.collapsedNavItems.splice(index, 1);
+                }
+              });
+            } else {
+              this.collapsedNavItems.push(navItem);
+            }
+            this.renderPage();
+          }
+          //
+          collapseAllCollapsibles() {
+            this.allCollapsibles.forEach((navItem) => {
+              navItem.iconElement.classList.remove("active");
+              navItem.children.forEach((el) => {
+                el.containerElement.parentElement.classList.add("hidden");
+              });
+            });
+          }
+          //
+          expandNonCollapsed(navItemList_=null) {
+            let navItemList = null;
+            if (navItemList_ != null) {navItemList = navItemList_;} else {navItemList = this.navigationElementsTree;}
+            navItemList.forEach((navItem) => {
+              navItem.containerElement.parentElement.classList.remove("hidden");
+              if (navItem.children.length > 0 && this.collapsedNavItems.includes(navItem) == false) {
+                navItem.iconElement.classList.add("active");
+                this.expandNonCollapsed(navItem.children);
+              }
+            });
+          }
+    
+          // related to pressing navItems title parts
+          toggleArticle(navItem) {
+            if (this.isShowAll) {
+              return;
+            }
+            if (this.checkedArticles.includes(navItem)) {
+              this.checkedArticles.forEach((element, index) => {
+                if (element == navItem) {
+                  this.checkedArticles.splice(index, 1);
+                }
+              });
+            } else {
+              this.checkedArticles.push(navItem);
+            }
+            this.renderPage();
+          }
+    
+          // related to 'Show all' button
+          toggleShowAll() {
+            this.showAllButton.classList.toggle("active");
+            this.isShowAll = !this.isShowAll;
+            if (this.isShowAll) {
+              this.showAllArticles(this.navigationElementsTree);
+            } else {
+              this.hideAllArticles(this.navigationElementsTree);
+              this.showAllSavedArticles(this.checkedArticles);
+            }
+          }
+          //
+          hideAllArticles(navItemList) {
+            for (let i = 0; i < navItemList.length; i++) {
+              navItemList[i].deactivate()
+              if (navItemList[i].children.length > 0) {
+                this.hideAllArticles(navItemList[i].children);
+              }
+            }
+          }
+          //
+          showAllSavedArticles(navItemList) {
+            for (let i = 0; i < navItemList.length; i++) {
+              navItemList[i].activate()
+            };
+          }
+          //
+          showAllArticles(navItemList) {
+            for (let i = 0; i < navItemList.length; i++) {
+              navItemList[i].activate()
+              if (navItemList[i].children.length > 0) {
+                this.showAllArticles(navItemList[i].children);
+              }
+            };
+          }
+    
+          // related to refreshing nav
+          renderPage() {
+            // Deactivate all navItems and activate only checked ones
+            if (this.isShowAll == false) {
+              this.allNavItems.forEach((navItem) => {
+                navItem.deactivate();
+              });
+              this.checkedArticles.forEach((navItem) => {
+                navItem.activate();
+              });
+            }
+            // Handling collapsibles
+            this.collapseAllCollapsibles();
+            this.expandNonCollapsed();
+          }
+    
+          /* State */
+          saveState() {
+            let checkedArticlesStrings = [];
+            this.checkedArticles.forEach((navItem) => {
+              checkedArticlesStrings.push(navItem.jsForClassName);
+            });
+            let collapsedNavItemsStrings = [];
+            this.collapsedNavItems.forEach((navItem) => {
+              collapsedNavItemsStrings.push(navItem.jsForClassName);
+            });
+            const stateObject = {
+              isShowAll: this.isShowAll,
+              checkedArticlesStrings: checkedArticlesStrings,
+              collapsedNavItemsStrings: collapsedNavItemsStrings
+            }
+            console.log(stateObject);
+            localStorage.setItem("siteNavigation", JSON.stringify(stateObject));
+          }
+          //
+          loadState() {
+            const loadedStateObject = JSON.parse(localStorage.getItem("siteNavigation"));
+            if (!loadedStateObject) {
+              console.log("No loaded state for 'siteNavigation'");
+              return;
+            }
+            // checked articles
+            this.checkedArticles = [];
+            loadedStateObject.checkedArticlesStrings.forEach((jsName) => {
+              this.checkedArticles.push(this.findButtonByJsClassName(jsName));
+            });
+            // collapsed NavItems
+            this.collapsedNavItems = [];
+            loadedStateObject.collapsedNavItemsStrings.forEach((jsName) => {
+              this.collapsedNavItems.push(this.findButtonByJsClassName(jsName));
+            });
+            //
+            this.renderPage();
+            if (this.isShowAll != loadedStateObject.isShowAll) {
+              this.isShowAll = !loadedStateObject.isShowAll;
+              this.toggleShowAll();
+            }
+          }
+        } // Navigation
+      } // SiteNavigation namespace
+      // Initialize
+      const siteNavigation = new SiteNavigation.Navigation();
+      stateManager.register(
+        "siteNavigation", 
+        siteNavigation.saveState.bind(siteNavigation), 
+        siteNavigation.loadState.bind(siteNavigation)
+      );
+    </script>
+    <script>
+      window.addEventListener("load", (event) => {
+        stateManager.load();
+      });
+      window.addEventListener("beforeunload", (event) => {
+        stateManager.save();
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,6 @@
 used links:
 https://www.pythontutorial.net/tkinter/
+https://stackoverflow.com/questions/4033723/how-do-i-access-command-line-arguments
 
 Wymagania funkcjonalne:
  -- // Global

@@ -2,37 +2,51 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
+from models.prog_args import ProgArgs
+from pathlib import PurePath
+
 
 def open_directory_dialog(site_directory_text):
     filename = filedialog.askdirectory()
     site_directory_text.set(filename)
 
 
-def main():
+def start() -> ProgArgs:
     root = tk.Tk()
     root.title('Makesite')
     # root.geometry('300x100')
 
+    # Static bits
     site_directory_label = ttk.Label(root, text='Directory:')
 
+    # Interactive bits
     site_directory_text = tk.StringVar()
     site_directory = ttk.Entry(root, textvariable=site_directory_text)
 
-    site_directory_browse_button = ttk.Button(root, text='browse', command=lambda v=site_directory_text: open_directory_dialog(v))
+    site_directory_browse_button = ttk.Button(root, text='browse',
+                                              command=lambda v=site_directory_text: open_directory_dialog(v))
 
+    # Packing
     site_directory_label.pack(side=tk.LEFT)
     site_directory.pack(side=tk.LEFT)
     site_directory_browse_button.pack(side=tk.LEFT)
 
+    # Running
     try:
         from ctypes import windll
         windll.shcore.SetProcessDpiAwareness(1)
     finally:
         root.mainloop()
 
-    print("Executed after mainloop")
-    smileyface = input("ey")
+    # Return settings to main program after completion
+    return ProgArgs(
+        target_path=PurePath(site_directory_text.get()),
+        embed_images=False
+    )
 
 
 if __name__ == "__main__":
-    main()
+    argumets = start()
+    print(argumets)
+
+    hold_the_screen = input("Press any key to exit...")
