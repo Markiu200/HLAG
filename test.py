@@ -1,6 +1,5 @@
 from itertools import chain
-from tree import Tree
-from tree_node import TreeNode
+from outline_node import OutlineNode
 
 my_tree = Tree("root")
 

@@ -1,7 +1,7 @@
 from abc import ABC
 # Own imports
 from tree_node import TreeNode
-from tree import Tree
+from outline_node import Tree
 
 
 class TreeComponent:
