@@ -1,12 +1,34 @@
-from outline_element import OutlineElement
 from pathlib import PurePath
+# Own imports
+from base_generator import BaseGenerator
 
 
 class OutlineNode:
-    def __init__(self, element: OutlineElement):
-        self.element = element
+    """Represents node in a tree. It is used to assembly JS navigation and to support
+    section content generation.
+
+    Attributes:
+        rel_path: PurePath - file or directory path relative to project directory root
+        abs_path: PurePath - absolute file or directory path
+        filename: str - file or directory name
+    """
+    def __init__(self, rel_path: PurePath, abs_path: PurePath, filename: str):
         self.children = []
         self.parent = None
+        #
+        self.rel_path = rel_path
+        self.abs_path = abs_path
+        self.filename = filename
+        self.dom_id = None
+        self.generator: BaseGenerator | None = None
+        #
+        self.create_dom_id()
+
+    def create_dom_id(self):
+        self.dom_id = ".".join([*self.rel_path.parts, self.filename])
+
+    def set_generator(self, generator: BaseGenerator):
+        self.generator = generator
 
     def walk(self):
         yield from self._walk(self)
@@ -26,9 +48,6 @@ class OutlineNode:
 
     def get_parent(self) -> 'OutlineNode':
         return self.parent
-
-    def get_element(self) -> OutlineElement:
-        return self.element
 
     def get_size(self) -> int:
         return self._count_nodes(self)
@@ -70,7 +89,7 @@ class OutlineNode:
         return self._get_node(self, rel_path)
 
     def _get_node(self, node: 'OutlineNode', rel_path: PurePath):
-        if node.element.rel_path == rel_path:
+        if node.rel_path == rel_path:
             return node
 
         for child in node.children:

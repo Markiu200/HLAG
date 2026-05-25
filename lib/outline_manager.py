@@ -2,8 +2,10 @@ from pathlib import PurePath, Path
 import logging
 # Own imports
 from models.config import Config
-from lib.filetypes import Node, File, Directory, RootNode
-from lib.base_outline_manager import BaseOutlineManager
+from filetypes import Node, File, Directory, RootNode
+from outline_node import OutlineNode
+from outline_element import OutlineElement
+from base_outline_manager import BaseOutlineManager
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +13,13 @@ logger = logging.getLogger(__name__)
 class OutlineManager(BaseOutlineManager):
     def __init__(self, config: Config):
         self.config = config
-        self.root = Directory(PurePath("."), PurePath("."), RootNode())
         self.node_count = 0
         self.registered_nodes = {}
-        self.prefix_length = len(config.target_path.parts)
+        self.abs_dir_prefix_length = len(config.target_path.parts)
+        # Create root
+        self.root = OutlineNode(
+
+        )
 
     def register(self, path, filename):
         print("Registered:", PurePath(path, filename))
