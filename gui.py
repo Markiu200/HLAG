@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
-from models.prog_args import ProgArgs
+from models.config import Config
 from pathlib import PurePath
 
 
@@ -11,7 +11,7 @@ def open_directory_dialog(site_directory_text):
     site_directory_text.set(filename)
 
 
-def start() -> ProgArgs:
+def start() -> Config:
     root = tk.Tk()
     root.title('Makesite')
     # root.geometry('300x100')
@@ -39,7 +39,12 @@ def start() -> ProgArgs:
         root.mainloop()
 
     # Return settings to main program after completion
-    return ProgArgs(
+    # todo temporary check for empty directory
+    if site_directory_text.get() == "":
+        # raise NotADirectoryError(f"Root directory not set!")
+        site_directory_text.set('D:\\hlag\\webpage')
+
+    return Config(
         target_path=PurePath(site_directory_text.get()),
         embed_images=False
     )

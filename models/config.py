@@ -1,7 +1,7 @@
 from pathlib import PurePath
 
 
-class ProgArgs:
+class Config:
     def __init__(self,
                  target_path: str | PurePath = None,
                  embed_images: bool = False
