@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class BaseOutlineManager(ABC):
     @abstractmethod
-    def register(self, path, filename):
+    def register(self, full_path):
         """Register a file or directory that needs to be in final product.
 
         Positional arguments:

@@ -1,13 +1,14 @@
 from pathlib import PurePath
+from dataclasses import dataclass
+from logging import Logger
 
 
+@ dataclass
 class Config:
-    def __init__(self,
-                 target_path: str | PurePath = None,
-                 embed_images: bool = False
-                 ):
-        self.embed_images = embed_images
-        self.target_path = target_path
+    target_path: PurePath
+    embed_images: bool
+    base_path_length: int
+    logger: Logger | None
 
-    def __str__(self):
-        return f"target_path:{self.target_path}; embed_images:{self.embed_images}"
+
+config = Config(PurePath(), False, 0, None)
