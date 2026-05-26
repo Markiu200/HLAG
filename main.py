@@ -47,6 +47,7 @@ structure_reader = StructureReader(
 
 # Run the script
 structure_reader.scan()
+print(omanager.root.dom_id)
 print("And so on...")
 print(omanager.registered_nodes)
 
