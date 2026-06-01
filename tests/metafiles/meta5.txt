@@ -1,0 +1,7 @@
+[%>title:Only title but leading new line and some stuff later]
+[%>type:other]
+[%>module:simple_txt]
+
+<Dict>
+
+</Dict>
