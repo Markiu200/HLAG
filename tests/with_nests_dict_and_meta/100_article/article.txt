@@ -1,0 +1,2 @@
+[%>meta:metadata_for_module]
+Article text
