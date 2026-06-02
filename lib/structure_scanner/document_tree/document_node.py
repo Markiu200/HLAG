@@ -1,5 +1,6 @@
 from pathlib import PurePath
-from data.node_attributes import NodeAttribute
+from data.node_attribute import NodeAttribute
+from data.node_type import NodeMetadataTypeValue, NodeMetadataKey
 
 
 class DocumentNode:
@@ -38,10 +39,10 @@ class DocumentNode:
     def get_attributes(self) -> set:
         return self.attributes
 
-    def set_metadata(self, metadata_tuple: (str, str)):
+    def set_metadata(self, metadata_tuple: (str | NodeMetadataKey, str | NodeMetadataTypeValue)):
         self.metadata[metadata_tuple[0]] = metadata_tuple[1]
 
-    def get_metadata(self, key) -> str | None:
+    def get_metadata(self, key: str | NodeMetadataKey) -> str | NodeMetadataTypeValue | None:
         if key in self.metadata:
             return self.metadata[key]
         return None
