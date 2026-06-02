@@ -27,6 +27,9 @@ class StructureScanner:
                 or (parent_node.get_parent() is not None
                     and NodeAttribute.IS_ESCAPED in parent_node.get_parent().get_attributes())):
             parent_node.add_attribute(NodeAttribute.IS_ESCAPED)
+        # otherwise it is in outline
+        else:
+            parent_node.add_attribute(NodeAttribute.IN_OUTLINE)
 
         with os.scandir(parent_node.path) as contents:
             for scanned_element in contents:
