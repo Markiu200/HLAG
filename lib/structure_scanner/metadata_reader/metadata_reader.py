@@ -1,11 +1,28 @@
-from pathlib import PurePath
 import re
+from pathlib import PurePath
 from logging import Logger
 # Own imports
 from models.config import config
+from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 
-possible_keys = ("title", "type", "module", "meta")
-type_possible_values = ("dictionary", "image", "metafile", "unsupported")
+possible_keys = [key.value for key in NodeMetadataKey]
+type_possible_values = [key.value for key in NodeMetadataTypeValue]
+
+
+def key_to_enum_type(key):
+    if isinstance(key, NodeMetadataKey):
+        return key
+    if key in possible_keys:
+        return NodeMetadataKey(key)
+    return None
+
+
+def type_value_to_enum_type(value):
+    if isinstance(value, NodeMetadataTypeValue):
+        return value
+    if value in possible_keys:
+        return NodeMetadataTypeValue(value)
+    return None
 
 
 def get_metadata(path: PurePath, logger: Logger = None):
@@ -28,25 +45,34 @@ def get_metadata(path: PurePath, logger: Logger = None):
                     continue
 
             if reg_search:
+                # user did not provide key or value (or both)
+                # todo add in tests wrongly typed in data
                 if len(reg_search.groups()) < 2:
                     if logger:
                         config.logger.warning(f"Metadata for line {line} has no key:value pair, line is ignored")
                     continue
+
+                # both key and value are here, check for errors
                 key = reg_search.groups()[0]
                 value = reg_search.groups()[1]
+                # check if key is ok
                 if key not in possible_keys:
                     if logger:
                         config.logger.warning(f"Metadata key '{key}' is not recognized and is ignored")
                     continue
+                # check if value of key of 'type' is ok
                 if key == "type" and value not in type_possible_values:
                     if logger:
                         config.logger.warning(f"Metadata value '{value}' for 'type' key is not recognized and is ignored")
                     continue
 
+            key = key_to_enum_type(key)
+            if key == NodeMetadataKey.TYPE:
+                value = type_value_to_enum_type(value)
             metadata[key] = value
 
-    if had_anything_else is False and metadata.get("type") is None and len(metadata) > 0:
-        metadata["type"] = "metafile"
+    if had_anything_else is False and metadata.get(NodeMetadataKey.TYPE) is None and len(metadata) > 0:
+        metadata[NodeMetadataKey.TYPE] = NodeMetadataTypeValue.METAFILE
 
     return metadata
 
@@ -64,6 +90,7 @@ if __name__ == "__main__":
         test_metadata = get_metadata(test_file)
         for tkey, tvalue in test_metadata.items():
             print(f"{tkey}: {tvalue}")
+        print()
 
     # test_lines = [
     #     "[%>title:jeff]"
