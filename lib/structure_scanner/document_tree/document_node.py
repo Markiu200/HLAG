@@ -11,6 +11,14 @@ class DocumentNode:
         self.attributes = set()
         self.metadata = dict()
 
+    def __eq__(self, other: 'DocumentNode'):
+        return (self.path == other.path
+                and self.attributes == other.attributes
+                and self.metadata == other.metadata)
+
+    def __str__(self):
+        return f"parent:     {id(self.parent)}\npath:       {self.path}\nattributes: {self.attributes}\nmetadata:   {self.metadata}"
+
     def add_child(self, child_node: 'DocumentNode'):
         if not isinstance(child_node, DocumentNode):
             raise TypeError(f"Child node is of type {type(child_node)} whereas it should be {type(self)}")
