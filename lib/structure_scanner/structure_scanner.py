@@ -3,6 +3,7 @@ from pathlib import PurePath
 # Own imports
 from models.config import config
 from data.node_attributes import NodeAttribute
+from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 from structure_scanner.document_tree.document_tree import DocumentTree
 from structure_scanner.document_tree.document_node import DocumentNode
 from structure_scanner.metadata_reader.metadata_reader import get_metadata
@@ -43,10 +44,11 @@ class StructureScanner:
                     parent_node.add_child(new_node)
                     self._scan(new_node)
 
-                # apply metadata to directory itself - just title so far
-                for child in parent_node.children:
-                    if child.get_metadata("type") == "metafile" and child.get_metadata("title") is not None:
-                        parent_node.set_metadata(("title", child.get_metadata("title")))
+            # apply metadata to directory itself - just title so far
+            for child in parent_node.children:
+                if (child.get_metadata(NodeMetadataKey.TYPE) == NodeMetadataTypeValue.METAFILE
+                        and child.get_metadata(NodeMetadataKey.TITLE) is not None):
+                    parent_node.set_metadata((NodeMetadataKey.TITLE, child.get_metadata(NodeMetadataKey.TITLE)))
 
     def _scan_file(self, parent_node: DocumentNode, path: PurePath):
         new_node = DocumentNode(path=path)
