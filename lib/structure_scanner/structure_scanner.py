@@ -2,7 +2,7 @@ import os
 from pathlib import PurePath
 # Own imports
 from models.config import config
-from data.node_attributes import NodeAttribute
+from data.node_attribute import NodeAttribute
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 from structure_scanner.document_tree.document_tree import DocumentTree
 from structure_scanner.document_tree.document_node import DocumentNode
@@ -18,11 +18,14 @@ class StructureScanner:
         self.tree = DocumentTree(root=DocumentNode(path=root_directory))
         #
         self.supported_readable_files_extensions = (".txt", ".json", ".html")
+        self.supported_image_files_extensions = (".jpg", ".jpeg", "png")
 
     def scan(self):
         self._scan(self.tree.get_root())
 
     def _scan(self, parent_node: DocumentNode):
+        # all directories are containers
+        parent_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.CONTAINER))
         # check if current folder is escaped
         if (self._is_escaped(parent_node.path.name)
                 or (parent_node.get_parent() is not None
@@ -32,9 +35,9 @@ class StructureScanner:
         else:
             parent_node.add_attribute(NodeAttribute.IN_OUTLINE)
 
-        with os.scandir(parent_node.path) as contents:
+        with (os.scandir(parent_node.path) as contents):
             for scanned_element in contents:
-                current_full_path = PurePath(parent_node.path, scanned_element)
+                current_full_path = PurePath(parent_node.path, scanned_element.name)
 
                 if scanned_element.is_file():
                     self._scan_file(parent_node, current_full_path)
@@ -53,9 +56,26 @@ class StructureScanner:
     def _scan_file(self, parent_node: DocumentNode, path: PurePath):
         new_node = DocumentNode(path=path)
         file_extension = path.suffix
-        if file_extension in self.supported_readable_files_extensions:
+        # in readable files, read metadata
+        if file_extension.lower() in self.supported_readable_files_extensions:
             new_node.metadata = dict(get_metadata(path, config.logger))
+            # check if type was already set by method above
+            if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
+                new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.TEXT))
 
-            if NodeAttribute.IS_ESCAPED in parent_node.get_attributes() or self._is_escaped(path.name):
-                new_node.add_attribute(NodeAttribute.IS_ESCAPED)
+        # check if it is image file
+        # todo include in tests
+        if file_extension.lower() in self.supported_image_files_extensions:
+            new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.IMAGE))
+
+        # check if it is escaped directly or through parent node
+        if NodeAttribute.IS_ESCAPED in parent_node.get_attributes() or self._is_escaped(path.name):
+            new_node.add_attribute(NodeAttribute.IS_ESCAPED)
+
+        # if file did not match any supported extensions list
+        # todo include in tests
+        if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
+            new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.UNSUPPORTED))
+
+        # after all checks, add ready node
         parent_node.add_child(new_node)
