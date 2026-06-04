@@ -1,0 +1,4 @@
+[%>title:All meta types correctly]
+[%>type:metafile]
+[%>module:the_module]
+[%>meta:theMeta]
