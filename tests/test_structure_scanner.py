@@ -96,7 +96,7 @@ class TestStructureScanner(unittest.TestCase):
             result_node = self.structure_scanner.tree.get_node_by_path(node.path)
             self.assertTrue(result_node, f"Node {node.path} is not accounted for!")
             self.assertEqual(node, result_node, f"Node {node.path} does not match the reference node!\nExpected: {str(node)}\nActual: {str(result_node)}")
-            #
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
