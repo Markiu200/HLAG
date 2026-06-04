@@ -53,7 +53,7 @@ def get_metadata(path: PurePath, logger: Logger = None):
                     continue
 
                 # both key and value are here, check for errors
-                key = reg_search.groups()[0]
+                key = reg_search.groups()[0].lower()
                 value = reg_search.groups()[1]
                 # check if key is ok
                 if key not in possible_keys:
@@ -61,14 +61,14 @@ def get_metadata(path: PurePath, logger: Logger = None):
                         config.logger.warning(f"Metadata key '{key}' is not recognized and is ignored")
                     continue
                 # check if value of key of 'type' is ok
-                if key == "type" and value not in type_possible_values:
+                if key == "type" and value.lower() not in type_possible_values:
                     if logger:
                         config.logger.warning(f"Metadata value '{value}' for 'type' key is not recognized and is ignored")
                     continue
 
             key = key_to_enum_type(key)
             if key == NodeMetadataKey.TYPE:
-                value = type_value_to_enum_type(value)
+                value = type_value_to_enum_type(value.lower())
             metadata[key] = value
 
     if had_anything_else is False and metadata.get(NodeMetadataKey.TYPE) is None and len(metadata) > 0:
