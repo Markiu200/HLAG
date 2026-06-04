@@ -1,0 +1,1 @@
+[%>title:Only title and some text after tag on the same line]hey

@@ -1,3 +1,1 @@
-[%>title:Title and module and type and no stuff later]
-[%>type:dictionary]
-[%>module:simple_txt]
+[%>title:Only title and leading new line]

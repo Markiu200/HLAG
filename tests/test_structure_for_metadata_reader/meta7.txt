@@ -1,0 +1,3 @@
+[%>title:other cases]tags]
+[%>meta:a_meta][%>type:metadata]
+[%>module:[%>module]:module]

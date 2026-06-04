@@ -1,1 +1,4 @@
-[%>title:Only title but leading new line]
+[%>titl:Wrong keys]
+[%>typ:metafile]
+[%>modu:a_module]
+[%>met:a_meta]

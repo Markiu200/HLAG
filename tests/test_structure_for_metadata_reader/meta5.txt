@@ -1,7 +1,2 @@
-[%>title:Title and module and wrong type and some stuff later]
-[%>type:other]
-[%>module:simple_txt]
-
-<Dict>
-
-</Dict>
+[%>title:Title and type with wrong value]
+[%>type:otherz]
