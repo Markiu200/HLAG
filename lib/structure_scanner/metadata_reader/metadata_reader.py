@@ -1,9 +1,18 @@
 import re
 from pathlib import PurePath
 from logging import Logger
+from dataclasses import dataclass
 # Own imports
 from models.config import config
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
+
+
+@dataclass
+class ReadResults:
+    metadata: dict
+    has_leftovers: bool
+    leftovers: str
+    last_line: int
 
 
 class MetadataReader:
@@ -12,7 +21,7 @@ class MetadataReader:
 
     def __init__(self, logger: Logger | None = None):
         self.logger = logger
-        self.was_anything_else = False
+        self.tag_regex = r'^(?:\[%>)(.*?):(.*?)]'
 
     @classmethod
     def key_to_enum_type(cls, key):
@@ -30,59 +39,102 @@ class MetadataReader:
             return NodeMetadataTypeValue(value)
         return None
 
-    def get_metadata_from_file(self, path: PurePath) -> (dict, bool):
+    def get_metadata_from_file(self, path: PurePath) -> ReadResults:
         metadata = dict()
-        was_anything_else = False
+        last_line = 0
+
+        result = None
         with open(path) as f:
             for line in f.readlines():
-                # lines can be commented out with "//"
-                # todo add to tests
-                if line.startswith("//"):
-                    continue
-
-                # empty lines also ignored
-                # todo add to tests
-                if len(line.strip()) == 0:
-                    continue
-
-                # do not read file further when tags end
-                if not line.startswith("[%>"):
-                    was_anything_else = True
+                last_line += 1
+                result = self.get_metadata_from_line(line)
+                if len(result.metadata) > 0:
+                    for key, value in result.metadata.items():
+                        metadata[key] = value
+                if result.last_line > 0:
                     break
 
-                # if there's actually any tag, then get metadata
-                retrieved = self.get_metadata_from_line(line)
-                for key, value in retrieved[0].items():
+        if result is None:
+            return ReadResults(
+                metadata=dict(),
+                has_leftovers=False,
+                leftovers="",
+                last_line=last_line
+            )
+        else:
+            return ReadResults(
+                metadata=metadata,
+                has_leftovers=result.has_leftovers,
+                leftovers=result.leftovers,
+                last_line=last_line
+            )
+
+    def get_metadata_from_lines(self, lines: iter) -> ReadResults:
+        metadata = dict()
+        last_line = 0
+
+        result = None
+        for line in lines:
+            line += 1
+            result = self.get_metadata_from_line(line)
+            if len(result.metadata) > 0:
+                for key, value in result.metadata.items():
                     metadata[key] = value
+            if result.last_line > 0:
+                break
 
-                # it there's any non-tag in a line, stop reading
-                if was_anything_else or retrieved[1]:
-                    was_anything_else = True
-                    break
+        if result is None:
+            return ReadResults(
+                metadata=dict(),
+                has_leftovers=False,
+                leftovers="",
+                last_line=last_line
+            )
+        else:
+            return ReadResults(
+                metadata=metadata,
+                has_leftovers=result.has_leftovers,
+                leftovers=result.leftovers,
+                last_line=last_line
+            )
 
-        return metadata, was_anything_else
+    def get_metadata_from_line(self, line: str) -> ReadResults:
+        metadata = dict()
+        has_leftovers = False
+        last_line = 0
 
-    def get_metadata_from_line(self, line: str) -> (dict, bool):
-        result_dict = dict()
-        was_anything_else = False
+        # first check if the line would be considered as "last" for reader - empty line
+        if len(line.strip()) == 0:
+            last_line = 1
 
-        if line.startswith("[%>"):
-            reg_search = re.search(r'(?:\[%>)(.*?):(.*?)]', line)
+        # strip the comments
+        comment_search = re.search(r'(//.*)', line)
+        if comment_search is not None:
+            line = line.replace(comment_search.group(0), "")
 
-            while reg_search:
-                processed = self._process_findings(reg_search)
-                if processed is not None:
-                    result_dict[processed[0]] = processed[1]
+        line = line.strip()
+        reg_search = re.match(self.tag_regex, line)
 
-                line = line.replace(reg_search.group(0), "").strip()
-                reg_search = None
-                if line.startswith("[%>"):
-                    reg_search = re.search(r'(?:\[%>)(.*?):(.*?)]', line)
+        while reg_search:
+            processed = self._process_findings(reg_search)
+            if processed is not None:
+                metadata[processed[0]] = processed[1]
 
-        if len(line) > 0:
-            was_anything_else = True
+            line = line.replace(reg_search.group(0), "").strip()
+            reg_search = re.match(self.tag_regex, line)
 
-        return result_dict, was_anything_else
+        leftovers = line
+        if len(leftovers) > 0:
+            has_leftovers = True
+            # second check if the line would be considered "last" for reader - leftovers
+            last_line = 1
+
+        return ReadResults(
+            metadata=metadata,
+            has_leftovers=has_leftovers,
+            leftovers=leftovers,
+            last_line=last_line
+        )
 
     def _process_findings(self, reg_search: re.Match) -> tuple | None:
         key = reg_search.groups()[0].lower()
@@ -107,69 +159,6 @@ class MetadataReader:
 
         return key, value
 
-    def get_metadata_from_lines(self, lines: iter) -> list[tuple[dict, bool]]:
-        metadata_list = list()
-
-        for line in lines:
-            result = self.get_metadata_from_line(line)
-            metadata_list.append((result[0], result[1]))
-
-        return metadata_list
-
-
-def get_metadata(path: PurePath, logger: Logger = None):
-    metadata = dict()
-    had_anything_else = False
-
-    with open(path) as f:
-        for line in f.readlines():
-            if line.startswith("//"):
-                continue
-
-            reg_search = re.search(r'(?:\[%>)(.*?):(.*?)]', line)
-            if reg_search is None:
-                if len(line.strip()) == 0:
-                    had_anything_else = False
-                    continue
-
-                if len(line.strip()) > 0:
-                    had_anything_else = True
-                    continue
-
-            if reg_search:
-                # user did not provide key or value (or both)
-                if len(reg_search.groups()) < 2:
-                    if logger:
-                        config.logger.warning(f"Metadata for line {line} has no key:value pair, line is ignored")
-                    continue
-
-                # both key and value are here, check for errors
-                key = reg_search.groups()[0].lower()
-                value = reg_search.groups()[1]
-                # check if key is ok
-                if key not in MetadataReader.possible_keys:
-                    if logger:
-                        config.logger.warning(f"Metadata key '{key}' is not recognized and is ignored")
-                    continue
-                # check if value of key of 'type' is ok
-                if key == "type" and value.lower() not in MetadataReader.type_possible_values:
-                    if logger:
-                        config.logger.warning(
-                            f"Metadata value '{value}' for 'type' key is not recognized and is ignored")
-                    continue
-
-            key = MetadataReader.key_to_enum_type(key)
-            if key == NodeMetadataKey.TYPE:
-                value = MetadataReader.type_value_to_enum_type(value.lower())
-            metadata[key] = value
-
-    # if had_anything_else is False and metadata.get(NodeMetadataKey.TYPE) is None and len(metadata) > 0:
-    #     metadata[NodeMetadataKey.TYPE] = NodeMetadataTypeValue.METAFILE
-
-    return metadata, had_anything_else
-
 
 if __name__ == "__main__":
-    metadata_reader = MetadataReader()
-    got_meta = metadata_reader.get_metadata_from_line("[%>title:jeff][%>type:metafile]")
-    print(got_meta)
+    pass
