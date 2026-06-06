@@ -51,6 +51,10 @@ class MetadataReader:
                 if len(result.metadata) > 0:
                     for key, value in result.metadata.items():
                         metadata[key] = value
+                if result.last_line == -1:
+                    # if it was empty line, last line was actually previous one
+                    last_line -= 1
+                    break
                 if result.last_line > 0:
                     break
 
@@ -105,7 +109,7 @@ class MetadataReader:
 
         # first check if the line would be considered as "last" for reader - empty line
         if len(line.strip()) == 0:
-            last_line = 1
+            last_line = -1
 
         # strip the comments
         comment_search = re.search(r'(//.*)', line)
