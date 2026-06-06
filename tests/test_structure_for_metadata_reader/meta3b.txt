@@ -1,0 +1,3 @@
+[%>title:Only title tag and type tag after new line]
+
+[%>type:metafile]
