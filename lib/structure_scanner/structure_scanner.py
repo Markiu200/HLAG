@@ -6,7 +6,7 @@ from data.node_attribute import NodeAttribute
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 from structure_scanner.document_tree.document_tree import DocumentTree
 from structure_scanner.document_tree.document_node import DocumentNode
-from structure_scanner.metadata_reader.metadata_reader import get_metadata
+import structure_scanner.metadata_reader.metadata_reader as mr
 
 
 class StructureScanner:
@@ -16,6 +16,7 @@ class StructureScanner:
 
     def __init__(self, root_directory: PurePath):
         self.tree = DocumentTree(root=DocumentNode(path=root_directory))
+        self.metadata_reader = mr.MetadataReader(config.logger)
         #
         self.supported_readable_files_extensions = (".txt", ".json", ".html")
         self.supported_image_files_extensions = (".jpg", ".jpeg", "png")
@@ -58,7 +59,8 @@ class StructureScanner:
         file_extension = path.suffix
         # in readable files, read metadata
         if file_extension.lower() in self.supported_readable_files_extensions:
-            new_node.metadata = dict(get_metadata(path, config.logger))
+            got_meta = self.metadata_reader.get_metadata_from_file(path)
+            new_node.metadata = dict(got_meta.metadata)
             # check if type was already set by method above
             if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
                 new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.TEXT))
@@ -68,14 +70,14 @@ class StructureScanner:
         if file_extension.lower() in self.supported_image_files_extensions:
             new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.IMAGE))
 
-        # check if it is escaped directly or through parent node
-        if NodeAttribute.IS_ESCAPED in parent_node.get_attributes() or self._is_escaped(path.name):
-            new_node.add_attribute(NodeAttribute.IS_ESCAPED)
-
         # if file did not match any supported extensions list
         # todo include in tests
         if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
             new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.UNSUPPORTED))
+
+        # check if it is escaped directly or through parent node
+        if NodeAttribute.IS_ESCAPED in parent_node.get_attributes() or self._is_escaped(path.name):
+            new_node.add_attribute(NodeAttribute.IS_ESCAPED)
 
         # after all checks, add ready node
         parent_node.add_child(new_node)
