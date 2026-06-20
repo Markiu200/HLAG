@@ -4,6 +4,9 @@ from pathlib import Path, PurePath
 # Own imports
 from models.config import config
 import gui
+import structure_scanner.metadata_reader.metadata_reader as mr
+from structure_scanner.structure_scanner import StructureScanner
+
 from module_manager import ModuleManager
 from outline_manager import OutlineManager
 from structure_reader_new import StructureReader
@@ -50,11 +53,16 @@ if __name__ == "__main__":
     # todo css_manager is instantiated
     # In case GUI gives any option to change default CSS, it is instantiated before GUI
 
+    # Start GUI
     start_gui()
 
     # todo js_manager is instatiated
 
+    # # todo metadata_reader is instantiated
+    # metadata_reader = mr.MetadataReader
+
     # todo structure_scanner is instantiated
+    structure_scanner = StructureScanner(config.target_path)
 
     # todo db_manager is instantiated
 
@@ -72,6 +80,7 @@ if __name__ == "__main__":
 
     # todo structure_scanner scans structure
     # todo we get all metadata and attributes for the rest of modules
+    structure_scanner.scan()
 
     # todo db_manager gets all dictionaries from structure_scanner
 
