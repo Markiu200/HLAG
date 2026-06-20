@@ -84,6 +84,10 @@ class MetadataReader:
             if len(result.metadata) > 0:
                 for key, value in result.metadata.items():
                     metadata[key] = value
+            if result.last_line == -1:
+                # if it was empty line, last line was actually previous one
+                last_line -= 1
+                break
             if result.last_line > 0:
                 break
 
