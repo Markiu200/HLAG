@@ -1,0 +1,12 @@
+# Own imports
+from base_check import BaseCheck
+from structure_scanner.document_tree.document_node import DocumentNode
+from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
+
+
+class UnsupportedScan(BaseCheck):
+    def check(self, node: DocumentNode):
+        meta = {NodeMetadataKey.TYPE: NodeMetadataTypeValue.UNSUPPORTED}
+        node.add_metadata(meta)
+
+        return meta
