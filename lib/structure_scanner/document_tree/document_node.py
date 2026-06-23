@@ -22,7 +22,7 @@ class DocumentNode:
 
     def add_child(self, child_node: 'DocumentNode'):
         if not isinstance(child_node, DocumentNode):
-            raise TypeError(f"Child node is of type {type(child_node)} whereas it should be {type(self)}")
+            raise TypeError(f"Child node is of type {type(child_node)} when it should be {type(self)}")
 
         child_node.parent = self
         self.children.append(child_node)
