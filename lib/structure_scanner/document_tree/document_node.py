@@ -42,6 +42,19 @@ class DocumentNode:
     def set_metadata(self, metadata_tuple: (str | NodeMetadataKey, str | NodeMetadataTypeValue)):
         self.metadata[metadata_tuple[0]] = metadata_tuple[1]
 
+    def add_metadata(self, metadata: dict):
+        # todo proper logging
+        for key, value in metadata.items():
+            if key in NodeMetadataKey:
+                if key == NodeMetadataKey.TYPE:
+                    if value in NodeMetadataTypeValue:
+                        self.metadata[key] = value
+                    else:
+                        print(f"Warning: value of \"{value}\" for node metadata type is not recognized and is skipped.")
+                self.metadata[key] = value
+            else:
+                raise KeyError(f"Error while attempting to add \"{key}\" to node metadata - key not supported")
+
     def get_metadata(self, key: str | NodeMetadataKey) -> str | NodeMetadataTypeValue | None:
         if key in self.metadata:
             return self.metadata[key]

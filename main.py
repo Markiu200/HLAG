@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
     # todo structure_scanner is instantiated
     structure_scanner = StructureScanner(config.target_path)
+    structure_scanner.register_text_type_extensions({".txt", ".md", ".html", ".json"})
 
     # todo db_manager is instantiated
 
