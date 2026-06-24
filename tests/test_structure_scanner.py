@@ -45,6 +45,21 @@ def wat(node: DocumentNode, attributes: set) -> DocumentNode:
     return node
 
 
+def wmnat(node: DocumentNode, metadata: dict, attributes: set) -> DocumentNode:
+    """With metadata and attributes"""
+    node = wmt(node, metadata)
+    node = wat(node, attributes)
+    return node
+
+
+def wall(node: DocumentNode, metadata: dict, attributes: set, children: list[DocumentNode]) -> DocumentNode:
+    """With all - metadata, attributes, children"""
+    node = wmt(node, metadata)
+    node = wat(node, attributes)
+    node = wch(node, children)
+    return node
+
+
 class TestStructureScanner(unittest.TestCase):
     def setUp(self):
         global global_root
@@ -62,6 +77,39 @@ class TestStructureScanner(unittest.TestCase):
         )
 
         self.assertEqual(structure_scanner.tree, expected_tree)
+
+    def test_full(self):
+        structure_scanner = StructureScanner(PurePath("D:\\hlag\\tests\\test_structures_for_structure_scanner\\full"))
+        structure_scanner.register_node_checks(UnsupportedScan())
+        structure_scanner.scan()
+
+        expected_tree = DocumentTree(
+            wall(DocumentNode(PurePath(prt("full"))),
+                 metadata={NodeMetadataKey.TYPE: NodeMetadataTypeValue.UNSUPPORTED},
+                 attributes={NodeAttribute.IN_OUTLINE},
+                 children=[
+                     wall(DocumentNode(PurePath(prt("full\\_dict.txt"))),
+                          metadata={NodeMetadataKey.TYPE: NodeMetadataTypeValue.DICTIONARY},
+                          attributes={NodeAttribute.IS_ESCAPED},
+                          children=[]),
+                     wall(DocumentNode(PurePath(prt("full\\_title.txt"))),
+                          metadata={NodeMetadataKey.TITLE: "Start"},
+                          attributes={NodeAttribute.IS_ESCAPED},
+                          children=[]),
+                     wall(DocumentNode(PurePath(prt("full\\000_header.txt"))),
+                          metadata={NodeMetadataKey.TYPE: NodeMetadataTypeValue.TEXT},
+                          attributes={NodeAttribute.IS_ESCAPED},
+                          children=[]),
+                     wall(DocumentNode(PurePath(prt("full\\_title.txt"))),
+                          metadata={NodeMetadataKey.TITLE: "Start"},
+                          attributes={NodeAttribute.IS_ESCAPED},
+                          children=[]),
+                     wall(DocumentNode(PurePath(prt("full\\_title.txt"))),
+                          metadata={NodeMetadataKey.TITLE: "Start"},
+                          attributes={NodeAttribute.IS_ESCAPED},
+                          children=[]),
+                 ])
+        )
 
 
 if __name__ == "__main__":
