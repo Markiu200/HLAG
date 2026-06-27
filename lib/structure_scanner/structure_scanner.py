@@ -15,6 +15,11 @@ class StructureScanner:
     def _is_escaped(cls, name: str):
         return name.startswith((".", "_"))
 
+    @classmethod
+    def _apply_checks(cls, node: DocumentNode, checks: list[BaseCheck]):
+        for check in checks:
+            check.check(node)
+
     def __init__(self, root_directory: PurePath):
         self.root_directory = root_directory
         self.tree = None
@@ -22,7 +27,8 @@ class StructureScanner:
         #
         self.pre_dir_checks: list[BaseCheck] = []
         self.post_dir_checks: list[BaseCheck] = []
-        self.node_checks: list[BaseCheck] = []
+        self.pre_metaread_node_checks: list[BaseCheck] = []
+        self.post_metaread_node_checks: list[BaseCheck] = []
         #
         self.text_type_extensions = set()
 
@@ -32,28 +38,21 @@ class StructureScanner:
                 item = "".join((".", item)).strip()
             self.text_type_extensions.add(item)
 
-    def register_pre_directory_checks(self, check: BaseCheck):
+    def register_pre_directory_check(self, check: BaseCheck):
         self.pre_dir_checks.append(check)
 
-    def register_post_directory_checks(self, check: BaseCheck):
+    def register_post_directory_check(self, check: BaseCheck):
         self.post_dir_checks.append(check)
 
-    def register_node_checks(self, check: BaseCheck):
-        self.node_checks.append(check)
+    def register_pre_metaread_node_check(self, check: BaseCheck):
+        self.pre_metaread_node_checks.append(check)
+
+    def register_post_metaread_node_check(self, check: BaseCheck):
+        self.post_metaread_node_checks.append(check)
 
     def scan(self):
         self.tree = DocumentTree(root=DocumentNode(path=self.root_directory))
         self._scan(self.tree.get_root())
-
-    def _apply_directory_metadata(self, container: DocumentNode):
-        for child in container.children:
-            if (child.get_metadata(NodeMetadataKey.TYPE) == NodeMetadataTypeValue.METAFILE
-                    and child.get_metadata(NodeMetadataKey.TITLE) is not None):
-                container.set_metadata((NodeMetadataKey.TITLE, child.get_metadata(NodeMetadataKey.TITLE)))
-
-    def _apply_checks(self, node: DocumentNode, checks: list[BaseCheck]):
-        for check in checks:
-            check.check(node)
 
     def _scan(self, parent_node: DocumentNode):
         self._apply_checks(parent_node, self.pre_dir_checks)
@@ -64,7 +63,13 @@ class StructureScanner:
                 if scanned_element.is_dir():
                     self._scan(new_node)
                 if scanned_element.is_file():
-                    self._apply_checks(new_node, self.node_checks)
+                    # pre_meta_checks
+                    self._apply_checks(new_node, self.pre_metaread_node_checks)
+                    # meta read
+                    got_meta = self.metadata_reader.get_metadata_from_file(current_full_path)
+                    new_node.add_metadata(got_meta.metadata)
+                    # post meta checks
+                    self._apply_checks(new_node, self.post_metaread_node_checks)
                     parent_node.add_child(new_node)
         self._apply_checks(parent_node, self.post_dir_checks)
 
