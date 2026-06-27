@@ -16,7 +16,8 @@ class StructureScanner:
         return name.startswith((".", "_"))
 
     def __init__(self, root_directory: PurePath):
-        self.tree = DocumentTree(root=DocumentNode(path=root_directory))
+        self.root_directory = root_directory
+        self.tree = None
         self.metadata_reader = mr.MetadataReader(config.logger)
         #
         self.pre_dir_checks: list[BaseCheck] = []
@@ -41,6 +42,7 @@ class StructureScanner:
         self.node_checks.append(check)
 
     def scan(self):
+        self.tree = DocumentTree(root=DocumentNode(path=self.root_directory))
         self._scan(self.tree.get_root())
 
     def _apply_directory_metadata(self, container: DocumentNode):
