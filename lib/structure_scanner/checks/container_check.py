@@ -4,7 +4,8 @@ from structure_scanner.document_tree.document_node import DocumentNode
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 
 
-class UnsupportedScan(BaseCheck):
+class ContainerCheck(BaseCheck):
+    """Pre dir check"""
     def check(self, node: DocumentNode):
         meta = {NodeMetadataKey.TYPE: NodeMetadataTypeValue.UNSUPPORTED}
         node.add_metadata(meta)
