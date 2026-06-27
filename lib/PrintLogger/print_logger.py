@@ -2,18 +2,22 @@ import logging
 import sys
 
 
-class PrintLogger:
-    def __init__(self, logger_name: str):
-        self.logger = logging.getLogger(logger_name)
+class PrintLogger(logging.Logger):
+    def __init__(self, *args):
+        super().__init__(*args)
 
-    def print_critical(self, msg):
-        self.logger.critical(msg)
+    def critical(self, msg: str, *args):
+        super().critical(msg, *args)
         sys.stderr.write(msg)
 
-    def print_error(self, msg):
-        self.logger.error(msg)
+    def error(self, msg: str, *args):
+        super().error(msg, *args)
         sys.stderr.write(msg)
 
-    def print_warning(self, msg):
-        self.logger.warning(msg)
+    def warning(self, msg: str, *args):
+        super().warning(msg, *args)
+        sys.stdout.write(msg)
+
+    def info(self, msg: str, *args):
+        super().info(msg, *args)
         sys.stdout.write(msg)
