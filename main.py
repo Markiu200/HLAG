@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 # Own imports
 from models.config import config
 import gui
-import structure_scanner.metadata_reader.metadata_reader as mr
+from structure_scanner.metadata_reader.metadata_reader import MetadataReader
 from structure_scanner.structure_scanner import StructureScanner
 
 from module_manager import ModuleManager
@@ -58,8 +58,9 @@ if __name__ == "__main__":
 
     # todo js_manager is instatiated
 
-    # # todo metadata_reader is instantiated
-    # metadata_reader = mr.MetadataReader
+    # todo metadata_reader is configured
+    MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
+    MetadataReader.set_logger(config.logger)
 
     # todo structure_scanner is instantiated
     structure_scanner = StructureScanner(config.target_path)
