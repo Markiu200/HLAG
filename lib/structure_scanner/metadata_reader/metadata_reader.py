@@ -127,7 +127,7 @@ class MetadataReader:
     @classmethod
     def _process_findings(cls, reg_search: re.Match) -> tuple | None:
         key = reg_search.groups()[0].lower()
-        value = reg_search.groups()[1].lower()
+        value = reg_search.groups()[1]
 
         # check if key is ok
         if key not in MetadataReader.possible_keys:
@@ -136,7 +136,7 @@ class MetadataReader:
             return None
 
         # check if value of key of 'type' is ok
-        if key == "type" and value not in MetadataReader.type_possible_values:
+        if key == "type" and value.lower() not in MetadataReader.type_possible_values:
             if MetadataReader.logger:
                 config.logger.warning(
                     f"Metadata value '{value}' for 'type' key is not recognized and is ignored")
