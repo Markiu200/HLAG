@@ -50,11 +50,14 @@ class MetadataReader:
         metadata = dict()
         lines = []
 
-        with open(path) as f:
+        with open(path, "rb") as f:
             while True:
                 line = f.readline()
                 if not line:
                     break
+                # This keeps original newline combinations, instead of auto translating them to "\n"
+                line = line.decode()
+                #
                 reg_search = re.match(MetadataReader.tag_regex, line.lstrip())
                 lines.append(line)
                 if not reg_search:
