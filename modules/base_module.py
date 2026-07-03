@@ -12,9 +12,12 @@ class BaseModule(ABC):
 
     def __init__(self, node: DocumentNode):
         self.node = node
+        self.content: str = ""
 
     def read(self):
-        pass
+        with open(self.node.path) as f:
+            f.seek(self.node.metadata["cursor"])
+            self.content = f.read()
 
     def replace_references(self):
         pass
