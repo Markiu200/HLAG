@@ -23,4 +23,10 @@ class BaseModule(ABC):
         pass
 
     def write(self):
+    def write(self, output: str) -> str:
+        # todo: replacing references
+        return output
+
+    @abstractmethod
+    def print(self):
         pass
