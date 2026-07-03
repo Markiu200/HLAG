@@ -6,7 +6,7 @@ from data.node_attribute import NodeAttribute
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 from structure_scanner.document_tree.document_tree import DocumentTree
 from structure_scanner.document_tree.document_node import DocumentNode
-import structure_scanner.metadata_reader.metadata_reader as mr
+from structure_scanner.metadata_reader.metadata_reader import MetadataReader
 from structure_scanner.checks.base_check import BaseCheck
 
 
@@ -23,7 +23,6 @@ class StructureScanner:
     def __init__(self, root_directory: PurePath):
         self.root_directory = root_directory
         self.tree = None
-        self.metadata_reader = mr.MetadataReader(config.logger)
         #
         self.pre_dir_checks: list[BaseCheck] = []
         self.post_dir_checks: list[BaseCheck] = []
@@ -66,8 +65,9 @@ class StructureScanner:
                     # pre_meta_checks
                     self._apply_checks(new_node, self.pre_metaread_node_checks)
                     # meta read
-                    got_meta = self.metadata_reader.get_metadata_from_file(current_full_path)
+                    got_meta = MetadataReader.get_metadata_from_file(current_full_path)
                     new_node.add_metadata(got_meta.metadata)
+                    new_node.set_metadata(("cursor", got_meta.cursor))
                     # post meta checks
                     self._apply_checks(new_node, self.post_metaread_node_checks)
                     parent_node.add_child(new_node)
