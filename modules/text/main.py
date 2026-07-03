@@ -1,5 +1,5 @@
 # Own imports
-from modules.base_module import BaseModule
+from base_module.base_module import BaseModule
 from structure_scanner.document_tree.document_node import DocumentNode
 
 
