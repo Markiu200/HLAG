@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import re
-from dataclasses import dataclass
 # Own imports
 from structure_scanner.document_tree.document_node import DocumentNode
 from module_manager import ModuleManager
@@ -24,8 +23,9 @@ class ReferenceEnd(BaseReference):
 
 
 class Reference(BaseReference):
-    def __init__(self, begin: int, end: int, key: str, value: str, content: str):
+    def __init__(self, begin: int, end: int, number: int, key: str, value: str, content: str):
         super().__init__(begin, end)
+        self.number = number
         self.key = key
         self.value = value
         self.content = content
@@ -58,7 +58,7 @@ class BaseModule(ABC):
         return result
 
     @classmethod
-    def _match_refs(cls, ordered_list: list[BaseReference], reference: Reference, current_id: int) -> tuple[ReferenceEnd, int]:
+    def _match_refs(cls, ordered_list: list[BaseReference], current_id: int) -> tuple[ReferenceEnd, int]:
         stacked = 0
         new_id = current_id + 1
         for item in ordered_list[new_id:]:
@@ -90,6 +90,7 @@ class BaseModule(ABC):
                 Reference(
                     begin=item.regs[0][0],
                     end=item.regs[0][1],
+                    number=-1,
                     key=item.groups()[0],
                     value=item.groups()[1],
                     content=""
@@ -105,6 +106,9 @@ class BaseModule(ABC):
             )
         final_list = BaseModule._combine(ref_list, end_ref_list)
         #
+        # Idea for below thing is - if there's a spanned reference, find the last existing end tag
+        # and encapsulate everything inside it - including other deeper nested references.
+        # resolve_id carries where that "last end tag" was and the list continues from that point.
         resolve_id = 0
         for id_, item in enumerate(final_list):
             if id_ < resolve_id:
@@ -112,7 +116,7 @@ class BaseModule(ABC):
             resolve_id += 1
             if isinstance(item, Reference):
                 if item.key in BaseModule.spanned_references:
-                    res = BaseModule._match_refs(final_list, item, id_)
+                    res = BaseModule._match_refs(final_list, id_)
                     # todo: this
                     resolve_id = res[1]
                     item.content = self.content[item.end:res[0].begin]
@@ -124,6 +128,7 @@ class BaseModule(ABC):
         reference_counter = len(self.reference_list) - 1
         for reference in reversed(self.reference_list):
             self.content = self.content.replace(self.content[reference.begin:reference.end], f"[%{reference_counter}%]", 1)
+            reference.number = reference_counter
             reference_counter -= 1
 
     def write(self, output: str) -> str:
