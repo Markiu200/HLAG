@@ -1,0 +1,3 @@
+// PyCM zwraca coś takiego:
+
+{}
