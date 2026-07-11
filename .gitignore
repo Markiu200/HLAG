@@ -6,6 +6,7 @@ webpage*/
 /test_*
 /tests.py
 /tests*.py
+/json_stuff/old_newfluence_copy_with_checklist_prototype.html
 
 # macOS settings file 
 .DS_Store
