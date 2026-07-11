@@ -3,6 +3,10 @@ import re
 # Own imports
 from structure_scanner.document_tree.document_node import DocumentNode
 from module_manager import ModuleManager
+from structure_scanner.metadata_reader.metadata_reader import MetadataReader
+# temp
+from modules.text.main import Text
+from content_manager import ContentManager
 
 
 class BaseReference:
@@ -29,6 +33,14 @@ class Reference(BaseReference):
         self.key = key
         self.value = value
         self.content = content
+
+
+class AReference:
+    def __init__(self, content: str, meta: dict):
+        self.content = content
+        self.meta = meta
+        self.print = None
+        self.jsref = None
 
 
 class BaseModule(ABC):
@@ -59,6 +71,7 @@ class BaseModule(ABC):
 
     @classmethod
     def _match_refs(cls, ordered_list: list[BaseReference], current_id: int) -> tuple[ReferenceEnd, int]:
+        # todo maybe replace it with RPN  in the future
         stacked = 0
         new_id = current_id + 1
         for item in ordered_list[new_id:]:
@@ -73,68 +86,96 @@ class BaseModule(ABC):
                     return item, new_id
         raise RuntimeError("Spanned module without end tag match")
 
-    def __init__(self, node: DocumentNode):
-        self.node = node
-        self.content: str = ""
-        self.reference_list: list[Reference] = []
+    @classmethod
+    def _match_refs2(cls, content: str, tag_end: int):
+        # todo maybe replace it with RPN  in the future
+        last_pos = tag_end
+        count = 0
+        # todo make that less baked in
+        tag_delimiter_regex = r'\[%.*?%]'
+        while True:
+            reg_search = re.search(tag_delimiter_regex, content[last_pos:])
+            if not reg_search:
+                raise RuntimeError("Spanned module without end tag match")
+            if reg_search.group() == "[%end%]":
+                if count > 0:
+                    count -= 1
+                    last_pos += reg_search.regs[0][1]
+                    continue
+                else:
+                    return ReferenceEnd(
+                        begin=reg_search.regs[0][0] + last_pos,
+                        end=reg_search.regs[0][1] + last_pos
+                    )
+            else:
+                count += 1
+                last_pos += reg_search.regs[0][1]
+                continue
 
-    def read(self):
-        with open(self.node.path) as f:
-            f.seek(self.node.metadata["cursor"])
-            self.content = f.read()
+    @classmethod
+    def get_jsref_from_file(cls, node: DocumentNode):
+        with open(node.path) as f:
+            content = f.read()
+        # get metadata from file level
+        top_reference = AReference(
+            content=content,
+            meta=dict(node.metadata)
+        )
+        return BaseModule.get_jsref_from_reference(top_reference)
 
-    def replace_references(self):
-        ref_list = []
-        for item in re.finditer(BaseModule.reference_regex, self.content):
-            ref_list.append(
-                Reference(
-                    begin=item.regs[0][0],
-                    end=item.regs[0][1],
+    @classmethod
+    def get_jsref_from_reference(cls, reference: AReference):
+        # read metadata
+        got_meta = MetadataReader.get_metadata_from_lines([reference.content])
+        if len(got_meta.metadata) > 0:
+            for key, value in got_meta.metadata.items():
+                reference.meta[key]: value
+        reference.content = reference.content[got_meta.cursor:]
+        # replace part
+        reference.content = BaseModule.replace_references(reference.content)
+        # match module with meta
+        # todo komunikacja z modulemanager
+        reference.print = Text(reference.content, reference.meta).print
+        # talk with ContentManager
+        # todo something like sm_response = ContentManager.register_instance(reference.print())
+        sm_response = ContentManager.register_instance(reference.print())
+        reference.jsref = sm_response
+        return reference.jsref
+
+    @classmethod
+    def replace_references(cls, content) -> str:
+        while True:
+            reg_search = re.search(BaseModule.reference_regex, content)
+            if not reg_search:
+                break
+            #
+            key = reg_search.groups()[0]
+            # tmp
+            new_reference = (0, 0, 0, "", "", "")
+            #
+            if key == "mod":
+                new_reference = Reference(
+                    begin=reg_search.regs[0][0],
+                    end=reg_search.regs[0][1],
                     number=-1,
-                    key=item.groups()[0],
-                    value=item.groups()[1],
+                    key=key,
+                    value=reg_search.groups()[1],
                     content=""
                 )
+                end_reference = BaseModule._match_refs2(content, new_reference.end)
+                new_reference.content = content[new_reference.end:end_reference.begin]
+                new_reference.end = end_reference.end
+            if key == "ins":
+                # todo
+                pass
+            if key == "dict":
+                # todo
+                pass
+            #
+            new_areference = AReference(
+                content=new_reference.content,
+                meta=dict()
             )
-        end_ref_list = []
-        for item in re.finditer(BaseModule.end_reference_regex, self.content):
-            end_ref_list.append(
-                ReferenceEnd(
-                    begin=item.regs[0][0],
-                    end=item.regs[0][1]
-                )
-            )
-        final_list = BaseModule._combine(ref_list, end_ref_list)
-        #
-        # Idea for below thing is - if there's a spanned reference, find the last existing end tag
-        # and encapsulate everything inside it - including other deeper nested references.
-        # resolve_id carries where that "last end tag" was and the list continues from that point.
-        resolve_id = 0
-        for id_, item in enumerate(final_list):
-            if id_ < resolve_id:
-                continue
-            resolve_id += 1
-            if isinstance(item, Reference):
-                if item.key in BaseModule.spanned_references:
-                    res = BaseModule._match_refs(final_list, id_)
-                    # todo: this
-                    resolve_id = res[1]
-                    item.content = self.content[item.end:res[0].begin]
-                    item.end = res[0].end
-                    self.reference_list.append(item)
-                else:
-                    self.reference_list.append(item)
-        #
-        reference_counter = len(self.reference_list) - 1
-        for reference in reversed(self.reference_list):
-            self.content = self.content.replace(self.content[reference.begin:reference.end], f"[%{reference_counter}%]", 1)
-            reference.number = reference_counter
-            reference_counter -= 1
-
-    def write(self, output: str) -> str:
-        # todo: replacing references
-        return output
-
-    @abstractmethod
-    def print(self):
-        pass
+            jsref = BaseModule.get_jsref_from_reference(new_areference)
+            content = content.replace(content[new_reference.begin:new_reference.end], jsref)
+        return content
