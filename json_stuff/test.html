@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tests</title>
+</head>
+<body onload="load_f()">
+  <script>
+    function load_f() {
+      console.log("load done")
+      addElement()
+    }
+    function addElement() {
+      const elem = document.createElement("p")
+      elem.id = "the_element";
+      elem.innerHTML = "Appended P"
+      document.body.appendChild(elem)
+    }
+
+
+
+    registered_modules = {
+      text: [
+        {id: 0, data: {nodes: ["Text P 1", "Text P 2", "Text P 3"]}, meta: null},
+        {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
+        {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
+      ]
+    }
+
+    // trzymamy instancje {id: ..., instance: ...}
+    class TextModuleManager {
+      static instances = [{id: 1, instance: "Instance of Text 1"}];
+      static getInstance(id) {
+        let found = TextModuleManager.instances.find((element) => {return element.id == id});
+        if (found) {
+          return found.instance;
+        } else {
+          return TextModuleManager.createInstance(id);
+        }
+      }
+      static createInstance(id) {
+        let newInstance = {id: id, instance: "Instance of Text "+id};
+        TextModuleManager.instances.push(newInstance);
+        return newInstance.instance;
+      }
+    }
+    console.log(TextModuleManager.getInstance(1))
+    console.log(TextModuleManager.getInstance(3))
+    console.log(TextModuleManager.getInstance(5))
+    console.log(TextModuleManager.instances)
+
+  </script>
+</body>
+</html>
