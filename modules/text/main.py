@@ -1,13 +1,30 @@
+import re
+import json
 # Own imports
-from base_module.base_module import BaseModule
-from structure_scanner.document_tree.document_node import DocumentNode
+# from base_module.base_module import BaseModule
+# from structure_scanner.document_tree.document_node import DocumentNode
 
 
-class Text(BaseModule):
-    def __init__(self, node: DocumentNode):
-        super().__init__(node)
+class Text:
+    def __init__(self, content: str, metadata: dict):
+        self.content = content
+        self.metadata = metadata
 
     def print(self):
-        super().read()
-        super().replace_references()
-        yield super().write(self.content)
+        lines = []
+        last_find = 0
+        while True:
+            search = re.search(r'JSREF\(.*?\)', self.content[last_find:])
+            if not search:
+                break
+            lines.append(self.content[last_find:search.regs[0][0] - 1])
+            lines.append(self.content[search.regs[0][0]:search.regs[0][1]])
+            last_find = search.regs[0][1] + 1
+        lines.append(self.content[last_find:])
+        #
+        result = {
+            "module": "text",
+            "content": lines,
+            "metadata": "some_meta"
+        }
+        return result
