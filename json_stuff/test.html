@@ -36,8 +36,10 @@
       static getInstance(id) {
         let found = TextModuleManager.instances.find((element) => {return element.id == id});
         if (found) {
+          console.log("returning exisitng instance...")
           return found.instance;
         } else {
+          console.log("generating new instance...")
           return TextModuleManager.createInstance(id);
         }
       }
@@ -68,12 +70,20 @@
 
     console.log(TextModuleManager.instances)
     for (i=0;i<3;i++) {
-      let instance = TextModuleManager.getInstance(i)
-      console.log(instance)
-      document.body.appendChild(instance)
+      let instance = TextModuleManager.getInstance(i);
+      console.log(instance);
+      document.body.appendChild(instance);
     }
+    let single_instance = TextModuleManager.getInstance(0);
+    console.log(single_instance);
+    document.body.appendChild(single_instance);
 
-    
+    let a = document.createElement("p");
+    a.innerHTML = "AAA";
+    document.body.appendChild(a);
+    document.body.appendChild(a);
+    document.body.appendChild(a);
+    document.body.appendChild(a);
 
 
   </script>
