@@ -28,9 +28,11 @@
       ]
     }
 
-    // trzymamy instancje {id: ..., instance: ...}
     class TextModuleManager {
-      static instances = [{id: 1, instance: "Instance of Text 1"}];
+      static name = "text";
+      // trzymamy instancje {id: ..., instance: ...}
+      static instances = [];
+
       static getInstance(id) {
         let found = TextModuleManager.instances.find((element) => {return element.id == id});
         if (found) {
@@ -39,16 +41,40 @@
           return TextModuleManager.createInstance(id);
         }
       }
+
       static createInstance(id) {
-        let newInstance = {id: id, instance: "Instance of Text "+id};
+        // todo: proper fetch from contentmanager
+        let pyLoad = registered_modules[TextModuleManager.name].find((element) => {return element.id == id});
+        if (!pyLoad) {
+          throw new Error("Instance ID "+id+" of "+TextModuleManager.name+" module is not registered!");
+        }
+        let node = TextModuleManager.generate(pyLoad.data, pyLoad.meta);
+        let newInstance = {id: id, instance: node};
         TextModuleManager.instances.push(newInstance);
         return newInstance.instance;
       }
+
+      static generate(data, meta) {
+        let root = document.createElement("div");
+        data.nodes.forEach(element => {
+          let newP = document.createElement("p");
+          newP.innerHTML = element;
+          root.appendChild(newP);
+        });
+        return root;
+      }
     }
-    console.log(TextModuleManager.getInstance(1))
-    console.log(TextModuleManager.getInstance(3))
-    console.log(TextModuleManager.getInstance(5))
+
+
     console.log(TextModuleManager.instances)
+    for (i=0;i<3;i++) {
+      let instance = TextModuleManager.getInstance(i)
+      console.log(instance)
+      document.body.appendChild(instance)
+    }
+
+    
+
 
   </script>
 </body>
