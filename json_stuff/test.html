@@ -32,27 +32,45 @@
 
 
     // ContentManager class
-    class ContentWindow {
-      constructor(id) {
-        this.id = id;
-        this.title = null;
-        this.instances = [];
-        this.window = this.createFrame();
+    class WindowContainer {
+      constructor(title) {
+        this.window = document.createElement("div");
+        this.titlebar = document.createElement("div");
+        this.content = document.createElement("div");
+        this.window.style.border = "1px solid black";
+        this.titlebar.style.borderBottom = "1px solid black";
+        this.titlebar.innerHTML = title;
+        this.window.appendChild(this.titlebar);
+        this.window.appendChild(this.content);
       }
 
-      createFrame() {
-        let frame = document.createElement("div");
-        return frame;
+      hideTitlebar() {
+        this.titlebar.style.display = "none";
+      }
+
+      showTitlebar() {
+        this.titlebar.style.display = "initial";
+      }
+    }
+
+    class ContentWindow {
+      constructor(id, title=null) {
+        this.id = id;
+        this.title = title;
+        this.instances = [];
+        this.window = new WindowContainer(this.title);
+        // TEMPORARY
+        this.window.hideTitlebar();
       }
       
       open() {
         // todo open all instances, add them to main
-        let frame = this.window;
+        let content = this.window.content;
         this.instances.forEach((element) => {
           element.open();
-          frame.appendChild(element.node);
+          content.appendChild(element.node);
         })
-        ContentManager.main.appendChild(frame);
+        ContentManager.main.appendChild(this.window.window);
       }
 
       close() {
@@ -62,7 +80,7 @@
 
     class ContentManager {
       static main = document.getElementById("main");
-      // navigation zna zarequestowane okienka, content manager trzyma ich zawartosc
+      // navigation zna zarequestowane okienka, content manager trzyma ich zawartosc (ContentWindow)
       static openedWindows = [];
 
       static openWindow(windowJSON) {
@@ -70,7 +88,7 @@
         if (found) {
           console.log("Window "+windowJSON.id+" appears to be already opened.");
         } else {
-          let newWindow = new ContentWindow(windowJSON.id);
+          let newWindow = new ContentWindow(windowJSON.id, windowJSON.title);
           newWindow.title = windowJSON.title;
           windowJSON.contents.forEach((element) => {
             let module = element.module;
@@ -144,6 +162,7 @@
 
 
     // Data
+    // This is done by PyCM
     let registered_modules = {
       text: [
         {id: 0, data: {nodes: ["Text P 1", "Text P 2", "Text P 3"]}, meta: null},
@@ -151,18 +170,22 @@
         {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
       ]
     }
-    let windows = [
-      {id: 0, title: "Home", contents: [{module: "text", id: 0}, {module: "text", id: 2}]},
-      {id: 0, title: "Data", contents: [{module: "text", id: 1}]}
-    ]
+    // This could be done by PySS, if we decide to get it involved this much
     let moduleMap = [
       {name: "text", manager: TextModuleManager}
     ];
+    // This is done by PyNav
+    let windows = [
+      {id: 0, title: "Home", contents: [{module: "text", id: 0}, {module: "text", id: 2}]},
+      {id: 1, title: "Data", contents: [{module: "text", id: 1}]}
+    ]
+    
 
 
     // Playground
     console.log("debug");
     Navigation.requestWindow(0);
+    Navigation.requestWindow(1);
 
   </script>
 </body>
