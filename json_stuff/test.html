@@ -132,7 +132,7 @@
         let key = found[1];
         let value = found[2];
         // if (key == "mod") {
-        return ReferenceResolver.resolve_mod(key, value)
+        return ReferenceResolver.resolve_mod(key, parseInt(value))
         //}
       }
 
@@ -150,8 +150,14 @@
       constructor(id, node) {
         this.id = id
         this.node = node
+        this.nestedInstances = []
       }
-      open() {}
+      open() {
+        console.log("Text instance opened");
+        this.nestedInstances.forEach((instance) => {
+          instance.open()
+        })
+      }
       close() {}
     }
 
@@ -175,28 +181,31 @@
 
       static createInstance(id) {
         // todo: proper fetch from contentmanager
-        let pyLoad = registered_modules[TextModuleManager.name].find((element) => {return element.id == id});
-        if (!pyLoad) {
+        let instanceJSON = registered_modules[TextModuleManager.name].find((element) => {return element.id == id});
+        if (!instanceJSON) {
           throw new Error("Instance ID "+id+" of "+TextModuleManager.name+" module is not registered!");
         }
-        let node = TextModuleManager.generate(pyLoad.data, pyLoad.meta);
-        let newInstance = new TextModuleInstance(id, node);
+        let newInstance = new TextModuleInstance(id, null);
+        TextModuleManager.generate(instanceJSON.data, instanceJSON.meta, newInstance);
         return newInstance;
       }
 
-      static generate(data, meta) {
+      static generate(data, meta, instance) {
         let root = document.createElement("div");
         data.nodes.forEach(element => {
           if (ReferenceResolver.contains_ref(element)) {
             // assuming Py part separated refs from rest of the text
-            root.appendChild(ReferenceResolver.resolve(element).node);
+            // todo more universal way
+            let nestedInstance = ReferenceResolver.resolve(element);
+            root.appendChild(nestedInstance.node);
+            instance.nestedInstances.push(nestedInstance);
           } else {
             let newP = document.createElement("p");
             newP.innerHTML = element;
             root.appendChild(newP);
           }
         });
-        return root;
+        instance.node = root;
       }
     }
 
