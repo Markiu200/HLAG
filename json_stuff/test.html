@@ -83,6 +83,14 @@
       // navigation zna zarequestowane okienka, content manager trzyma ich zawartosc (ContentWindow)
       static openedWindows = [];
 
+      static getInstance(module, id) {
+        let manager = moduleMap.find((el) => {return el.name == module;});
+        if (!manager) {throw new Error("Manager for module "+module+" not found.")}
+        let instance = manager.manager.getInstance(id);
+        if (instance) {return instance;}
+        throw new Error("Module "+module+" did not return instance "+id);
+      }
+
       static openWindow(windowJSON) {
         let found = ContentManager.openedWindows.find((element) => {return element.id == windowJSON.id;});
         if (found) {
@@ -91,11 +99,8 @@
           let newWindow = new ContentWindow(windowJSON.id, windowJSON.title);
           newWindow.title = windowJSON.title;
           windowJSON.contents.forEach((element) => {
-            let module = element.module;
-            let manager = moduleMap.find((el) => {return el.name == module});
-            let instance = manager.manager.getInstance(element.id);
-            newWindow.instances.push(instance);
-          })
+            newWindow.instances.push(ContentManager.getInstance(element.module, element.id));
+          });
           ContentManager.openedWindows.push(newWindow);
           newWindow.open();
         }
@@ -103,6 +108,36 @@
 
       static closeWindow(windowJSON) {
         // todo close windows
+      }
+    }
+
+
+    // Reference resolving class
+    class ReferenceResolver {
+      // todo bede musial uwzgledni JSREF i JSDICT - jako ze slownikowe wyszukiwania at runtime beda tez potrzebne
+      // dla niektorych aplikacji
+      // todo w dodatku uwzglednic znak specjalny zeby zapobiec przypadkowym uzyciom w kodzie
+      static re = /JSREF\((.*?),(.*?)\)/;
+
+      static contains_ref(line) {
+        return (ReferenceResolver.re).test(line);
+      }
+
+      static resolve(jsref) {
+        // jezeli JSREF wyglada tak: JSREF(module,id)
+        let found = jsref.match(ReferenceResolver.re);
+        if (!found) {
+          return false;
+        }
+        let key = found[1];
+        let value = found[2];
+        // if (key == "mod") {
+        return ReferenceResolver.resolve_mod(key, value)
+        //}
+      }
+
+      static resolve_mod(module, id) {
+        return ContentManager.getInstance(module, id);
       }
     }
 
@@ -152,9 +187,14 @@
       static generate(data, meta) {
         let root = document.createElement("div");
         data.nodes.forEach(element => {
-          let newP = document.createElement("p");
-          newP.innerHTML = element;
-          root.appendChild(newP);
+          if (ReferenceResolver.contains_ref(element)) {
+            // assuming Py part separated refs from rest of the text
+            root.appendChild(ReferenceResolver.resolve(element).node);
+          } else {
+            let newP = document.createElement("p");
+            newP.innerHTML = element;
+            root.appendChild(newP);
+          }
         });
         return root;
       }
@@ -168,6 +208,8 @@
         {id: 0, data: {nodes: ["Text P 1", "Text P 2", "Text P 3"]}, meta: null},
         {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
         {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
+        {id: 3, data: {nodes: ["Writings before reference", "JSREF(text,4)", "Writings after reference"]}, meta: null},
+        {id: 4, data: {nodes: ["Inserted as reference"]}, meta: null},
       ]
     }
     // This could be done by PySS, if we decide to get it involved this much
@@ -177,15 +219,22 @@
     // This is done by PyNav
     let windows = [
       {id: 0, title: "Home", contents: [{module: "text", id: 0}, {module: "text", id: 2}]},
-      {id: 1, title: "Data", contents: [{module: "text", id: 1}]}
+      {id: 1, title: "Data", contents: [{module: "text", id: 1}]},
+      {id: 2, title: "Referenced", contents: [{module: "text", id: 3}]},
     ]
     
 
 
     // Playground
     console.log("debug");
-    Navigation.requestWindow(0);
-    Navigation.requestWindow(1);
+    // Navigation.requestWindow(0);
+    // Navigation.requestWindow(1);
+    Navigation.requestWindow(2);
+    
+    // let text = "JSREF(text,2)";
+    // // let re = new RegExp("JSREF((.*?),(.*?))");
+    // let re = /JSREF\((.*?),(.*?)\)/;
+    // let res = text.match(re);
 
   </script>
 </body>
