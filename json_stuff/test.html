@@ -26,21 +26,34 @@
         {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
         {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
       ]
+    //
+    //    USER WRITTEN
+    //
+    // TextModuleManager and TextModule class
+    class TextModuleInstance {
+      constructor(id, node) {
+        this.id = id
+        this.node = node
+      }
+      open() {}
+      close() {}
     }
 
     class TextModuleManager {
       static name = "text";
-      // trzymamy instancje {id: ..., instance: ...}
+      // trzymamy instancje we wlasnych klasach
       static instances = [];
 
       static getInstance(id) {
-        let found = TextModuleManager.instances.find((element) => {return element.id == id});
-        if (found) {
+        let foundInstance = TextModuleManager.instances.find((element) => {return element.id == id});
+        if (foundInstance) {
           console.log("returning exisitng instance...")
-          return found.instance;
+          return foundInstance;
         } else {
-          console.log("generating new instance...")
-          return TextModuleManager.createInstance(id);
+          console.log("generating new instance...");
+          let createdInstance = TextModuleManager.createInstance(id);
+          TextModuleManager.instances.push(createdInstance);
+          return createdInstance;
         }
       }
 
@@ -51,8 +64,8 @@
           throw new Error("Instance ID "+id+" of "+TextModuleManager.name+" module is not registered!");
         }
         let node = TextModuleManager.generate(pyLoad.data, pyLoad.meta);
-        let newInstance = {id: id, instance: node};
-        TextModuleManager.instances.push(newInstance);
+        let newInstance = new TextModuleInstance(id, node);
+        return newInstance;
         return newInstance.instance;
       }
 
