@@ -6,6 +6,7 @@
   <title>Tests</title>
 </head>
 <body onload="load_f()">
+  <main id="main"></main>
   <script>
     function load_f() {
       console.log("load done")
@@ -26,6 +27,64 @@
         {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
         {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
       ]
+    // ContentManager class
+    class ContentWindow {
+      constructor(id) {
+        this.id = id;
+        this.title = null;
+        this.instances = [];
+        this.window = this.createFrame();
+      }
+
+      createFrame() {
+        let frame = document.createElement("div");
+        return frame;
+      }
+      
+      open() {
+        // todo open all instances, add them to main
+        let frame = this.window;
+        this.instances.forEach((element) => {
+          element.open();
+          frame.appendChild(element.node);
+        })
+        ContentManager.main.appendChild(frame);
+      }
+
+      close() {
+        // todo close all instances, remove them from main
+      }
+    }
+
+    class ContentManager {
+      static main = document.getElementById("main");
+      // navigation zna zarequestowane okienka, content manager trzyma ich zawartosc
+      static openedWindows = [];
+
+      static openWindow(windowJSON) {
+        let found = ContentManager.openedWindows.find((element) => {return element.id == windowJSON.id;});
+        if (found) {
+          console.log("Window "+windowJSON.id+" appears to be already opened.");
+        } else {
+          let newWindow = new ContentWindow(windowJSON.id);
+          newWindow.title = windowJSON.title;
+          windowJSON.contents.forEach((element) => {
+            let module = element.module;
+            let manager = moduleMap.find((el) => {return el.name == module});
+            let instance = manager.manager.getInstance(element.id);
+            newWindow.instances.push(instance);
+          })
+          ContentManager.openedWindows.push(newWindow);
+          newWindow.open();
+        }
+      }
+
+      static closeWindow(windowJSON) {
+        // todo close windows
+      }
+    }
+
+
     //
     //    USER WRITTEN
     //
