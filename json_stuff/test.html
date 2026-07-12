@@ -8,9 +8,9 @@
 <body onload="load_f()">
   <main id="main"></main>
   <script>
-    function load_f() {
-      console.log("load done")
-      addElement()
+    function load_f() {}
+
+
     // Navigation class
     class Navigation {
       // trzymamy windows z glownego
@@ -143,23 +143,26 @@
     }
 
 
-    console.log(TextModuleManager.instances)
-    for (i=0;i<3;i++) {
-      let instance = TextModuleManager.getInstance(i);
-      console.log(instance);
-      document.body.appendChild(instance);
+    // Data
+    let registered_modules = {
+      text: [
+        {id: 0, data: {nodes: ["Text P 1", "Text P 2", "Text P 3"]}, meta: null},
+        {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
+        {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
+      ]
     }
-    let single_instance = TextModuleManager.getInstance(0);
-    console.log(single_instance);
-    document.body.appendChild(single_instance);
+    let windows = [
+      {id: 0, title: "Home", contents: [{module: "text", id: 0}, {module: "text", id: 2}]},
+      {id: 0, title: "Data", contents: [{module: "text", id: 1}]}
+    ]
+    let moduleMap = [
+      {name: "text", manager: TextModuleManager}
+    ];
 
-    let a = document.createElement("p");
-    a.innerHTML = "AAA";
-    document.body.appendChild(a);
-    document.body.appendChild(a);
-    document.body.appendChild(a);
-    document.body.appendChild(a);
 
+    // Playground
+    console.log("debug");
+    Navigation.requestWindow(0);
 
   </script>
 </body>
