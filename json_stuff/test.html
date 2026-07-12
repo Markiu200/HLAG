@@ -11,22 +11,26 @@
     function load_f() {
       console.log("load done")
       addElement()
+    // Navigation class
+    class Navigation {
+      // trzymamy windows z glownego
+      static requestedWindows = [];
+
+      static requestWindow(windowId) {
+        let found = windows.find((element) => {return element.id == windowId});
+        ContentManager.openWindow(found);
+        Navigation.requestedWindows.push(found);
+      }
+
+      static closeWindow(windowId) {
+        let found = windows.find((element) => {return element.id == windowId});
+        let index = Navigation.requestedWindows.indexOf(found);
+        ContentManager.closeWindow(found);
+        Navigation.requestedWindows.splice(index, 1);
+      }
     }
-    function addElement() {
-      const elem = document.createElement("p")
-      elem.id = "the_element";
-      elem.innerHTML = "Appended P"
-      document.body.appendChild(elem)
-    }
 
 
-
-    registered_modules = {
-      text: [
-        {id: 0, data: {nodes: ["Text P 1", "Text P 2", "Text P 3"]}, meta: null},
-        {id: 1, data: {nodes: ["Paragraph P 1", "Paragraph P 2", "Paragraph P 3"]}, meta: null},
-        {id: 2, data: {nodes: ["Words P 1", "Words P 2", "Words P 3"]}, meta: null},
-      ]
     // ContentManager class
     class ContentWindow {
       constructor(id) {
