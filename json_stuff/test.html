@@ -7,6 +7,11 @@
 </head>
 <body onload="load_f()">
   <main id="main"></main>
+  <button onclick="ow1()">open window 1</button>
+  <button onclick="cw1()">close window 1</button>
+  <button onclick="ow2()">open window 2</button>
+  <button onclick="cw2()">close window 2</button>
+
   <script>
     function load_f() {}
 
@@ -73,7 +78,10 @@
       }
 
       close() {
-        // todo close all instances, remove them from main
+        this.instances.forEach((instance) => {
+          instance.close();
+        })
+        ContentManager.main.removeChild(this.window.window);
       }
     }
 
@@ -116,7 +124,14 @@
       }
 
       static closeWindow(windowJSON) {
-        // todo close windows
+        let window = ContentManager.openedWindows.find((element) => {return element.id == windowJSON.id;});
+        if (window) {
+          window.close();
+          let index = ContentManager.openedWindows.indexOf(window);
+          ContentManager.openedWindows.splice(index, 1);
+        } else {
+          console.log("Window "+windowJSON.id+" appears to be already closed.");
+        }
       }
     }
 
@@ -167,7 +182,12 @@
           instance.open()
         })
       }
-      close() {}
+      close() {
+        console.log("Text instance closed");
+        this.nestedInstances.forEach((instance) => {
+          instance.close()
+        })
+      }
     }
 
     class TextModuleManager {
@@ -247,12 +267,20 @@
     console.log("debug");
     // Navigation.requestWindow(0);
     // Navigation.requestWindow(1);
-    Navigation.requestWindow(2);
+    // Navigation.requestWindow(2);
     
-    // let text = "JSREF(text,2)";
-    // // let re = new RegExp("JSREF((.*?),(.*?))");
-    // let re = /JSREF\((.*?),(.*?)\)/;
-    // let res = text.match(re);
+    function ow1() {
+      Navigation.requestWindow(0);
+    }
+    function cw1() {
+      Navigation.dismissWindow(0);
+    }
+    function ow2() {
+      Navigation.requestWindow(2);
+    }
+    function cw2() {
+      Navigation.dismissWindow(2);
+    }
 
   </script>
 </body>
