@@ -64,7 +64,6 @@
       }
       
       open() {
-        // todo open all instances, add them to main
         let content = this.window.content;
         this.instances.forEach((element) => {
           element.open();
@@ -82,6 +81,7 @@
       static main = document.getElementById("main");
       // navigation zna zarequestowane okienka, content manager trzyma ich zawartosc (ContentWindow)
       static openedWindows = [];
+      static createdWindows = [];
 
       static getInstance(module, id) {
         let manager = moduleMap.find((el) => {return el.name == module;});
@@ -91,18 +91,27 @@
         throw new Error("Module "+module+" did not return instance "+id);
       }
 
-      static openWindow(windowJSON) {
-        let found = ContentManager.openedWindows.find((element) => {return element.id == windowJSON.id;});
-        if (found) {
-          console.log("Window "+windowJSON.id+" appears to be already opened.");
-        } else {
-          let newWindow = new ContentWindow(windowJSON.id, windowJSON.title);
+      static createWindow(windowJSON) {
+        let newWindow = new ContentWindow(windowJSON.id, windowJSON.title);
           newWindow.title = windowJSON.title;
           windowJSON.contents.forEach((element) => {
             newWindow.instances.push(ContentManager.getInstance(element.module, element.id));
           });
-          ContentManager.openedWindows.push(newWindow);
-          newWindow.open();
+        ContentManager.createdWindows.push(newWindow);
+        return newWindow;
+      }
+
+      static openWindow(windowJSON) {
+        let window = ContentManager.createdWindows.find((element) => {return element.id == windowJSON.id;});
+        if (!window) {
+          window = ContentManager.createWindow(windowJSON);
+        }
+        let isOpened = ContentManager.openedWindows.find((element) => {return element == window;});
+        if (isOpened) {
+          console.log("Window "+windowJSON.id+" appears to be already opened.");
+        } else {
+          window.open();
+          ContentManager.openedWindows.push(window);
         }
       }
 
