@@ -22,7 +22,7 @@
         Navigation.requestedWindows.push(found);
       }
 
-      static closeWindow(windowId) {
+      static dismissWindow(windowId) {
         let found = windows.find((element) => {return element.id == windowId});
         let index = Navigation.requestedWindows.indexOf(found);
         ContentManager.closeWindow(found);
@@ -65,9 +65,9 @@
       
       open() {
         let content = this.window.content;
-        this.instances.forEach((element) => {
-          element.open();
-          content.appendChild(element.node);
+        this.instances.forEach((instance) => {
+          instance.open();
+          content.appendChild(instance.node);
         })
         ContentManager.main.appendChild(this.window.window);
       }
