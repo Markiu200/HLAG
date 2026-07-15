@@ -1,7 +1,9 @@
 from pathlib import PurePath
+import re
+import os
 # Own imports
-from indent_manager import BaseIndentManager
 from printer.base_printer import BasePrinter
+from IndentTracker import IndentTracker
 
 
 class Printer(BasePrinter):
@@ -9,9 +11,6 @@ class Printer(BasePrinter):
         self.indent_manager = None
         self.output_file_path = None
         self.registered_generators = []
-
-    def set_indent_manager(self, indent_manager: BaseIndentManager):
-        self.indent_manager = indent_manager
 
     def set_output_file_path(self, path: PurePath):
         self.output_file_path = path
