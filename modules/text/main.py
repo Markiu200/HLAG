@@ -1,39 +1,30 @@
 import re
-import json
+from pathlib import PurePath
 # Own imports
-# from base_module.base_module import BaseModule
-# from structure_scanner.document_tree.document_node import DocumentNode
+from module_facade import ModuleFacade
 
 
-class Text:
-    def __init__(self, content: str, metadata: dict):
-        self.content = content
-        self.metadata = metadata
-
-    def print(self):
-        lines = []
-        last_find = 0
-        while True:
-            search = re.search(r'JSREF\(.*?\)', self.content[last_find:])
-            if not search:
-                break
-            lines.append(self.content[last_find:search.regs[0][0] - 1])
-            lines.append(self.content[search.regs[0][0]:search.regs[0][1]])
-            last_find = search.regs[0][1] + 1
-        lines.append(self.content[last_find:])
-        #
-        result = {
-            "module": "text",
-            "content": lines,
-            "metadata": "some_meta"
-        }
-        return result
+def init():
+    print("Initiating Text module...")
+    module_path = PurePath(__file__).parent
+    ModuleFacade.register_js(PurePath(module_path, "js.js"))
 
 
-if __name__ == "__main__":
-    from pathlib import PurePath, Path
-    import os
-    from test import getpath
-    pathp = Path(".")
-    path = os.path.abspath(os.getcwd())
-    print(getpath())
+def parse(input_data):
+    lines = []
+    last_find = 0
+    while True:
+        search = re.search(r'JSREF\(.*?\)', input_data[last_find:])
+        if not search:
+            break
+        lines.append(input_data[last_find:search.regs[0][0] - 1])
+        lines.append(input_data[search.regs[0][0]:search.regs[0][1]])
+        last_find = search.regs[0][1] + 1
+    lines.append(input_data[last_find:])
+    #
+    result = {
+        "module": "text",
+        "content": lines,
+        "metadata": ""
+    }
+    return result
