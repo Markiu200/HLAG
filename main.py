@@ -2,8 +2,9 @@ import sys
 import logging
 from pathlib import Path, PurePath
 # Own imports
-from snippet_provider import yield_snippet
 from config import config
+from snippet_provider import yield_snippet
+from js_manager import JSManager
 import gui
 
 from printer.printer import Printer
@@ -53,6 +54,7 @@ if __name__ == "__main__":
     # start_gui()
 
     # todo js_manager is instatiated
+    # might not be needed if it's static class
 
     # todo metadata_reader is configured
     # MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
@@ -115,6 +117,9 @@ if __name__ == "__main__":
     # todo content_manager registers content
 
     # todo js_manager registers post-content JS
+    js_path = PurePath(r"D:\hlag\assets\js\navigation.js")
+    JSManager.register(js_path)
+    printer.register(JSManager.print())
 
     # todo end snippet registered
     printer.register(yield_snippet("ending"))
