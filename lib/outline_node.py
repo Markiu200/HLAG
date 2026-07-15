@@ -1,7 +1,7 @@
 from pathlib import PurePath
 from os import sep as system_separator
 # Own imports
-from models.config import config
+from config import config
 
 
 class OutlineNode:

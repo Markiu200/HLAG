@@ -3,7 +3,7 @@ from pathlib import PurePath
 from logging import Logger
 from dataclasses import dataclass
 # Own imports
-from models.config import config
+from config import config
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 
 

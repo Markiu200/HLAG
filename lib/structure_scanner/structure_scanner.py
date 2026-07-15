@@ -1,7 +1,6 @@
 import os
 from pathlib import PurePath
 # Own imports
-from models.config import config
 from data.node_attribute import NodeAttribute
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 from structure_scanner.document_tree.document_tree import DocumentTree

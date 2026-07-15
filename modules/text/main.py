@@ -28,3 +28,12 @@ class Text:
             "metadata": "some_meta"
         }
         return result
+
+
+if __name__ == "__main__":
+    from pathlib import PurePath, Path
+    import os
+    from test import getpath
+    pathp = Path(".")
+    path = os.path.abspath(os.getcwd())
+    print(getpath())

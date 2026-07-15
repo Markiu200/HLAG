@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
-from models.config import config
+from config import config
 from pathlib import PurePath
 
 

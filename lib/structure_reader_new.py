@@ -1,7 +1,7 @@
 import os
 from pathlib import PurePath
 # Own imports
-from models.config import config
+from config import config
 from base_outline_manager import BaseOutlineManager
 
 

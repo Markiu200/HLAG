@@ -2,14 +2,10 @@ import sys
 import logging
 from pathlib import Path, PurePath
 # Own imports
-from models.config import config
+from snippet_provider import yield_snippet
+from config import config
 import gui
-from structure_scanner.metadata_reader.metadata_reader import MetadataReader
-from structure_scanner.structure_scanner import StructureScanner
 
-from module_manager import ModuleManager
-from outline_manager import OutlineManager
-from structure_reader_new import StructureReader
 from printer.printer import Printer
 
 
@@ -47,24 +43,24 @@ if __name__ == "__main__":
 
     # todo module_manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
-    modules_lib_directory = str(Path(Path.cwd(), "modules"))
-    module_manager = ModuleManager(modules_lib_directory)
+    # modules_lib_directory = str(Path(Path.cwd(), "modules"))
+    # module_manager = ModuleManager(modules_lib_directory)
 
     # todo css_manager is instantiated
     # In case GUI gives any option to change default CSS, it is instantiated before GUI
 
     # Start GUI
-    start_gui()
+    # start_gui()
 
     # todo js_manager is instatiated
 
     # todo metadata_reader is configured
-    MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
-    MetadataReader.set_logger(config.logger)
+    # MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
+    # MetadataReader.set_logger(config.logger)
 
     # todo structure_scanner is instantiated
-    structure_scanner = StructureScanner(config.target_path)
-    structure_scanner.register_text_type_extensions({".txt", ".md", ".html", ".json"})
+    # structure_scanner = StructureScanner(config.target_path)
+    # structure_scanner.register_text_type_extensions({".txt", ".md", ".html", ".json"})
 
     # todo db_manager is instantiated
 
@@ -82,7 +78,7 @@ if __name__ == "__main__":
 
     # todo structure_scanner scans structure
     # todo we get all metadata and attributes for the rest of modules
-    structure_scanner.scan()
+    # structure_scanner.scan()
 
     # todo db_manager gets all dictionaries from structure_scanner
 
@@ -105,6 +101,8 @@ if __name__ == "__main__":
     # todo register everything in printer
 
     # todo default start snippet
+    # todo see if you need to pass assets directory or not, might not be needed
+    printer.register(yield_snippet("beginning", title="TestDocu"))
 
     # todo css_manager registers all needed CSS and default CSS
 
@@ -119,6 +117,7 @@ if __name__ == "__main__":
     # todo js_manager registers post-content JS
 
     # todo end snippet registered
+    printer.register(yield_snippet("ending"))
 
     # todo print
     printer.print()

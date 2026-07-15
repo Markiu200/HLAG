@@ -1,5 +1,5 @@
 # Own imports
-from models.config import config
+from config import config
 from outline_node import OutlineNode
 from base_outline_manager import BaseOutlineManager
 
