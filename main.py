@@ -3,8 +3,10 @@ import logging
 from pathlib import Path, PurePath
 # Own imports
 from config import config
+from module_manager import ModuleManager
 from snippet_provider import yield_snippet
 from js_manager import JSManager
+from css_manager import CSSManager
 import gui
 
 from printer.printer import Printer
@@ -42,10 +44,22 @@ def start_gui():
 if __name__ == "__main__":
     initialize_logger()
 
+    # TEMPORARY CONFIG SETUP
+    config.target_path = PurePath(r'D:\hlag\webpage')
+    config.output_path = PurePath(r'D:\hlag')
+    config.assets_path = PurePath(r'D:\hlag\assets')
+    config.modules_path = PurePath(r'D:\hlag\modules')
+    config.output_name = "document_output.txt"
+    config.document_title = "DocuTest"
+    config.embed_images = True
+    config.base_path_length = 2
+
     # todo module_manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
-    # modules_lib_directory = str(Path(Path.cwd(), "modules"))
-    # module_manager = ModuleManager(modules_lib_directory)
+    modules_directory = PurePath(PurePath(__file__).parent, "modules")
+    ModuleManager.set_module_dir_patch(modules_directory)
+    ModuleManager.fetch_modules()
+    ModuleManager.initiate_modules()
 
     # todo css_manager is instantiated
     # In case GUI gives any option to change default CSS, it is instantiated before GUI
@@ -53,8 +67,10 @@ if __name__ == "__main__":
     # Start GUI
     # start_gui()
 
-    # todo js_manager is instatiated
-    # might not be needed if it's static class
+    # printer is instantiated
+    # todo consider making it singleton
+    printer = Printer()
+    printer.set_output_file_path(PurePath(".", "document_output.txt"))
 
     # todo metadata_reader is configured
     # MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
@@ -69,11 +85,6 @@ if __name__ == "__main__":
     # todo navigation_manager is instantiated
 
     # todo content_manager is instantiated
-
-    # printer is instantiated
-    # todo Output file can be changed in GUI and/or cmd argument
-    printer = Printer()
-    printer.set_output_file_path(PurePath(".", "document_output.txt"))
 
     # todo module_manager scans for modules
     # todo to be used when document elements are generated (get their generators)
@@ -100,51 +111,33 @@ if __name__ == "__main__":
 
     # todo content manager registers in js_manager js for js manager (in HTML/js)
 
-    # todo register everything in printer
+    #
+    #   REGISTERING EVERYTHING FOR PRINTING
+    #   register them in appropriate order
+    #
 
-    # todo default start snippet
-    # todo see if you need to pass assets directory or not, might not be needed
+    # Register document beginnig for printing
     printer.register(yield_snippet("beginning", title="TestDocu"))
 
-    # todo css_manager registers all needed CSS and default CSS
+    # Register document CSS for printing
+    CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
+    printer.register(CSSManager.print())
 
-    # todo middle snippet registered
-
-    # todo js_manager register pre-content JS
+    # Register middle part of document (after style and before body) for printing
+    printer.register(yield_snippet("after-style"))
 
     # todo navigation manager registers navigation
 
     # todo content_manager registers content
 
-    # todo js_manager registers post-content JS
-    js_path = PurePath(r"D:\hlag\assets\js\navigation.js")
-    JSManager.register(js_path)
+    # Register JS parts for printing
+    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
+    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
+    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
     printer.register(JSManager.print())
 
-    # todo end snippet registered
+    # Register document ending for printing
     printer.register(yield_snippet("ending"))
 
-    # todo print
+    # Print
     printer.print()
-
-    # # After GUI we should have target directory
-    # config.base_path_length = len(config.target_path.parts)
-    #
-    # structure_reader = StructureReader()
-    #
-    # outline_manager = OutlineManager()
-    # structure_reader.set_outline_manager(outline_manager)
-    #
-    # # Go through the structure and feed other managers
-    # structure_reader.scan()
-    #
-    # print(structure_reader)
-    #
-    # # todo Write result
-    # # with open("output.txt", "w") as file:
-    # #     file.write(site_builder.build())
-    #
-    # # printer = BasePrinter()
-    #
-    # # a = input()
-
