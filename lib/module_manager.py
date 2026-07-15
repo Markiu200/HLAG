@@ -49,7 +49,13 @@ class ModuleManager:
             module.module.init()
 
     @classmethod
-    def get_print_method(cls, module_name: str):
+    def get_parse_method(cls, module_name: str):
         for module in cls.found_modules:
             if module.name == module_name:
                 return module.module.parse
+
+    @classmethod
+    def get_module(cls, module_name: str):
+        for module in cls.found_modules:
+            if module.name == module_name:
+                return module.module
