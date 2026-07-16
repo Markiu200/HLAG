@@ -1,127 +1,71 @@
 import os
 from pathlib import PurePath
 # Own imports
-from data.node_attribute import NodeAttribute
-from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
-from structure_scanner.document_tree.document_tree import DocumentTree
-from structure_scanner.document_tree.document_node import DocumentNode
+from .document_tree import DocumentNode, DocumentTree
 from structure_scanner.metadata_reader.metadata_reader import MetadataReader
 from structure_scanner.checks.base_check import BaseCheck
 
 
 class StructureScanner:
+    root_directory = None
+    tree = None
+    #
+    pre_dir_checks: list[BaseCheck] = []
+    post_dir_checks: list[BaseCheck] = []
+    pre_metaread_node_checks: list[BaseCheck] = []
+    post_metaread_node_checks: list[BaseCheck] = []
+
     @classmethod
     def _is_escaped(cls, name: str):
         return name.startswith((".", "_"))
+
+    @classmethod
+    def set_root_directory(cls, path: PurePath):
+        cls.root_directory = path
 
     @classmethod
     def _apply_checks(cls, node: DocumentNode, checks: list[BaseCheck]):
         for check in checks:
             check.check(node)
 
-    def __init__(self, root_directory: PurePath):
-        self.root_directory = root_directory
-        self.tree = None
-        #
-        self.pre_dir_checks: list[BaseCheck] = []
-        self.post_dir_checks: list[BaseCheck] = []
-        self.pre_metaread_node_checks: list[BaseCheck] = []
-        self.post_metaread_node_checks: list[BaseCheck] = []
-        #
-        self.text_type_extensions = set()
+    @classmethod
+    def register_pre_directory_check(cls, check: BaseCheck):
+        cls.pre_dir_checks.append(check)
 
-    def register_text_type_extensions(self, ext_list: list[str] | tuple[str] | set[[str]]):
-        for item in ext_list:
-            if not item.startswith("."):
-                item = "".join((".", item)).strip()
-            self.text_type_extensions.add(item)
+    @classmethod
+    def register_post_directory_check(cls, check: BaseCheck):
+        cls.post_dir_checks.append(check)
 
-    def register_pre_directory_check(self, check: BaseCheck):
-        self.pre_dir_checks.append(check)
+    @classmethod
+    def register_pre_metaread_node_check(cls, check: BaseCheck):
+        cls.pre_metaread_node_checks.append(check)
 
-    def register_post_directory_check(self, check: BaseCheck):
-        self.post_dir_checks.append(check)
+    @classmethod
+    def register_post_metaread_node_check(cls, check: BaseCheck):
+        cls.post_metaread_node_checks.append(check)
 
-    def register_pre_metaread_node_check(self, check: BaseCheck):
-        self.pre_metaread_node_checks.append(check)
+    @classmethod
+    def scan(cls):
+        cls.tree = DocumentTree(root=DocumentNode(path=cls.root_directory))
+        cls._scan(cls.tree.get_root())
 
-    def register_post_metaread_node_check(self, check: BaseCheck):
-        self.post_metaread_node_checks.append(check)
-
-    def scan(self):
-        self.tree = DocumentTree(root=DocumentNode(path=self.root_directory))
-        self._scan(self.tree.get_root())
-
-    def _scan(self, parent_node: DocumentNode):
-        self._apply_checks(parent_node, self.pre_dir_checks)
+    @classmethod
+    def _scan(cls, parent_node: DocumentNode):
+        cls._apply_checks(parent_node, cls.pre_dir_checks)
         with (os.scandir(parent_node.path) as contents):
             for scanned_element in contents:
                 current_full_path = PurePath(parent_node.path, scanned_element.name)
                 new_node = DocumentNode(path=current_full_path)
                 if scanned_element.is_dir():
-                    self._scan(new_node)
+                    cls._scan(new_node)
                 if scanned_element.is_file():
                     # pre_meta_checks
-                    self._apply_checks(new_node, self.pre_metaread_node_checks)
+                    cls._apply_checks(new_node, cls.pre_metaread_node_checks)
                     # meta read
-                    got_meta = MetadataReader.get_metadata_from_file(current_full_path)
-                    new_node.add_metadata(got_meta.metadata)
-                    new_node.set_metadata(("cursor", got_meta.cursor))
+                    # got_meta = MetadataReader.get_metadata_from_file(current_full_path)
+                    # new_node.add_metadata(got_meta.metadata)
+                    # new_node.set_metadata("cursor", got_meta.cursor)
                     # post meta checks
-                    self._apply_checks(new_node, self.post_metaread_node_checks)
+                    cls._apply_checks(new_node, cls.post_metaread_node_checks)
                     parent_node.add_child(new_node)
-        self._apply_checks(parent_node, self.post_dir_checks)
-
-        # # all directories are containers
-        # parent_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.CONTAINER))
-        # # check if current folder is escaped
-        # if (self._is_escaped(parent_node.path.name)
-        #         or (parent_node.get_parent() is not None
-        #             and NodeAttribute.IS_ESCAPED in parent_node.get_parent().get_attributes())):
-        #     parent_node.add_attribute(NodeAttribute.IS_ESCAPED)
-        # else:
-        #     # otherwise it is in outline
-        #     parent_node.add_attribute(NodeAttribute.IN_OUTLINE)
-        #
-        # with (os.scandir(parent_node.path) as contents):
-        #     for scanned_element in contents:
-        #         current_full_path = PurePath(parent_node.path, scanned_element.name)
-        #
-        #         if scanned_element.is_file():
-        #             self._scan_file(parent_node, current_full_path)
-        #
-        #         if scanned_element.is_dir():
-        #             new_node = DocumentNode(path=current_full_path)
-        #             parent_node.add_child(new_node)
-        #             self._scan(new_node)
-        #
-        #     # apply metadata to directory itself - just title so far
-        #     self._apply_directory_metadata(parent_node)
-
-    def _scan_file(self, parent_node: DocumentNode, path: PurePath):
-        new_node = DocumentNode(path=path)
-        file_extension = path.suffix
-        # in readable files, read metadata
-        if file_extension.lower() in self.text_type_extensions:
-            got_meta = self.metadata_reader.get_metadata_from_file(path)
-            new_node.metadata = dict(got_meta.metadata)
-            # check if type was already set by method above
-            if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
-                new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.TEXT))
-
-        # check if it is image file
-        # todo include in tests
-        if file_extension.lower() in self.text_type_extensions:
-            new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.IMAGE))
-
-        # if file did not match any supported extensions list
-        # todo include in tests
-        if new_node.get_metadata(NodeMetadataKey.TYPE) is None:
-            new_node.set_metadata((NodeMetadataKey.TYPE, NodeMetadataTypeValue.UNSUPPORTED))
-
-        # check if it is escaped directly or through parent node
-        if NodeAttribute.IS_ESCAPED in parent_node.get_attributes() or self._is_escaped(path.name):
-            new_node.add_attribute(NodeAttribute.IS_ESCAPED)
-
-        # after all checks, add ready node
-        parent_node.add_child(new_node)
+        cls._apply_checks(parent_node, cls.post_dir_checks)
