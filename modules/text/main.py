@@ -8,6 +8,7 @@ from txt_check import TXTCheck
 
 
 def init():
+    # todo dependencies / priority / data download / list of other files for the module
     print("Initiating Text module...")
     module_path = PurePath(__file__).parent
     sys.path.append(str(PurePath(module_path, "txt_check.py")))
