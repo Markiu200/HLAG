@@ -1,6 +1,5 @@
 from pathlib import PurePath
 from data.node_attribute import NodeAttribute
-from data.node_type import NodeMetadataTypeValue, NodeMetadataKey
 
 
 class DocumentNode:
@@ -39,24 +38,15 @@ class DocumentNode:
     def get_attributes(self) -> set:
         return self.attributes
 
-    def set_metadata(self, metadata_tuple: (str | NodeMetadataKey, str | NodeMetadataTypeValue)):
-        self.metadata[metadata_tuple[0]] = metadata_tuple[1]
+    def set_metadata(self, key: str, value):
+        self.metadata[key] = value
 
     def add_metadata(self, metadata: dict):
         # todo proper logging
         for key, value in metadata.items():
             self.metadata[key] = value
-            # if key in NodeMetadataKey:
-            #     if key == NodeMetadataKey.TYPE:
-            #         if value in NodeMetadataTypeValue:
-            #             self.metadata[key] = value
-            #         else:
-            #             print(f"Warning: value of \"{value}\" for node metadata type is not recognized and is skipped.")
-            #     self.metadata[key] = value
-            # else:
-            #     raise KeyError(f"Error while attempting to add \"{key}\" to node metadata - key not supported")
 
-    def get_metadata(self, key: str | NodeMetadataKey) -> str | NodeMetadataTypeValue | None:
+    def get_metadata(self, key: str):
         if key in self.metadata:
             return self.metadata[key]
         return None

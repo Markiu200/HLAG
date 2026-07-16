@@ -11,5 +11,5 @@ class BaseCheck(ABC):
         cls.scanner = scanner
 
     @abstractmethod
-    def check(self, node: DocumentNode) -> tuple[dict, set]:
+    def check(self, node: DocumentNode):
         pass
