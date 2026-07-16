@@ -3,7 +3,7 @@ import re
 import os
 # Own imports
 from printer.base_printer import BasePrinter
-from IndentTracker import IndentTracker
+from indent_tracker import IndentTracker
 
 
 class Printer(BasePrinter):

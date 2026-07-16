@@ -1,6 +1,6 @@
 from pathlib import PurePath
 # Own imports
-from IndentTracker import IndentTracker
+from indent_tracker import IndentTracker
 
 
 class JSManager:
