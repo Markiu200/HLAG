@@ -46,7 +46,14 @@ class ModuleManager:
     @classmethod
     def initiate_modules(cls):
         for module in cls.found_modules:
-            module.module.init()
+            module.module.register_checks()
+
+    @classmethod
+    def register_module_files(cls, module_name):
+        for module in cls.found_modules:
+            if module.name == module_name:
+                module.module.register_files()
+                break
 
     @classmethod
     def get_parse_method(cls, module_name: str):

@@ -7,13 +7,18 @@ from module_facade import ModuleFacade
 from txt_check import TXTCheck
 
 
-def init():
+module_path = PurePath(__file__).parent
+
+
+def register_checks():
     # todo dependencies / priority / data download / list of other files for the module
     print("Initiating Text module...")
-    module_path = PurePath(__file__).parent
     sys.path.append(str(PurePath(module_path, "txt_check.py")))
-    ModuleFacade.register_js(PurePath(module_path, "js.js"))
     ModuleFacade.register_check(TXTCheck())
+
+
+def register_files():
+    ModuleFacade.register_js(PurePath(module_path, "js.js"))
 
 
 def parse(input_data):
