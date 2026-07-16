@@ -10,6 +10,7 @@ class DocumentNode:
         self.path = path
         self.attributes = set()
         self.metadata = dict()
+        self.references: list[str] = []
 
     def __eq__(self, other: 'DocumentNode'):
         return (self.path == other.path
