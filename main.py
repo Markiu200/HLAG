@@ -7,6 +7,8 @@ from module_manager import ModuleManager
 from snippet_provider import yield_snippet
 from js_manager import JSManager
 from css_manager import CSSManager
+from structure_scanner import StructureScanner
+#
 import gui
 
 from printer.printer import Printer
@@ -45,7 +47,7 @@ if __name__ == "__main__":
     initialize_logger()
 
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(r'D:\hlag\webpage')
+    config.target_path = PurePath(r'D:\hlag\tests\test_module')
     config.output_path = PurePath(r'D:\hlag')
     config.assets_path = PurePath(r'D:\hlag\assets')
     config.modules_path = PurePath(r'D:\hlag\modules')
@@ -76,9 +78,8 @@ if __name__ == "__main__":
     # MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
     # MetadataReader.set_logger(config.logger)
 
-    # todo structure_scanner is instantiated
-    # structure_scanner = StructureScanner(config.target_path)
-    # structure_scanner.register_text_type_extensions({".txt", ".md", ".html", ".json"})
+    # Configure StructureScanner
+    StructureScanner.set_root_directory(config.target_path)
 
     # todo db_manager is instantiated
 
@@ -91,7 +92,7 @@ if __name__ == "__main__":
 
     # todo structure_scanner scans structure
     # todo we get all metadata and attributes for the rest of modules
-    # structure_scanner.scan()
+    StructureScanner.scan()
 
     # todo db_manager gets all dictionaries from structure_scanner
 
