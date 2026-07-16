@@ -8,6 +8,9 @@ from structure_scanner import DocumentNode
 
 
 class ModuleFacade:
+    """This class is here to be used by modules - a simple way to get the "singleton"
+    kind of classes, and one place to import other stuff from."""
+
     @classmethod
     def register_js(cls, path: PurePath):
         JSManager.register(path)

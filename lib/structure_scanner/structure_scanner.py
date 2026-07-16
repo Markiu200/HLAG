@@ -7,7 +7,7 @@ from structure_scanner.checks.base_check import BaseCheck
 
 class StructureScanner:
     root_directory = None
-    tree = None
+    tree: DocumentTree = None
     #
     pre_dir_checks: list[BaseCheck] = []
     post_dir_checks: list[BaseCheck] = []
