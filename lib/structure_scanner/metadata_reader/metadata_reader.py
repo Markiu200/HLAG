@@ -14,28 +14,8 @@ class ReadResults:
 
 
 class MetadataReader:
-    possible_keys = [key.value for key in NodeMetadataKey]
-    type_possible_values = [key.value for key in NodeMetadataTypeValue]
     tag_regex = None
     logger = None
-
-    @classmethod
-    def key_to_enum_type(cls, key: str | NodeMetadataKey):
-        """Translates string representation of key to enum type."""
-        if isinstance(key, NodeMetadataKey):
-            return key
-        if key in MetadataReader.possible_keys:
-            return NodeMetadataKey(key)
-        return None
-
-    @classmethod
-    def type_value_to_enum_type(cls, value: str | NodeMetadataTypeValue):
-        """Translates string representation of value for TYPE key to enum type."""
-        if isinstance(value, NodeMetadataTypeValue):
-            return value
-        if value in MetadataReader.type_possible_values:
-            return NodeMetadataTypeValue(value)
-        return None
 
     @classmethod
     def set_tag_regex(cls, reg: str):
@@ -131,24 +111,6 @@ class MetadataReader:
     def _process_findings(cls, reg_search: re.Match) -> tuple | None:
         key = reg_search.groups()[0].lower()
         value = reg_search.groups()[1]
-
-        # check if key is ok
-        if key not in MetadataReader.possible_keys:
-            if MetadataReader.logger:
-                config.logger.warning(f"Metadata key '{key}' is not recognized and is ignored")
-            return None
-
-        # check if value of key of 'type' is ok
-        if key == "type" and value.lower() not in MetadataReader.type_possible_values:
-            if MetadataReader.logger:
-                config.logger.warning(
-                    f"Metadata value '{value}' for 'type' key is not recognized and is ignored")
-            return None
-
-        key = MetadataReader.key_to_enum_type(key)
-        if key == NodeMetadataKey.TYPE:
-            value = MetadataReader.type_value_to_enum_type(value.lower())
-
         return key, value
 
 
