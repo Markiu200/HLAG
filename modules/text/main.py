@@ -21,7 +21,8 @@ class Text(IModule):
     def get_info(cls) -> dict:
         return {
             "priority": 1,
-            "dependencies": []
+            "dependencies": [],
+            "jsmanager": "TextModuleManager"
         }
 
     @classmethod

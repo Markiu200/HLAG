@@ -6,6 +6,7 @@ from module_manager import ModuleManager
 class ContentManager:
     printable_elements_list: list[DocumentNode] = []
     used_modules: set[str] = set()
+    module_map: dict = dict()
     saved_refs: dict = dict()  # refs beda jak {"nazwa": [str_refek]}
     saved_refs_ids: dict = dict()
 
@@ -76,5 +77,23 @@ class ContentManager:
         return jsref
 
     @classmethod
+    def generate_module_map(cls) -> str:
+        res = []
+        for used_module in cls.used_modules:
+            jsmanager = ModuleManager.get_module(used_module).get_info().get("jsmanager")
+            if jsmanager:
+                res.append({
+                    "name": used_module,
+                    "manager": jsmanager
+                })
+        return json.dumps(res)
+
+    @classmethod
+    def print_html_container(cls):
+        yield "<main></main>"
+
+    @classmethod
     def print(cls):
-        yield "".join(["let registered_modules = {", json.dumps(cls.saved_refs), "}"])
+        yield "".join(["let registered_modules = [", json.dumps(cls.saved_refs), "]"])
+        yield "\n"
+        yield "".join(["let moduleMap = ", cls.generate_module_map()])
