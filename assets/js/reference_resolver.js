@@ -3,7 +3,7 @@ class ReferenceResolver {
   // todo bede musial uwzgledni JSREF i JSDICT - jako ze slownikowe wyszukiwania at runtime beda tez potrzebne
   // dla niektorych aplikacji
   // todo w dodatku uwzglednic znak specjalny zeby zapobiec przypadkowym uzyciom w kodzie
-  static re = /JSREF\((.*?),(.*?)\)/;
+  static re = /\[%JSREF\((.*?),(.*?)\)%\]/;
 
   static contains_ref(line) {
     return (ReferenceResolver.re).test(line);
