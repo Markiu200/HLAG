@@ -48,7 +48,7 @@ if __name__ == "__main__":
     initialize_logger()
 
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(r'D:\hlag\tests\test_module')
+    config.target_path = PurePath(r'D:\hlag\webpage')
     config.output_path = PurePath(r'D:\hlag')
     config.assets_path = PurePath(r'D:\hlag\assets')
     config.modules_path = PurePath(r'D:\hlag\modules')

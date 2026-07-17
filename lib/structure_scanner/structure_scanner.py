@@ -47,8 +47,8 @@ class StructureScanner:
     def _scan(cls, parent_node: DocumentNode):
         cls._apply_checks(parent_node, cls.pre_dir_checks)
         with (os.scandir(parent_node.path) as contents):
+            dirs = []
             for scanned_element in contents:
-                dirs = []
                 current_full_path = PurePath(parent_node.path, scanned_element.name)
                 new_node = DocumentNode(path=current_full_path)
                 if scanned_element.is_dir():
@@ -60,3 +60,4 @@ class StructureScanner:
             cls._apply_checks(parent_node, cls.post_dir_checks)
             for dir_node in dirs:
                 cls._scan(dir_node)
+                parent_node.add_child(dir_node)

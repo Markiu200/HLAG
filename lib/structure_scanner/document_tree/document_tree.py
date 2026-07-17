@@ -28,9 +28,9 @@ class DocumentTree:
 
     def _iter_loop(self, node: DocumentNode):
         for child in node.children:
-            yield child
             if len(child.children) > 0:
-                self._iter_loop(child)
+                yield from child
+            yield child
 
     def get_root(self):
         return self.root

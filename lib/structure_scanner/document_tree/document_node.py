@@ -20,6 +20,10 @@ class DocumentNode:
     def __str__(self):
         return f"parent:     {id(self.parent)}\npath:       {self.path}\nattributes: {self.attributes}\nmetadata:   {self.metadata}"
 
+    def __iter__(self):
+        for child in self.children:
+            yield child
+
     def add_child(self, child_node: 'DocumentNode'):
         if not isinstance(child_node, DocumentNode):
             raise TypeError(f"Child node is of type {type(child_node)} when it should be {type(self)}")
