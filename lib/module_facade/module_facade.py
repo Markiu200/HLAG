@@ -14,7 +14,7 @@ class ModuleFacade:
 
     @classmethod
     def register_js(cls, path: PurePath):
-        JSManager.register(path)
+        JSManager.register_file(path)
 
     @classmethod
     def register_css(cls, path: PurePath):
