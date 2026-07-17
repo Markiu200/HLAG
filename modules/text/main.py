@@ -6,6 +6,8 @@ from base_module import IModule
 #
 from txt_check import TXTCheck
 import replace_references as rr
+import read_metadata_from_file as rmff
+import read_metadata_from_lines as rmfl
 
 
 def get_module():
@@ -32,12 +34,11 @@ class Text(IModule):
 
     @classmethod
     def read_metadata_from_file(cls, node: DocumentNode) -> dict:
-        # todo this part - for TXT just copy and paste from what you have already
-        pass
+        return rmff.get_metadata_from_file(node.path)
 
     @classmethod
     def read_metadata_from_string(cls, content: str) -> dict:
-        pass
+        return rmfl.read_metadata_from_lines([content])
 
     @classmethod
     def replace_references(cls, content: str) -> str:
