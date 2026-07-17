@@ -7,11 +7,11 @@ def read_metadata_from_lines(lines: list[str]):
 
     for line in lines:
         got = rmfs.get_metadata_from_string(line)
-        if len(got.metadata) > 0:
-            for key, value in got.metadata.items():
+        if len(got) > 0:
+            for key, value in got.items():
                 metadata[key] = value
-        cursor += got.cursor
-        line_after = line[got.cursor:]
+        cursor += got["cursor"]
+        line_after = line[got["cursor"]:]
         line_after_len = len(line_after)
         if len(line_after.strip()) > 0:
             # checks if after getting all the metadata from line there's more text

@@ -49,7 +49,7 @@ class Text(IModule):
         past_meta_location = node.metadata.get("cursor", 0)
         with open(node.path) as f:
             f.seek(past_meta_location)
-            return cls.parse_from_string(f.read())
+            return cls.parse_from_string(f.read(), node.metadata)
 
     @classmethod
     def parse_from_string(cls, content: str, meta: dict) -> dict:
@@ -57,17 +57,17 @@ class Text(IModule):
         lines = []
         last_ref_location = 0
         while True:
-            search = re.search(r'JSREF\(.*?\)', content[last_ref_location:])
+            search = re.search(r'\[%JSREF\(.*?\)%]', content[last_ref_location:])
             if not search:
                 break
-            lines.append(content[last_ref_location:search.regs[0][0] - 1])
-            lines.append(content[search.regs[0][0]:search.regs[0][1]])
-            last_ref_location = search.regs[0][1] + 1
+            lines.append(content[last_ref_location:search.regs[0][0]+last_ref_location])
+            lines.append(content[search.regs[0][0]+last_ref_location:search.regs[0][1]+last_ref_location])
+            last_ref_location += search.regs[0][1]
         lines.append(content[last_ref_location:])
         #
         result = {
             "module": "text",
-            "ref": lines,
-            "metadata": ""
+            "data": lines,
+            "meta": ""
         }
         return result

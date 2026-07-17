@@ -23,8 +23,8 @@ def get_metadata_from_file(path: PurePath) -> dict:
                 break
 
     got = rmfl.read_metadata_from_lines(lines)
-    if len(got.metadata) > 0:
-        for key, value in got.metadata.items():
+    if len(got) > 0:
+        for key, value in got.items():
             metadata[key] = value
 
     return metadata

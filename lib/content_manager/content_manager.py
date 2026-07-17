@@ -44,6 +44,8 @@ class ContentManager:
     @classmethod
     def get_reference_from_data(cls, data: dict) -> str:
         module = ModuleManager.get_module(data.get("module"))
+        if not module:
+            raise RuntimeError(f"Module {data.get('module')} has been referenced but no such module is found.")
         found_meta = module.read_metadata_from_string(data.get("content"))
         jsref_dict = module.parse_from_string(data.get("content"), found_meta)
         jsref = cls.register_instance(jsref_dict)
@@ -54,7 +56,7 @@ class ContentManager:
         # saved_refs = {module: {id:int, refs:list}}
         module = data.get("module")
         #
-        if not cls.saved_refs_ids.get(module):
+        if module not in cls.used_modules:  # not cls.saved_refs_ids.get(module):
             cls.saved_refs_ids[module] = -1
             cls.saved_refs[module] = []
             cls.used_modules.add(module)
