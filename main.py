@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 # Own imports
 from config import config
 from module_manager import ModuleManager
-from snippet_provider import yield_snippet
+from snippet_provider import yield_snippet, yield_snippet_with_args
 from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
