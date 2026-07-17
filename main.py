@@ -8,6 +8,7 @@ from snippet_provider import yield_snippet
 from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
+from content_manager import ContentManager
 #
 import gui
 
@@ -74,18 +75,12 @@ if __name__ == "__main__":
     printer = Printer()
     printer.set_output_file_path(PurePath(".", "document_output.txt"))
 
-    # todo metadata_reader is configured
-    # MetadataReader.set_tag_regex(r'\[%>(.*?):(.*?)]')
-    # MetadataReader.set_logger(config.logger)
-
     # Configure StructureScanner
     StructureScanner.set_root_directory(config.target_path)
 
     # todo db_manager is instantiated
 
     # todo navigation_manager is instantiated
-
-    # todo content_manager is instantiated
 
     # todo module_manager scans for modules
     # todo to be used when document elements are generated (get their generators)
@@ -106,11 +101,10 @@ if __name__ == "__main__":
     # todo in js_manager and css_manager
 
     # todo content_manager gets generables from structure_scanner
+    ContentManager.fetch_content_from_scanner()
 
-    # todo content_manager produces 3-way tuples (module, instance, instructions)
-    # todo for each generable and saves them internally
-
-    # todo content manager registers in js_manager js for js manager (in HTML/js)
+    # todo content_manager produces 3-way tuples (id, data, meta)
+    ContentManager.parse_files()
 
     #
     #   REGISTERING EVERYTHING FOR PRINTING
@@ -129,12 +123,14 @@ if __name__ == "__main__":
 
     # todo navigation manager registers navigation
 
-    # todo content_manager registers content
+    # ContentManager registers it's container for printinf
+    printer.register(ContentManager.print_html_container())
 
     # Register JS parts for printing
-    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
-    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
-    JSManager.register(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
+    JSManager.register_other_print(ContentManager.print())
     printer.register(JSManager.print())
 
     # Register document ending for printing
