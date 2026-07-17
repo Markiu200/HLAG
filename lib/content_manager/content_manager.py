@@ -16,6 +16,12 @@ class ContentManager:
                 cls.printable_elements_list.append(node)
 
     @classmethod
+    def parse_files(cls):
+        for element in cls.printable_elements_list:
+            jsref = cls.get_reference_from_file(element)
+            element.references.append(jsref)
+
+    @classmethod
     def get_reference_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
         # todo get current module from metadata
         module = ModuleManager.get_module(node.metadata.get("module"))
