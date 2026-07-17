@@ -2,13 +2,17 @@ import importlib
 import os
 import sys
 import logging
+from pathlib import PurePath
+# Own imports
+from base_module import IModule
 
 logger = logging.getLogger(__name__)
 
 
 class Module:
-    def __init__(self, name: str, module):
+    def __init__(self, name: str, module_import, module: IModule):
         self.name = name
+        self.module_import = module_import
         self.module = module
 
 
@@ -35,9 +39,13 @@ class ModuleManager:
 
         try:
             for a_module in modules_directory_list:
+                sys.path.append(str(PurePath(cls.modules_dir_path, a_module)))
+                module_import = importlib.import_module(f"{a_module}.main")
+                module = module_import.get_module()
                 cls.found_modules.append(Module(
                     name=a_module,
-                    module=importlib.import_module(f"{a_module}.main")
+                    module_import=module_import,
+                    module=module
                 ))
         except Exception as e:
             logger.critical(f"Error occurred during user modules import.")
