@@ -57,19 +57,6 @@ class ModuleManager:
             module.module.register_checks()
 
     @classmethod
-    def register_module_files(cls, module_name):
-        for module in cls.found_modules:
-            if module.name == module_name:
-                module.module.register_files()
-                break
-
-    @classmethod
-    def get_parse_method(cls, module_name: str):
-        for module in cls.found_modules:
-            if module.name == module_name:
-                return module.module.parse
-
-    @classmethod
     def get_module(cls, module_name: str) -> IModule:
         for module in cls.found_modules:
             if module.name == module_name:
