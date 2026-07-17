@@ -5,6 +5,7 @@ from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from structure_scanner import BaseCheck
 from structure_scanner import DocumentNode
+from content_manager import ContentManager
 
 
 class ModuleFacade:
@@ -21,4 +22,8 @@ class ModuleFacade:
 
     @classmethod
     def register_check(cls, callback):
-        StructureScanner.register_pre_metaread_node_check(callback)
+        StructureScanner.register_node_check(callback)
+
+    @classmethod
+    def get_content_manager(cls):
+        return ContentManager
