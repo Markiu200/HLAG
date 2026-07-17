@@ -62,7 +62,7 @@ class ModuleManager:
                 return module.module.parse
 
     @classmethod
-    def get_module(cls, module_name: str):
+    def get_module(cls, module_name: str) -> IModule:
         for module in cls.found_modules:
             if module.name == module_name:
                 return module.module
