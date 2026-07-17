@@ -1,6 +1,6 @@
 # Own imports
 from base_check import BaseCheck
-from structure_scanner.document_tree.document_node import DocumentNode
+from structure_scanner.document_node import DocumentNode
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
 
 

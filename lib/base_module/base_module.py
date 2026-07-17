@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import re
 # Own imports
-from structure_scanner.document_tree.document_node import DocumentNode
+from structure_scanner.document_node import DocumentNode
 from module_manager import ModuleManager
 from structure_scanner.metadata_reader.metadata_reader import MetadataReader
 # temp

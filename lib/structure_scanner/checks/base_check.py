@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from structure_scanner.document_tree.document_node import DocumentNode
+from structure_scanner.document_node import DocumentNode
 # Own imports
 if __name__ == "__main__":
     from structure_scanner.structure_scanner import StructureScanner

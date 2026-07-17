@@ -1,16 +1,15 @@
 import unittest
 import sys
 from pathlib import PurePath
-from enum import Enum
+
 # Own imports
 sys.path.append("D:\\hlag")
 sys.path.append("D:\\hlag\\lib")
 
 from structure_scanner.structure_scanner import StructureScanner
-from data.node_attribute import NodeAttribute
 from data.node_type import NodeMetadataKey, NodeMetadataTypeValue
-from structure_scanner.document_tree.document_node import DocumentNode
-from structure_scanner.document_tree.document_tree import DocumentTree
+from structure_scanner.document_node import DocumentNode
+from structure_scanner.document_tree import DocumentTree
 # Checks
 sys.path.append("D:\\hlag\\lib\\structure_scanner\\checks")
 from structure_scanner.checks.unsupported_check import UnsupportedCheck
