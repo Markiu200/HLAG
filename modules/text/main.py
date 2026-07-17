@@ -68,7 +68,7 @@ class Text(IModule):
         #
         result = {
             "module": "text",
-            "data": lines,
+            "data": {"nodes": lines},
             "meta": ""
         }
         return result
