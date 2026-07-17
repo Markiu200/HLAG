@@ -6,6 +6,7 @@ from structure_scanner import StructureScanner
 from structure_scanner import BaseCheck
 from structure_scanner import DocumentNode
 from content_manager import ContentManager
+from module_manager import ModuleManager
 
 
 class ModuleFacade:
@@ -27,3 +28,7 @@ class ModuleFacade:
     @classmethod
     def get_content_manager(cls):
         return ContentManager
+
+    @classmethod
+    def get_module(cls, module_name: str):
+        return ModuleManager.get_module(module_name)

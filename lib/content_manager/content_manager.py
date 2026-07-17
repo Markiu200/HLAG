@@ -73,7 +73,7 @@ class ContentManager:
         }
         cls.saved_refs[module].append(ref)
         #
-        print(f"Instance registered, count {new_module_id}: {ref}")
+        print(f"Instance of {module} registered, count {new_module_id}: {ref}")
         return jsref
 
     @classmethod

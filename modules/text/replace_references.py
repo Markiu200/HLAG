@@ -2,7 +2,6 @@ import re
 from module_facade import ModuleFacade
 
 
-
 class BaseReference:
     def __init__(self, begin: int, end: int):
         self.begin = begin
