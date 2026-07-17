@@ -47,10 +47,12 @@ class ContentManager:
     def register_instance(cls, data: dict) -> str:  # zwraca JSREF
         # saved_refs = {module: {id:int, refs:list}}
         module = data.get("module")
+        #
         if not cls.saved_refs_ids.get(module):
             cls.saved_refs_ids[module] = -1
             cls.saved_refs[module] = []
             cls.used_modules.add(module)
+            ModuleManager.get_module(module).register_files()
         new_module_id = cls.saved_refs_ids[module] + 1
         cls.saved_refs_ids[module] = new_module_id
         #
