@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # printer is instantiated
     # todo consider making it singleton
     printer = Printer()
-    printer.set_output_file_path(PurePath(".", "document_output.txt"))
+    printer.set_output_file_path(PurePath(".", "document_output.html"))
 
     # Configure StructureScanner
     StructureScanner.set_root_directory(config.target_path)
@@ -112,14 +112,17 @@ if __name__ == "__main__":
     #
 
     # Register document beginnig for printing
-    printer.register(yield_snippet("beginning", title="TestDocu"))
+    printer.register(yield_snippet_with_args("beginning", title="TestDocu"))
 
     # Register document CSS for printing
     CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
-    printer.register(CSSManager.print())
+    # TEMPORARY COMMENTED OUT
+    # printer.register(CSSManager.print())
 
-    # Register middle part of document (after style and before body) for printing
+    # Register middle part of document (after style and open body) for printing
     printer.register(yield_snippet("after-style"))
+    # TEMPORARY
+    printer.register(yield_snippet("tmp-html"))
 
     # todo navigation manager registers navigation
 
@@ -131,6 +134,9 @@ if __name__ == "__main__":
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
     JSManager.register_other_print(ContentManager.print())
+    # TEMPORARY
+    JSManager.register_other_print(yield_snippet("tmp-js"))
+    JSManager.register_other_print(yield_snippet("tmp-windows"))
     printer.register(JSManager.print())
 
     # Register document ending for printing
