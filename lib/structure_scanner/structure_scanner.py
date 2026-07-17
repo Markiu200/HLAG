@@ -1,7 +1,7 @@
 import os
 from pathlib import PurePath
 # Own imports
-from document_tree import DocumentNode, DocumentTree
+from .document_tree import DocumentNode, DocumentTree
 from structure_scanner.checks.base_check import BaseCheck
 
 
