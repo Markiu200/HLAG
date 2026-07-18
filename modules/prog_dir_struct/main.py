@@ -2,6 +2,7 @@
 from module_facade import ModuleFacade, DocumentNode
 from base_module import IModule
 from escaped_check import EscapedCheck
+from dir_meta_check import DirMetaCheck
 
 
 def get_module():
@@ -21,7 +22,7 @@ class ProgDirStruct(IModule):
     def register_checks(cls):
         ModuleFacade.register_initial_dir_check(EscapedCheck())
         ModuleFacade.register_check(EscapedCheck())
-        pass
+        ModuleFacade.register_final_dir_check(DirMetaCheck())
 
     @classmethod
     def register_files(cls):
