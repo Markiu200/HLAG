@@ -13,7 +13,7 @@ class ContentManager:
     @classmethod
     def fetch_content_from_scanner(cls):
         for node in StructureScanner.tree:
-            if node.metadata.get("module"):
+            if node.metadata.get("module") and not node.has_attribute("escaped"):
                 cls.printable_elements_list.append(node)
 
     @classmethod
