@@ -21,6 +21,8 @@ class DocumentNode:
 
     def __iter__(self):
         for child in self.children:
+            if len(child.children) > 0:
+                yield from child
             yield child
 
     def add_child(self, child_node: 'DocumentNode'):
