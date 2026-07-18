@@ -9,7 +9,7 @@ class DocumentTree:
 
     def __iter__(self):
         yield self.root
-        yield from self._iter_loop(self.root)
+        yield from self.root
 
     def __eq__(self, other_tree: 'DocumentTree'):
         own_nodes = [node for node in self]
@@ -25,12 +25,6 @@ class DocumentTree:
                 return False
 
         return True
-
-    def _iter_loop(self, node: DocumentNode):
-        for child in node.children:
-            if len(child.children) > 0:
-                yield from child
-            yield child
 
     def get_root(self):
         return self.root
