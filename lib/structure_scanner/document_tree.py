@@ -1,6 +1,6 @@
 from pathlib import PurePath
 # Own imports
-from structure_scanner.document_node import DocumentNode
+from .document_node import DocumentNode
 
 
 class DocumentTree:
