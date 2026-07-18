@@ -13,7 +13,7 @@ from filetypes.directory import Directory
 from article import Article
 
 
-class Navigation:
+class NavigationOld:
     def __init__(self, root_directory: Directory):
         self.root_directory = root_directory
         self.html_part = '''\
