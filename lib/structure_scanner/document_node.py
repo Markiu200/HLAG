@@ -1,4 +1,5 @@
 from pathlib import PurePath
+from config import config
 
 
 class DocumentNode:
@@ -10,6 +11,8 @@ class DocumentNode:
         self.attributes = set()
         self.metadata = dict()
         self.references: list[str] = []
+        #
+        self.set_metadata("relPath", self.get_rel_path())
 
     def __eq__(self, other: 'DocumentNode'):
         return (self.path == other.path
@@ -24,6 +27,9 @@ class DocumentNode:
             if len(child.children) > 0:
                 yield from child
             yield child
+
+    def get_rel_path(self):
+        return str(self.path).replace(str(config.target_path), "")
 
     def add_child(self, child_node: 'DocumentNode'):
         if not isinstance(child_node, DocumentNode):
