@@ -39,6 +39,12 @@ class DocumentNode:
     def add_attribute(self, attribute):
         self.attributes.add(attribute)
 
+    def remove_attribute(self, attribute):
+        self.attributes.remove(attribute)
+
+    def has_attribute(self, attribute: str) -> bool:
+        return attribute in self.attributes
+
     def get_attributes(self) -> set:
         return self.attributes
 
