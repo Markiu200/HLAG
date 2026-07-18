@@ -70,6 +70,6 @@ class Text(IModule):
         result = {
             "module": "text",
             "data": {"nodes": lines},
-            "meta": ""
+            "meta": meta
         }
         return result
