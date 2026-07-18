@@ -1,5 +1,4 @@
 from pathlib import PurePath
-from data.node_attribute import NodeAttribute
 
 
 class DocumentNode:
@@ -37,7 +36,7 @@ class DocumentNode:
     def get_children(self):
         return self.children
 
-    def add_attribute(self, attribute: NodeAttribute):
+    def add_attribute(self, attribute):
         self.attributes.add(attribute)
 
     def get_attributes(self) -> set:
