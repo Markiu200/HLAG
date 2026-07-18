@@ -9,6 +9,7 @@ from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from content_manager import ContentManager
+from navigation_manager import NavigationManager
 #
 import gui
 
@@ -62,11 +63,14 @@ if __name__ == "__main__":
     modules_directory = PurePath(PurePath(__file__).parent, "modules")
     ModuleManager.set_module_dir_patch(modules_directory)
     ModuleManager.fetch_modules()
+
+    # Register Checks from modules before structure scan goes
     ModuleManager.initiate_modules()
 
     # todo css_manager is instantiated
     # In case GUI gives any option to change default CSS, it is instantiated before GUI
 
+    # todo GUI for selecting target directory and other stuff
     # Start GUI
     # start_gui()
 
@@ -78,33 +82,22 @@ if __name__ == "__main__":
     # Configure StructureScanner
     StructureScanner.set_root_directory(config.target_path)
 
-    # todo db_manager is instantiated
-
-    # todo navigation_manager is instantiated
-
-    # todo module_manager scans for modules
-    # todo to be used when document elements are generated (get their generators)
-
-    # todo structure_scanner scans structure
-    # todo we get all metadata and attributes for the rest of modules
+    # Scan the structure
     StructureScanner.scan()
 
     # todo db_manager gets all dictionaries from structure_scanner
 
-    # todo db_manager generates from structure_scanner data all 3-way tuples
-    # todo (relPath, module, instance)
+    # Content manager gets the files it can use from structure scanner
+    ContentManager.fetch_content_from_scanner()
+
+    # Content manager translates files to JSREF things
+    ContentManager.parse_files()
 
     # todo navigation manager gets document outline from structure_scanner
     # todo to craft a navigation JSON to be used by JS
 
     # todo if there's any outline, JS and CSS for navigation are registered
     # todo in js_manager and css_manager
-
-    # todo content_manager gets generables from structure_scanner
-    ContentManager.fetch_content_from_scanner()
-
-    # todo content_manager produces 3-way tuples (id, data, meta)
-    ContentManager.parse_files()
 
     #
     #   REGISTERING EVERYTHING FOR PRINTING
@@ -124,7 +117,8 @@ if __name__ == "__main__":
     # TEMPORARY
     printer.register(yield_snippet("tmp-html"))
 
-    # todo navigation manager registers navigation
+    # Register navigation for printing
+    printer.register(NavigationManager.print_html())
 
     # ContentManager registers it's container for printinf
     printer.register(ContentManager.print_html_container())
@@ -136,7 +130,7 @@ if __name__ == "__main__":
     JSManager.register_other_print(ContentManager.print())
     # TEMPORARY
     JSManager.register_other_print(yield_snippet("tmp-js"))
-    JSManager.register_other_print(yield_snippet("tmp-windows"))
+    JSManager.register_other_print(NavigationManager.print_js_data())
     printer.register(JSManager.print())
 
     # Register document ending for printing
