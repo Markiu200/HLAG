@@ -35,6 +35,9 @@ class DocumentNode:
     def get_parent(self):
         return self.parent
 
+    def set_parent(self, parent_node: 'DocumentNode'):
+        self.parent = parent_node
+
     def get_children(self):
         return self.children
 

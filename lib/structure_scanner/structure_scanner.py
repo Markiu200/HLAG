@@ -52,6 +52,7 @@ class StructureScanner:
             for scanned_element in contents:
                 current_full_path = PurePath(parent_node.path, scanned_element.name)
                 new_node = DocumentNode(path=current_full_path)
+                new_node.set_parent(parent_node)
                 if scanned_element.is_dir():
                     dirs.append(new_node)
                 if scanned_element.is_file():
