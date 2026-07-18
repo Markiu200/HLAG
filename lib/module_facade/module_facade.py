@@ -22,8 +22,16 @@ class ModuleFacade:
         CSSManager.register(path)
 
     @classmethod
-    def register_check(cls, callback):
-        StructureScanner.register_node_check(callback)
+    def register_check(cls, check):
+        StructureScanner.register_node_check(check)
+
+    @classmethod
+    def register_initial_dir_check(cls, check):
+        StructureScanner.register_pre_directory_check(check)
+
+    @classmethod
+    def register_final_dir_check(cls, check):
+        StructureScanner.register_post_directory_check(check)
 
     @classmethod
     def get_content_manager(cls):
