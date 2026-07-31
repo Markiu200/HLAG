@@ -1,3 +1,4 @@
 from .module_facade import ModuleFacade
-from .module_facade import BaseCheck
-from .module_facade import DocumentNode
+# imports for "facadeness"
+from structure_scanner import DocumentNode
+from structure_scanner import BaseCheck

@@ -3,8 +3,6 @@ from pathlib import PurePath
 from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
-from structure_scanner import BaseCheck
-from structure_scanner import DocumentNode
 from content_manager import ContentManager
 from module_management import ModuleManager
 
