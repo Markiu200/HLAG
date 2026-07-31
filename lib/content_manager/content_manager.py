@@ -1,6 +1,6 @@
 import json
 from structure_scanner import StructureScanner, DocumentNode
-from module_manager import ModuleManager
+from module_management import ModuleManager
 
 
 class ContentManager:

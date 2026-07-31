@@ -6,7 +6,7 @@ from structure_scanner import StructureScanner
 from structure_scanner import BaseCheck
 from structure_scanner import DocumentNode
 from content_manager import ContentManager
-from module_manager import ModuleManager
+from module_management import ModuleManager
 
 
 class ModuleFacade:

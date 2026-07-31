@@ -2,7 +2,7 @@ import re
 from pathlib import PurePath
 # Own imports
 from module_facade import ModuleFacade, DocumentNode
-from base_module import IModule
+from module_management import IModule
 #
 from txt_check import TXTCheck
 import replace_references as rr

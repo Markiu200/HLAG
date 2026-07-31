@@ -1,6 +1,6 @@
 # Own imports
 from module_facade import ModuleFacade, DocumentNode
-from base_module import IModule
+from module_management import IModule
 from escaped_check import EscapedCheck
 from dir_meta_check import DirMetaCheck
 

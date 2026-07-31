@@ -4,7 +4,7 @@ import sys
 import logging
 from pathlib import PurePath
 # Own imports
-from base_module import IModule
+from module_management import IModule
 
 logger = logging.getLogger(__name__)
 
