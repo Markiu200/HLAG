@@ -53,7 +53,7 @@ if __name__ == "__main__":
     config.output_path = PurePath(r'D:\hlag')
     config.assets_path = PurePath(r'D:\hlag\assets')
     config.modules_path = PurePath(r'D:\hlag\modules')
-    config.output_name = "document_output.txt"
+    config.output_name = "document_output.html"
     config.document_title = "DocuTest"
     config.embed_images = True
     config.base_path_length = 2
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     # printer is instantiated
     # todo consider making it singleton
     printer = Printer()
-    printer.set_output_file_path(PurePath(".", "document_output.html"))
+    printer.set_output_file_path(PurePath(config.output_path, config.output_name))
 
     # Configure StructureScanner
     StructureScanner.set_root_directory(config.target_path)
