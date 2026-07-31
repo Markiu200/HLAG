@@ -3,7 +3,7 @@ from pathlib import PurePath
 # Own imports
 from .document_tree import DocumentTree
 from .document_node import DocumentNode
-from .checks import BaseCheck
+from .base_check import BaseCheck
 
 
 class StructureScanner:
