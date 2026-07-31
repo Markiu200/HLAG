@@ -1,9 +1,6 @@
 from pathlib import PurePath
-import re
-import os
 # Own imports
 from printer.base_printer import BasePrinter
-from indent_tracker import IndentTracker
 
 
 class Printer(BasePrinter):
