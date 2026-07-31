@@ -1,4 +1,3 @@
-import re
 from pathlib import PurePath
 # Own imports
 from module_facade import ModuleFacade, DocumentNode
