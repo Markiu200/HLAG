@@ -15,10 +15,6 @@ class StructureScanner:
     node_checks: list[BaseCheck] = []
 
     @classmethod
-    def _is_escaped(cls, name: str):
-        return name.startswith((".", "_"))
-
-    @classmethod
     def set_root_directory(cls, path: PurePath):
         cls.root_directory = path
 
