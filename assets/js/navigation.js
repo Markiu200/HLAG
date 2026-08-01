@@ -7,7 +7,15 @@ class NavigationButton {
       this.button.innerHTML = title;
       this.button.style.width = "250px";
       this.button.style.height = "50px";
-      this.button.addEventListener("click", () => {Navigation.switchToWindow(this.windowId);});
+      this.button.addEventListener("click", this.clickEvent.bind(this));
+    }
+
+    clickEvent(e) {
+      if (e.shiftKey) {
+        Navigation.toggleWindow(this.windowId);
+      } else {
+        Navigation.switchToWindow(this.windowId);
+      }
     }
 }
 
@@ -39,8 +47,9 @@ class Navigation {
 
   static switchToWindow(windowId) {
     Navigation.requestedWindows.forEach(element => {
-      Navigation.dismissWindow(element.id);
+      ContentManager.closeWindow(element);
     });
+    Navigation.requestedWindows.splice(0)
     Navigation.requestWindow(windowId);
   }
 
