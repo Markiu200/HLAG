@@ -5,14 +5,12 @@ class TextModuleInstance {
     this.nestedInstances = []
   }
   open() {
-    console.log("Text instance opened");
     this.nestedInstances.forEach((instance) => {
       instance.open()
     })
   }
 
   close() {
-    console.log("Text instance closed");
     this.nestedInstances.forEach((instance) => {
       instance.close()
     })
@@ -27,7 +25,6 @@ class TextModuleManager {
   static getInstance(id) {
     let foundInstance = TextModuleManager.instances.find((element) => {return element.id == id});
     if (foundInstance) {
-      console.log("returning exisitng instance...")
       return foundInstance;
     } else {
       console.log("generating new instance...");

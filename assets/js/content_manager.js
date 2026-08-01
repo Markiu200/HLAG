@@ -81,9 +81,7 @@ class ContentManager {
       window = ContentManager.createWindow(windowJSON);
     }
     let isOpened = ContentManager.openedWindows.find((element) => {return element == window;});
-    if (isOpened) {
-      console.log("Window "+windowJSON.id+" appears to be already opened.");
-    } else {
+    if (!isOpened) {
       window.open();
       ContentManager.openedWindows.push(window);
     }
@@ -95,8 +93,6 @@ class ContentManager {
       window.close();
       let index = ContentManager.openedWindows.indexOf(window);
       ContentManager.openedWindows.splice(index, 1);
-    } else {
-      console.log("Window "+windowJSON.id+" appears to be already closed.");
     }
   }
 }
