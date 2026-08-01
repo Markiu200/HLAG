@@ -24,22 +24,19 @@ class ContentManager:
 
     @classmethod
     def get_reference_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
-        # todo get current module from metadata
+        # Get current module from metadata
         module = ModuleManager.get_module(node.metadata.get("module"))
-        # todo then read the metadata using current Module meta-fetcher
+        # Read the metadata using current Module meta-fetcher
         found_meta = module.read_metadata_from_file(node)
-        # todo then update metadata
+        # Update metadata
         node.add_metadata(found_meta)
-        # todo then see what module it is after all
-        # todo then register that module as used
+        # See what module it is after all and register that module as used
         module = ModuleManager.get_module(node.metadata.get("module"))
-        # todo then append metadata read to the metadata
-        # assuming for now that it's been done via meta update above
-        # todo then invoke current Module parse along with DocumentNode
-        # todo then save the returned object (to be JSREFed at print)
-        # # todo if parser encounter reference, it asks this method for reference (passes the object)
-        jsref_dict = module.parse_from_file(node)
-        jsref = cls.register_instance(jsref_dict)
+        # Invoke that Module parse method and save it's jscard
+        # # if parser encounter reference, it asks this class to get reference (get_reference_from_data)
+        jscard = module.parse_from_file(node)
+        # Having file finally parsed, generate and return jsref
+        jsref = cls.register_instance(jscard)
         return jsref
 
     @classmethod
@@ -48,8 +45,8 @@ class ContentManager:
         if not module:
             raise RuntimeError(f"Module {data.get('module')} has been referenced but no such module is found.")
         found_meta = module.read_metadata_from_string(data.get("content"))
-        jsref_dict = module.parse_from_string(data.get("content"), found_meta)
-        jsref = cls.register_instance(jsref_dict)
+        jscard = module.parse_from_string(data.get("content"), found_meta)
+        jsref = cls.register_instance(jscard)
         return jsref
 
     @classmethod
@@ -75,6 +72,10 @@ class ContentManager:
         #
         print(f"Instance of {module} registered, count {new_module_id}: {ref}")
         return jsref
+
+    #
+    #   PRINTING RELATED METHODS
+    #
 
     @classmethod
     def generate_module_map(cls) -> str:
