@@ -5,7 +5,9 @@ class NavigationButton {
       this.button = document.createElement("button");
       this.button.type = "button";
       this.button.innerHTML = title;
-      this.button.addEventListener("click", Navigation.toggleWindow(this.windowId));
+      this.button.style.width = "250px";
+      this.button.style.height = "50px";
+      this.button.addEventListener("click", () => {Navigation.toggleWindow(this.windowId);});
     }
 }
 
@@ -28,7 +30,7 @@ class Navigation {
   }
 
   static toggleWindow(windowId) {
-    if (Navigation.requestedWindow.find((element) => {return element.id == windowId;})) {
+    if (Navigation.requestedWindows.find((element) => {return element.id == windowId;})) {
       Navigation.dismissWindow(windowId);
     } else {
       Navigation.requestWindow(windowId);
@@ -38,7 +40,7 @@ class Navigation {
   static generateNavigation() {
     windows.forEach(element => {
       let button = new NavigationButton(element.id, element.title);
-      Navigation.navigationDiv.appendChild(button);
+      Navigation.navigationDiv.appendChild(button.button);
     });
   }
 }
