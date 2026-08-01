@@ -123,17 +123,17 @@ if __name__ == "__main__":
     # Register navigation for printing
     printer.register(NavigationManager.print_html())
 
-    # ContentManager registers it's container for printinf
+    # ContentManager registers it's container for printing
     printer.register(ContentManager.print_html_container())
 
     # Register JS parts for printing
+    JSManager.register_other_print(NavigationManager.print_jswindows())  # TEMPORARY?
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
     JSManager.register_other_print(ContentManager.print())
     # TEMPORARY
     JSManager.register_other_print(yield_snippet("tmp-js"))
-    JSManager.register_other_print(NavigationManager.print_jswindows())
     printer.register(JSManager.print())
 
     # Register document ending for printing

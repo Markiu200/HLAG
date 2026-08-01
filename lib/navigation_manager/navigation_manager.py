@@ -49,7 +49,7 @@ class NavigationManager:
     @classmethod
     def print_html(cls):
         # todo this
-        yield "<nav>NAVIGATION</nav>"
+        yield '<nav id="nav"></nav>'
 
     @classmethod
     def print_js_manager(cls):
