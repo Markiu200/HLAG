@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # todo to craft a navigation JSON to be used by JS
     NavigationManager.fetch_content_from_scanner()
     # TEMPORARY
-    NavigationManager.generate_jswindows()
+    # NavigationManager.generate_jswindows()
 
     # todo if there's any outline, JS and CSS for navigation are registered
     # todo in js_manager and css_manager
@@ -133,12 +133,12 @@ if __name__ == "__main__":
     JSManager.register_other_print(ContentManager.print())
     # TEMPORARY
     JSManager.register_other_print(yield_snippet("tmp-js"))
-    JSManager.register_other_print(NavigationManager.print_js_data())
+    JSManager.register_other_print(NavigationManager.print_jswindows())
     printer.register(JSManager.print())
 
     # Register document ending for printing
     printer.register(yield_snippet("ending"))
 
     # Print
-    # printer.print()
+    printer.print()
     print("Done")

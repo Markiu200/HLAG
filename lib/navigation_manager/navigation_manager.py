@@ -38,7 +38,7 @@ class NavigationManager:
             #
             cls.jswindows.append(jswindow)
         print(json.dumps(cls.jswindows))
-        return json.dumps(cls.jswindows)
+        return cls.jswindows
 
     @classmethod
     def generate_nav_tree(cls):
@@ -55,6 +55,11 @@ class NavigationManager:
     def print_js_manager(cls):
         # todo this
         yield "class Navigation {}"
+
+    @classmethod
+    def print_jswindows(cls):
+        res = f"let windows = {cls.generate_jswindows()};"
+        yield res
 
     @classmethod
     def print_js_data(cls):
