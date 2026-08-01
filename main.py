@@ -95,6 +95,9 @@ if __name__ == "__main__":
 
     # todo navigation manager gets document outline from structure_scanner
     # todo to craft a navigation JSON to be used by JS
+    NavigationManager.fetch_content_from_scanner()
+    # TEMPORARY
+    NavigationManager.generate_jswindows()
 
     # todo if there's any outline, JS and CSS for navigation are registered
     # todo in js_manager and css_manager
@@ -137,4 +140,5 @@ if __name__ == "__main__":
     printer.register(yield_snippet("ending"))
 
     # Print
-    printer.print()
+    # printer.print()
+    print("Done")
