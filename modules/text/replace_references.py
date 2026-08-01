@@ -86,7 +86,7 @@ def replace_references(content: str) -> str:
             new_reference.content = content[new_reference.end:end_reference.begin]
             new_reference.end = end_reference.end
             #
-            jsref = ModuleFacade.get_content_manager().get_reference_from_data({
+            jsref = ModuleFacade.get_content_manager().get_jsref_from_data({
                 "module": value,
                 "content": new_reference.content
             })

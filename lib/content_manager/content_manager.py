@@ -23,7 +23,7 @@ class ContentManager:
             element.references.append(jsref)
 
     @classmethod
-    def get_reference_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
+    def get_jsref_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
         # Get current module from metadata
         module = ModuleManager.get_module(node.metadata.get("module"))
         # Read the metadata using current Module meta-fetcher
@@ -40,7 +40,7 @@ class ContentManager:
         return jsref
 
     @classmethod
-    def get_reference_from_data(cls, data: dict) -> str:
+    def get_jsref_from_data(cls, data: dict) -> str:
         module = ModuleManager.get_module(data.get("module"))
         if not module:
             raise RuntimeError(f"Module {data.get('module')} has been referenced but no such module is found.")
