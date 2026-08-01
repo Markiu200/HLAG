@@ -10,7 +10,7 @@ class DocumentNode:
         self.path = path
         self.attributes = set()
         self.metadata = dict()
-        self.references: list[str] = []
+        self.references: list[dict] = []
         #
         self.set_metadata("relPath", self.get_rel_path())
 

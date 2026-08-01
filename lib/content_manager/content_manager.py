@@ -9,6 +9,7 @@ class ContentManager:
     module_map: dict = dict()
     saved_refs: dict = dict()  # refs beda jak {"nazwa": [str_refek]}
     saved_refs_ids: dict = dict()
+    current_node: DocumentNode
 
     @classmethod
     def fetch_content_from_scanner(cls):
@@ -19,8 +20,9 @@ class ContentManager:
     @classmethod
     def parse_files(cls):
         for element in cls.printable_elements_list:
-            jsref = cls.get_reference_from_file(element)
-            element.references.append(jsref)
+            cls.current_node = element
+            jsref = cls.get_jsref_from_file(element)
+            # element.references.append(jsref)
 
     @classmethod
     def get_jsref_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
@@ -69,6 +71,11 @@ class ContentManager:
             "meta": data["meta"]
         }
         cls.saved_refs[module].append(ref)
+        #
+        cls.current_node.references.append({
+            "module": module,
+            "id": new_module_id,
+        })
         #
         print(f"Instance of {module} registered, count {new_module_id}: {ref}")
         return jsref
