@@ -117,8 +117,6 @@ if __name__ == "__main__":
 
     # Register middle part of document (after style and open body) for printing
     printer.register(yield_snippet("after-style"))
-    # TEMPORARY
-    printer.register(yield_snippet("tmp-html"))
 
     # Register navigation for printing
     printer.register(NavigationManager.print_html())
@@ -126,14 +124,14 @@ if __name__ == "__main__":
     # ContentManager registers it's container for printing
     printer.register(ContentManager.print_html_container())
 
-    # Register JS parts for printing
-    JSManager.register_other_print(NavigationManager.print_jswindows())  # TEMPORARY?
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
+    # Register JS parts for printing - ContentManager
     JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
     JSManager.register_other_print(ContentManager.print())
-    # TEMPORARY
-    JSManager.register_other_print(yield_snippet("tmp-js"))
+    # Register JS parts for printing - ReferenceResolver
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
+    # Register JS parts for printing - Navigation
+    JSManager.register_other_print(NavigationManager.print_jswindows())
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
     printer.register(JSManager.print())
 
     # Register document ending for printing
