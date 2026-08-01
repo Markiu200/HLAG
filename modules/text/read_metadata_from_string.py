@@ -22,7 +22,7 @@ def get_metadata_from_string(data: str):
         cursor += reg_search.regs[0][1]
         data = data.replace(reg_search.group(0), "", 1)
         # update metadata
-        metadata[reg_search.groups()[0].lower()] = reg_search.groups()[1].lower()
+        metadata[reg_search.groups()[0].lower()] = reg_search.groups()[1]
 
     metadata["cursor"] = cursor
     return metadata
