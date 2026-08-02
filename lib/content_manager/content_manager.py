@@ -65,19 +65,22 @@ class ContentManager:
         cls.saved_refs_ids[module] = new_module_id
         #
         jsref = f"[%JSREF({module},{new_module_id})%]"
-        ref = {
+        refdata = {
             "id": new_module_id,
             "data": data["data"],
             "meta": data["meta"]
         }
-        cls.saved_refs[module].append(ref)
+        cls.saved_refs[module].append(refdata)
         #
-        cls.current_node.references.append({
+        ref = {
             "module": module,
             "id": new_module_id,
-        })
+        }
+        cls.current_node.all_refs.append(ref)
+        # with this order, last ref will be file's own ref.
+        cls.current_node.ref = ref
         #
-        print(f"Instance of {module} registered, count {new_module_id}: {ref}")
+        print(f"Instance of {module} registered, count {new_module_id}: {refdata}")
         return jsref
 
     #
