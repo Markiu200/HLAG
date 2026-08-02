@@ -11,25 +11,24 @@ import read_metadata_from_lines as rmfl
 
 
 def get_module():
-    return Text
+    return Raw
 
 
-class Text(IModule):
+class Raw(IModule):
     module_path = PurePath(__file__).parent
 
     @classmethod
     def get_info(cls) -> dict:
         return {
-            "name": "text",
+            "name": "raw",
             "priority": 1,
             "dependencies": [],
-            "jsmanager": "TextModuleManager"
+            "jsmanager": "RawModuleManager"
         }
 
     @classmethod
     def register_checks(cls):
-        # ModuleFacade.register_check(TXTCheck())
-        pass
+        ModuleFacade.register_check(TXTCheck())
 
     @classmethod
     def register_files(cls):
@@ -59,17 +58,18 @@ class Text(IModule):
         content = cls.replace_references(content)
         lines = []
         last_ref_location = 0
-        while True:
-            search = re.search(r'\[%JSREF\(.*?\)%]', content[last_ref_location:])
-            if not search:
-                break
-            lines.append(content[last_ref_location:search.regs[0][0]+last_ref_location])
-            lines.append(content[search.regs[0][0]+last_ref_location:search.regs[0][1]+last_ref_location])
-            last_ref_location += search.regs[0][1]
-        lines.append(content[last_ref_location:])
+        #
+        current_line = ""
+        for line in content.splitlines():
+            if len(line) > 0:
+                current_line = ("" if len(current_line) == 0 else "</br>").join([current_line, line])
+            else:
+                lines.append(current_line)
+                current_line = ""
+        lines.append(current_line)
         #
         result = {
-            "module": "text",
+            "module": cls.get_info()["name"],
             "data": {"nodes": lines},
             "meta": meta
         }
