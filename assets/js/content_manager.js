@@ -32,11 +32,18 @@ class ContentWindow {
     this.window.hideTitlebar();
   }
 
-  open() {
+  populate() {
     let content = this.window.content;
     this.instances.forEach((instance) => {
+      instance.nodes.forEach(node => {
+        content.appendChild(node);
+      });
+    })
+  }
+
+  open() {
+    this.instances.forEach((instance) => {
       instance.open();
-      content.appendChild(instance.node);
     })
     ContentManager.main.appendChild(this.window.window);
   }
@@ -71,6 +78,7 @@ class ContentManager {
       windowJSON.contents.forEach((element) => {
         newWindow.instances.push(ContentManager.getInstance(element.module, element.id));
       });
+      newWindow.populate();
     ContentManager.createdWindows.push(newWindow);
     return newWindow;
   }
