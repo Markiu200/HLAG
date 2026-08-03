@@ -46,20 +46,26 @@ class RawModuleManager {
   }
 
   static generate(data, meta, instance) {
-    let root = document.createElement("div");
-    data.nodes.forEach(element => {
-      if (ReferenceResolver.contains_ref(element)) {
-        // assuming Py part separated refs from rest of the text
-        // todo more universal way
-        let nestedInstance = ReferenceResolver.resolve(element);
-        root.appendChild(nestedInstance.node);
-        instance.nestedInstances.push(nestedInstance);
+    let htmlEnabled = true;
+    if (meta["html"] ?? "" == "disable") {htmlEnabled = false;}
+
+    data.nodes.forEach(node => {
+      if (node["isRef"] == 0) {
+        let newSpan = document.createElement("span");
+        if (htmlEnabled) {
+          newSpan.innerHTML = node["line"];
+          instance.nodes.push(newSpan);
+        } else {
+          newSpan.innerText = node["line"];
+          instance.nodes.push(newSpan);
+        }
       } else {
-        let newP = document.createElement("p");
-        newP.innerHTML = element;
-        root.appendChild(newP);
+        let nestedInstance = ReferenceResolver.resolve(node["line"]);
+        nestedInstance.nodes.forEach(n_node => {
+          instance.nodes.push(n_node);
+        });
+        instance.nestedInstances.push(nestedInstance);
       }
     });
-    instance.node = root;
   }
 }

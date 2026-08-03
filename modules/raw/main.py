@@ -55,22 +55,59 @@ class Raw(IModule):
 
     @classmethod
     def parse_from_string(cls, content: str, meta: dict) -> dict:
+        append_brs = False if meta.get("autobr") == "disable" else True
+        enable_html = False if meta.get("html") == "disable" else True
+        enable_references = False if meta.get("references") == "disable" else True
+
         content = cls.replace_references(content)
-        lines = []
-        last_ref_location = 0
+
+        pattern = r'\[%JSREF\(.*?\)%]'
+        data_list = []
+        current_data = ""
+        splitted = content.splitlines()
         #
-        current_line = ""
-        for line in content.splitlines():
-            if len(line) > 0:
-                current_line = ("" if len(current_line) == 0 else "</br>").join([current_line, line])
+        for i in range(len(splitted)):
+            # --- references ---
+            if enable_references:
+                current_line = splitted[i]
+                jsref_found = re.search(pattern, current_line)
+                if jsref_found:
+                    while jsref_found:
+                        parts = current_line.split(sep=jsref_found.group(), maxsplit=1)
+                        # append left part (if any) to current_data and flush
+                        if len(parts[0]) + len(current_data) > 0:
+                            data_list.append({
+                                "isRef": 0,
+                                "line": "".join([current_data, parts[0]])
+                            })
+                        # append that find and flush
+                        data_list.append({
+                            "isRef": 1,
+                            "line": jsref_found.group()
+                        })
+                        # current_data is now right side
+                        current_data = parts[1]
+                        # search again in what is left
+                        jsref_found = re.search(pattern, current_data)
+                else:
+                    current_data = "".join([current_data, splitted[i]])
             else:
-                lines.append(current_line)
-                current_line = ""
-        lines.append(current_line)
+                # --- add line ---
+                current_data = "".join([current_data, splitted[i]])
+            # --- br ---
+            if append_brs:
+                if i != len(splitted) - 1:
+                    current_data = "".join([current_data, "</br>"])
+        # finish
+        if len(current_data) > 0:
+            data_list.append({
+                "isRef": 0,
+                "line": current_data
+            })
         #
         result = {
             "module": cls.get_info()["name"],
-            "data": {"nodes": lines},
+            "data": {"nodes": data_list},
             "meta": meta
         }
         return result
