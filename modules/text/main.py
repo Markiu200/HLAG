@@ -5,9 +5,6 @@ from module_facade import ModuleFacade, DocumentNode
 from module_management import IModule
 #
 from txt_check import TXTCheck
-import replace_references as rr
-import read_metadata_from_file as rmff
-import read_metadata_from_lines as rmfl
 
 
 def get_module():
@@ -37,22 +34,19 @@ class Text(IModule):
 
     @classmethod
     def read_metadata_from_file(cls, node: DocumentNode) -> dict:
-        return rmff.get_metadata_from_file(node.path)
+        return ModuleFacade.get_module("raw").read_metadata_from_file(node)
 
     @classmethod
     def read_metadata_from_string(cls, content: str) -> dict:
-        return rmfl.read_metadata_from_lines([content])
+        return ModuleFacade.get_module("raw").read_metadata_from_string(content)
 
     @classmethod
     def replace_references(cls, content: str) -> str:
-        return rr.replace_references(content)
+        return ModuleFacade.get_module("raw").replace_references(content)
 
     @classmethod
     def parse_from_file(cls, node: DocumentNode) -> dict:
-        past_meta_location = node.metadata.get("cursor", 0)
-        with open(node.path) as f:
-            f.seek(past_meta_location)
-            return cls.parse_from_string(f.read(), node.metadata)
+        return ModuleFacade.get_module("raw").parse_from_file(node)
 
     @classmethod
     def parse_from_string(cls, content: str, meta: dict) -> dict:
