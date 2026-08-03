@@ -1,7 +1,7 @@
 class RawModuleInstance {
-  constructor(id, node) {
+  constructor(id) {
     this.id = id
-    this.node = node
+    this.nodes = []
     this.nestedInstances = []
   }
   open() {
@@ -40,7 +40,7 @@ class RawModuleManager {
     if (!instanceJSON) {
       throw new Error("Instance ID "+id+" of "+RawModuleManager.name+" module is not registered!");
     }
-    let newInstance = new RawModuleInstance(id, null);
+    let newInstance = new RawModuleInstance(id);
     RawModuleManager.generate(instanceJSON.data, instanceJSON.meta, newInstance);
     return newInstance;
   }

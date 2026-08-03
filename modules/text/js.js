@@ -1,7 +1,7 @@
 class TextModuleInstance {
-  constructor(id, node) {
+  constructor(id, nodes) {
     this.id = id
-    this.node = node
+    this.nodes = nodes
     this.nestedInstances = []
   }
   open() {
@@ -52,7 +52,9 @@ class TextModuleManager {
         // assuming Py part separated refs from rest of the text
         // todo more universal way
         let nestedInstance = ReferenceResolver.resolve(element);
-        root.appendChild(nestedInstance.node);
+        nestedInstance.nodes.forEach(node => {
+          root.appendChild(node);
+        });
         instance.nestedInstances.push(nestedInstance);
       } else {
         let newP = document.createElement("p");
@@ -60,6 +62,6 @@ class TextModuleManager {
         root.appendChild(newP);
       }
     });
-    instance.node = root;
+    instance.nodes = [root];
   }
 }
