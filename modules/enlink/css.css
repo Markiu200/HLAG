@@ -1,0 +1,20 @@
+.enlink {
+    font-family: "Segoe UI",Arial,sans-serif;
+    padding: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border-left-color: blue;
+    border-left-width: 5px;
+    border-left-style: solid;
+    .title {
+        font-weight: bold;
+        margin-bottom: 2px;
+        margin-left: 12px;
+    }
+    .linkDiv {
+        margin-bottom: 20px;
+    }
+    .desc {
+        font-style: italic;
+    }
+}
