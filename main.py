@@ -49,7 +49,7 @@ if __name__ == "__main__":
     initialize_logger()
 
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(r'D:\hlag\webpage')
+    config.target_path = PurePath(r'D:\hlag_links')
     config.output_path = PurePath(r'D:\hlag')
     config.assets_path = PurePath(r'D:\hlag\assets')
     config.modules_path = PurePath(r'D:\hlag\modules')
@@ -111,9 +111,9 @@ if __name__ == "__main__":
     printer.register(yield_snippet_with_args("beginning", title="TestDocu"))
 
     # Register document CSS for printing
-    CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
+    # CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
     # TEMPORARY COMMENTED OUT
-    # printer.register(CSSManager.print())
+    printer.register(CSSManager.print())
 
     # Register middle part of document (after style and open body) for printing
     printer.register(yield_snippet("after-style"))
