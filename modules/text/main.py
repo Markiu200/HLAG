@@ -46,7 +46,10 @@ class Text(IModule):
 
     @classmethod
     def parse_from_file(cls, node: DocumentNode) -> dict:
-        return ModuleFacade.get_module("raw").parse_from_file(node)
+        past_meta_location = node.metadata.get("cursor", 0)
+        with open(node.path) as f:
+            f.seek(past_meta_location)
+            return cls.parse_from_string(f.read(), node.metadata)
 
     @classmethod
     def parse_from_string(cls, content: str, meta: dict) -> dict:
