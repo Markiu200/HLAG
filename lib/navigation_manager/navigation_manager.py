@@ -33,7 +33,10 @@ class NavigationManager:
             contents = []
             for child_node in node.get_children():
                 if child_node.ref:
-                    contents.append(child_node.ref)
+                    contents.append({
+                        "module": child_node.ref.module,
+                        "id": child_node.ref.ref_id
+                    })
             jswindow["contents"] = contents
             #
             cls.jswindows.append(jswindow)

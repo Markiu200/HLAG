@@ -1,4 +1,5 @@
 from pathlib import PurePath
+from models import Ref
 from config import config
 
 
@@ -10,8 +11,8 @@ class DocumentNode:
         self.path = path
         self.attributes = set()
         self.metadata = dict()
-        self.ref = dict()
-        self.all_refs: list[dict] = []
+        self.ref: None | Ref = None
+        self.all_refs: list[Ref] = []
         #
         self.set_metadata("relPath", self.get_rel_path())
 

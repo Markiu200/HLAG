@@ -1,14 +1,14 @@
 import json
 from structure_scanner import StructureScanner, DocumentNode
 from module_management import ModuleManager
-from models import Card, InstanceDBEntry
+from models import Card, Ref, InstanceDBEntry
 
 
 class ContentManager:
     printable_elements_list: list[DocumentNode] = []
     used_modules: set[str] = set()
     module_map: dict = dict()
-    saved_refs: dict = dict()  # refs beda jak {"nazwa": [str_refek]}
+    instance_db_records: dict = dict()  # refs beda jak {"nazwa": [str_refek]}
     saved_refs_ids: dict = dict()
     current_node: DocumentNode
 
@@ -52,29 +52,29 @@ class ContentManager:
         #
         if module not in cls.used_modules:  # not cls.saved_refs_ids.get(module):
             cls.saved_refs_ids[module] = -1
-            cls.saved_refs[module] = []
+            cls.instance_db_records[module] = []
             cls.used_modules.add(module)
             ModuleManager.get_module(module).register_files()
         new_module_id = cls.saved_refs_ids[module] + 1
         cls.saved_refs_ids[module] = new_module_id
         #
         jsref = f"[%JSREF({module},{new_module_id})%]"
-        refdata = {
+        instance_db_record = {
             "id": new_module_id,
             "data": instance_entry.data,
             "meta": instance_entry.meta
         }
-        cls.saved_refs[module].append(refdata)
+        cls.instance_db_records[module].append(instance_db_record)
         #
-        ref = {
-            "module": module,
-            "id": new_module_id,
-        }
+        ref = Ref(
+            module=module,
+            ref_id=new_module_id
+        )
         cls.current_node.all_refs.append(ref)
         # with this order, last ref will be file's own ref.
         cls.current_node.ref = ref
         #
-        print(f"Instance of {module} registered, count {new_module_id}: {refdata}")
+        print(f"Instance of {module} registered, count {new_module_id}: {ref.module}")
         return jsref
 
     #
@@ -97,6 +97,6 @@ class ContentManager:
 
     @classmethod
     def print(cls):
-        yield "".join(["let registered_modules = ", json.dumps(cls.saved_refs), ";"])
+        yield "".join(["let registered_modules = ", json.dumps(cls.instance_db_records), ";"])
         yield "\n"
         yield "".join(["let moduleMap = ", cls.generate_module_map()])
