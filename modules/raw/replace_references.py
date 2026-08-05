@@ -63,6 +63,11 @@ def _match_refs(content: str, tag_end: int):
 
 
 def replace_references(content: str) -> str:
+    """All references should be found and replaced before parsing contents. Module
+    itself should know how to recognize a reference.
+    :param content: Contents of the file - it should be loaded into memory entirely.
+    :return: The same content, but with JSREFs in place - ready for parsing.
+    """
     reference_regex = r'\[%(.*?):(.*?)%]'
     #
     while True:

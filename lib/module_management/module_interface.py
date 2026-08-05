@@ -53,16 +53,6 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def replace_references(cls, content: str) -> str:
-        """All references should be found and replaced before parsing contents. Module
-        itself should know how to recognize a reference.
-        :param content: Contents of the file - it should be loaded into memory entirely.
-        :return: The same content, but with JSREFs in place - ready for parsing.
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
     def parse_from_file(cls, node: DocumentNode) -> dict:
         """This method is what produces our final dict() of information to be used
         by ContentManager to craft the JSREF. All the references there might have been
