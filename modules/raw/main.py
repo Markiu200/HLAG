@@ -1,11 +1,11 @@
 import re
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode
+from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
 #
 from txt_check import TXTCheck
-import replace_references as rr
+import replace_orders as rr
 import read_metadata_from_file as rmff
 import read_metadata_from_lines as rmfl
 
@@ -35,31 +35,36 @@ class Raw(IModule):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
 
     @classmethod
-    def read_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
         return rmff.get_metadata_from_file(node.path)
 
     @classmethod
-    def read_metadata_from_string(cls, content: str) -> dict:
-        return rmfl.read_metadata_from_lines([content])
+    def get_metadata_from_data(cls, data: Data) -> dict:
+        return rmfl.read_metadata_from_lines([data.content])
 
     @classmethod
-    def replace_references(cls, content: str) -> str:
-        return rr.replace_references(content)
+    def replace_orders(cls, data: Data) -> str:
+        """
+        :param data: Data structure of the file (content & meta)
+        :return: content from Data structure, but with orders replaced with jsrefs
+        """
+        return rr.replace_orders(data)
 
     @classmethod
-    def parse_from_file(cls, node: DocumentNode) -> dict:
+    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
         past_meta_location = node.metadata.get("cursor", 0)
         with open(node.path) as f:
             f.seek(past_meta_location)
-            return cls.parse_from_string(f.read(), node.metadata)
+            content = f.read()
+        return cls.parse_data(Data(content=content, meta=node.metadata))
 
     @classmethod
-    def parse_from_string(cls, content: str, meta: dict) -> dict:
-        append_brs = False if meta.get("autobr") == "disable" else True
-        enable_html = False if meta.get("html") == "disable" else True
-        enable_references = False if meta.get("references") == "disable" else True
+    def parse_data(cls, data: Data) -> InstanceDBEntry:
+        append_brs = False if data.meta.get("autobr") == "disable" else True
+        enable_html = False if data.meta.get("html") == "disable" else True
+        enable_references = False if data.meta.get("references") == "disable" else True
 
-        content = cls.replace_references(content)
+        content = cls.replace_orders(data)
 
         pattern = r'\[%JSREF\(.*?\)%]'
         data_list = []
@@ -105,9 +110,9 @@ class Raw(IModule):
                 "line": current_data
             })
         #
-        result = {
-            "module": cls.get_info()["name"],
-            "data": {"nodes": data_list},
-            "meta": meta
-        }
-        return result
+        result_entry = InstanceDBEntry(
+            module=cls.get_info()["name"],
+            data={"nodes": data_list},
+            meta=data.meta
+        )
+        return result_entry

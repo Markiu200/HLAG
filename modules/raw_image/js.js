@@ -18,7 +18,7 @@ class RawImageModuleInstance {
 }
 
 class RawImageModuleManager {
-  static name = "raw_image_file";
+  static name = "raw_image";
   // trzymamy instancje we wlasnych klasach
   static instances = [];
 

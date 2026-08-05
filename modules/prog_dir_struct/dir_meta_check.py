@@ -10,6 +10,6 @@ class DirMetaCheck(BaseCheck):
             for child in dir_node.children:
                 if os.path.isfile(child.path):
                     if child.path.name == "_meta.txt" or child.path.name == "_metafile.txt":
-                        got_meta = ModuleFacade.get_module("text").read_metadata_from_file(child)
+                        got_meta = ModuleFacade.get_module("raw").get_metadata_from_file(child)
                         dir_node.add_metadata(got_meta)
         return result

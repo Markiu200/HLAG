@@ -1,5 +1,5 @@
 # Own imports
-from module_facade import ModuleFacade, DocumentNode
+from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
 from escaped_check import EscapedCheck
 from dir_meta_check import DirMetaCheck
@@ -29,21 +29,17 @@ class ProgDirStruct(IModule):
         pass
 
     @classmethod
-    def read_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
         return dict()
 
     @classmethod
-    def read_metadata_from_string(cls, content: str) -> dict:
+    def get_metadata_from_data(cls, data: Data) -> dict:
         return dict()
 
     @classmethod
-    def replace_references(cls, content: str) -> str:
-        return ""
+    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
+        return InstanceDBEntry("", None, None)
 
     @classmethod
-    def parse_from_file(cls, node: DocumentNode) -> dict:
-        return dict()
-
-    @classmethod
-    def parse_from_string(cls, content: str, meta: dict) -> dict:
-        return dict()
+    def parse_data(cls, data: Data) -> InstanceDBEntry:
+        return InstanceDBEntry("", None, None)

@@ -1,7 +1,7 @@
 import re
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode
+from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
 #
 from txt_check import TXTCheck
@@ -25,7 +25,6 @@ class Text(IModule):
 
     @classmethod
     def register_checks(cls):
-        # ModuleFacade.register_check(TXTCheck())
         pass
 
     @classmethod
@@ -33,29 +32,29 @@ class Text(IModule):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
 
     @classmethod
-    def read_metadata_from_file(cls, node: DocumentNode) -> dict:
-        return ModuleFacade.get_module("raw").read_metadata_from_file(node)
+    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_file(node)
 
     @classmethod
-    def read_metadata_from_string(cls, content: str) -> dict:
-        return ModuleFacade.get_module("raw").read_metadata_from_string(content)
+    def get_metadata_from_data(cls, data: Data) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_string(data)
 
     @classmethod
-    def replace_references(cls, content: str) -> str:
-        return ModuleFacade.get_module("raw").replace_references(content)
+    def replace_orders(cls, data: Data) -> str:
+        return ModuleFacade.get_module("raw").replace_orders(data)
 
     @classmethod
-    def parse_from_file(cls, node: DocumentNode) -> dict:
+    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
         past_meta_location = node.metadata.get("cursor", 0)
         with open(node.path) as f:
             f.seek(past_meta_location)
-            return cls.parse_from_string(f.read(), node.metadata)
+            content = f.read()
+        return cls.parse_data(Data(content=content, meta=node.metadata))
 
     @classmethod
-    def parse_from_string(cls, content: str, meta: dict) -> dict:
-        content = cls.replace_references(content)
+    def parse_data(cls, data: Data) -> InstanceDBEntry:
+        content = cls.replace_orders(data)
         lines = []
-        last_ref_location = 0
         #
         current_line = ""
         for line in content.splitlines():
@@ -66,9 +65,9 @@ class Text(IModule):
                 current_line = ""
         lines.append(current_line)
         #
-        result = {
-            "module": "text",
-            "data": {"nodes": lines},
-            "meta": meta
-        }
+        result = InstanceDBEntry(
+            module=cls.get_info()["name"],
+            data={"nodes": lines},
+            meta=data.meta
+        )
         return result

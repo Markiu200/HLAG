@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from structure_scanner.document_tree import DocumentNode
+from models import Data, InstanceDBEntry
 
 
 class IModule(ABC):
@@ -32,7 +33,7 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def read_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
         """
         :param node: DocumentNode of the file in question - it gets it's path from there,
         but it should't be used to actually modify the metadata.
@@ -42,10 +43,10 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def read_metadata_from_string(cls, content: str) -> dict:
+    def get_metadata_from_data(cls, data: Data) -> dict:
         """
         This will be most likely used when dealing with references.
-        :param content: String to read metadata from.
+        :param data: Data structure to read metadata from - Data.content for reading, and Data.meta for passing current metadata.
         but it should't be used to actually modify the metadata.
         :return: dict of metadata it found and some information about the read itself
         """
@@ -53,7 +54,7 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def parse_from_file(cls, node: DocumentNode) -> dict:
+    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
         """This method is what produces our final dict() of information to be used
         by ContentManager to craft the JSREF. All the references there might have been
         should have been replaced before.
@@ -62,7 +63,7 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def parse_from_string(cls, content: str, meta: dict) -> dict:
+    def parse_data(cls, data: Data) -> InstanceDBEntry:
         """This method is what produces our final dict() of information to be used
         by ContentManager to craft the JSREF. All the references there might have been
         should have been replaced before.

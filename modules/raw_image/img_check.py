@@ -8,6 +8,6 @@ class ImgCheck(BaseCheck):
         if (node.path.suffix == ".jpg"
                 or node.path.suffix == ".jpeg"
                 or node.path.suffix == ".png"):
-            meta = {"module": "raw_image_file"}
+            meta = {"module": "raw_image"}
             node.add_metadata(meta)
         return meta

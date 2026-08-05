@@ -1,6 +1,6 @@
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode
+from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
 
 
@@ -30,31 +30,28 @@ class Enlink(IModule):
         ModuleFacade.register_css(PurePath(cls.module_path, "css.css"))
 
     @classmethod
-    def read_metadata_from_file(cls, node: DocumentNode) -> dict:
-        return ModuleFacade.get_module("raw").read_metadata_from_file(node)
+    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_file(node)
 
     @classmethod
-    def read_metadata_from_string(cls, content: str) -> dict:
-        return ModuleFacade.get_module("raw").read_metadata_from_string(content)
+    def get_metadata_from_data(cls, data: Data) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_string(data)
 
     @classmethod
-    def replace_references(cls, content: str) -> str:
-        return ModuleFacade.get_module("raw").replace_references(content)
+    def replace_orders(cls, data: Data) -> str:
+        return ModuleFacade.get_module("raw").replace_orders(data)
 
     @classmethod
-    def parse_from_file(cls, node: DocumentNode) -> dict:
+    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
         past_meta_location = node.metadata.get("cursor", 0)
         with open(node.path) as f:
             f.seek(past_meta_location)
-            return cls.parse_from_string(f.read(), node.metadata)
+            content = f.read()
+        return cls.parse_data(Data(content=content, meta=node.metadata))
 
     @classmethod
-    def change_property(cls, last_property: str, item_property: str):
-        pass
-
-    @classmethod
-    def parse_from_string(cls, content: str, meta: dict) -> dict:
-        content = cls.replace_references(content)
+    def parse_data(cls, data: Data) -> InstanceDBEntry:
+        content = cls.replace_orders(data)
         #
         #  Format goes like this:
         #  title: About the topic
@@ -110,9 +107,9 @@ class Enlink(IModule):
             item[last_property] = value
             items.append(item)
         #
-        result = {
-            "module": "enlink",
-            "data": {"nodes": items},
-            "meta": meta
-        }
+        result = InstanceDBEntry(
+            module=cls.get_info()["name"],
+            data={"nodes": items},
+            meta=data.meta
+        )
         return result

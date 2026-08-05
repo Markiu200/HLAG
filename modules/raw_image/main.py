@@ -2,27 +2,29 @@ from pathlib import PurePath
 # Own imports
 from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
+#
+from img_check import ImgCheck
 
 
 def get_module():
-    return BorderedText
+    return RawImage
 
 
-class BorderedText(IModule):
+class RawImage(IModule):
     module_path = PurePath(__file__).parent
 
     @classmethod
     def get_info(cls) -> dict:
         return {
-            "name": "bordered_text",
-            "priority": -1,
-            "dependencies": ["text"],
-            "jsmanager": "BorderedTextModuleManager"
+            "name": "raw_image",
+            "priority": 1,
+            "dependencies": [],
+            "jsmanager": "RawImageModuleManager"
         }
 
     @classmethod
     def register_checks(cls):
-        pass
+        ModuleFacade.register_check(ImgCheck())
 
     @classmethod
     def register_files(cls):
@@ -30,24 +32,29 @@ class BorderedText(IModule):
 
     @classmethod
     def get_metadata_from_file(cls, node: DocumentNode) -> dict:
-        # Use Raw module methods
-        return ModuleFacade.get_module("raw").get_metadata_from_file(node)
+        return dict()
 
     @classmethod
     def get_metadata_from_data(cls, data: Data) -> dict:
-        return ModuleFacade.get_module("raw").get_metadata_from_data(data)
-
-    @classmethod
-    def replace_orders(cls, data: Data) -> str:
-        return ModuleFacade.get_module("raw").replace_orders(data)
+        return dict()
 
     @classmethod
     def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
-        return ModuleFacade.get_module("raw").parse_file(node)
+        node.set_metadata("imgSrc", "file")
+        return cls.parse_data(Data(str(node.path), node.metadata))
 
     @classmethod
     def parse_data(cls, data: Data) -> InstanceDBEntry:
-        result = ModuleFacade.get_module("raw").parse_data(data)
+        items = []
+        if data.meta.get("imgSrc") == "file":
+            items.append(ModuleFacade.get_assets_manager().register_asset(PurePath(data.content)))
+        else:
+            # todo If it is used as order
+            pass
         #
-        result.meta["module"] = "bordered_text"
+        result = InstanceDBEntry(
+            module=cls.get_info()["name"],
+            data={"nodes": items},
+            meta=data.meta
+        )
         return result

@@ -1,6 +1,7 @@
 import json
 from structure_scanner import StructureScanner, DocumentNode
 from module_management import ModuleManager
+from models import Card, InstanceDBEntry
 
 
 class ContentManager:
@@ -21,40 +22,33 @@ class ContentManager:
     def parse_files(cls):
         for element in cls.printable_elements_list:
             cls.current_node = element
-            jsref = cls.get_jsref_from_file(element)
-            # element.references.append(jsref)
+            cls.get_jsref_from_file(element)
 
     @classmethod
-    def get_jsref_from_file(cls, node: DocumentNode) -> str:  # zwraca JSREF
-        # Get current module from metadata
+    def get_jsref_from_file(cls, node: DocumentNode) -> str:
+        # Get current module from metadata, then using it read metadata in file
         module = ModuleManager.get_module(node.metadata.get("module"))
-        # Read the metadata using current Module meta-fetcher
-        found_meta = module.read_metadata_from_file(node)
-        # Update metadata
+        found_meta = module.get_metadata_from_file(node)
+        # Update metadata and then fetch module again to see if it changed
         node.add_metadata(found_meta)
-        # See what module it is after all and register that module as used
         module = ModuleManager.get_module(node.metadata.get("module"))
-        # Invoke that Module parse method and save it's jscard
-        # # if parser encounter reference, it asks this class to get reference (get_reference_from_data)
-        jscard = module.parse_from_file(node)
-        # Having file finally parsed, generate and return jsref
-        jsref = cls.register_instance(jscard)
+        # Get jscard from using module's method
+        instance_entry = module.parse_file(node)
+        # Having file finally parsed, generate, register and return jsref
+        jsref = cls.register_instance(instance_entry)
         return jsref
 
     @classmethod
-    def get_jsref_from_data(cls, data: dict) -> str:
-        module = ModuleManager.get_module(data.get("module"))
-        if not module:
-            raise RuntimeError(f"Module {data.get('module')} has been referenced but no such module is found.")
-        found_meta = module.read_metadata_from_string(data.get("content"))
-        jscard = module.parse_from_string(data.get("content"), found_meta)
-        jsref = cls.register_instance(jscard)
+    def get_jsref_from_card(cls, card: Card) -> str:
+        module = ModuleManager.get_module(card.module)
+        instance_entry = module.parse_data(card.data)
+        jsref = cls.register_instance(instance_entry)
         return jsref
 
     @classmethod
-    def register_instance(cls, data: dict) -> str:  # zwraca JSREF
+    def register_instance(cls, instance_entry: InstanceDBEntry) -> str:  # zwraca JSREF
         # saved_refs = {module: {id:int, refs:list}}
-        module = data.get("module")
+        module = instance_entry.module
         #
         if module not in cls.used_modules:  # not cls.saved_refs_ids.get(module):
             cls.saved_refs_ids[module] = -1
@@ -67,8 +61,8 @@ class ContentManager:
         jsref = f"[%JSREF({module},{new_module_id})%]"
         refdata = {
             "id": new_module_id,
-            "data": data["data"],
-            "meta": data["meta"]
+            "data": instance_entry.data,
+            "meta": instance_entry.meta
         }
         cls.saved_refs[module].append(refdata)
         #
