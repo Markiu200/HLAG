@@ -8,6 +8,7 @@ class Config:
     target_path: PurePath
     output_path: PurePath
     assets_path: PurePath
+    assets_dir_name: str
     modules_path: PurePath
     output_name: str
     document_title: str
@@ -16,4 +17,4 @@ class Config:
     logger: Logger | None
 
 
-config = Config(PurePath(), PurePath(), PurePath(), PurePath(), "", "", False, 0, None)
+config = Config(PurePath(), PurePath(), PurePath(), "", PurePath(), "", "", False, 0, None)

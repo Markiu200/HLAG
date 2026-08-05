@@ -4,6 +4,7 @@ from pathlib import Path, PurePath
 # Own imports
 from config import config
 from module_management import ModuleManager
+from assets_manager import AssetsManager
 from snippet_provider import yield_snippet, yield_snippet_with_args
 from js_manager import JSManager
 from css_manager import CSSManager
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     # TEMPORARY CONFIG SETUP
     config.target_path = PurePath(r'D:\hlag_links')
     config.output_path = PurePath(r'D:\hlag')
-    config.assets_path = PurePath(r'D:\hlag\assets')
+    config.assets_path = PurePath(r'D:\hlag')
+    config.assets_dir_name = "f_assets"
     config.modules_path = PurePath(r'D:\hlag\modules')
     config.output_name = "document_output.html"
     config.document_title = "DocuTest"
@@ -73,6 +75,9 @@ if __name__ == "__main__":
     # todo GUI for selecting target directory and other stuff
     # Start GUI
     # start_gui()
+
+    # Initialize assets folder
+    AssetsManager.initialize()
 
     # printer is instantiated
     # todo consider making it singleton
@@ -140,3 +145,4 @@ if __name__ == "__main__":
     # Print
     printer.print()
     print("Done")
+    AssetsManager.register_asset(PurePath(r'D:\hlag_links\py_tkinter\_img1.png'))

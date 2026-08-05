@@ -5,6 +5,7 @@ from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from content_manager import ContentManager
 from module_management import ModuleManager
+from assets_manager import AssetsManager
 
 
 class ModuleFacade:
@@ -34,6 +35,10 @@ class ModuleFacade:
     @classmethod
     def get_content_manager(cls):
         return ContentManager
+
+    @classmethod
+    def get_assets_manager(cls):
+        return AssetsManager
 
     @classmethod
     def get_module(cls, module_name: str):
