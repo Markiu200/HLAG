@@ -145,4 +145,3 @@ if __name__ == "__main__":
     # Print
     printer.print()
     print("Done")
-    AssetsManager.register_asset(PurePath(r'D:\hlag_links\py_tkinter\_img1.png'))
