@@ -1,54 +1,16 @@
-class EnlinkModuleInstance {
-  constructor(id, nodes) {
-    this.id = id
-    this.nodes = nodes
-    this.nestedInstances = []
-  }
-  open() {
-    this.nestedInstances.forEach((instance) => {
-      instance.open()
-    })
-  }
-
-  close() {
-    this.nestedInstances.forEach((instance) => {
-      instance.close()
-    })
-  }
+class EnlinkModuleInstance extends ModuleInstance {
+    constructor(id, module, controller) {
+        super(id, module);
+        this.controller = EnlinkModuleController
+    }
 }
 
-class EnlinkModuleManager {
-  static name = "enlink";
-  // trzymamy instancje we wlasnych klasach
-  static instances = [];
-
-  static getInstance(id) {
-    let foundInstance = EnlinkModuleManager.instances.find((element) => {return element.id == id});
-    if (foundInstance) {
-      return foundInstance;
-    } else {
-      console.log("generating new instance...");
-      let createdInstance = EnlinkModuleManager.createInstance(id);
-      EnlinkModuleManager.instances.push(createdInstance);
-      return createdInstance;
-    }
-  }
-
-  static createInstance(id) {
-    // todo: proper fetch from contentmanager
-    let instanceJSON = registered_modules[EnlinkModuleManager.name].find((element) => {return element.id == id});
-    if (!instanceJSON) {
-      throw new Error("Instance ID "+id+" of "+EnlinkModuleManager.name+" module is not registered!");
-    }
-    let newInstance = new EnlinkModuleInstance(id, null);
-    EnlinkModuleManager.generate(instanceJSON.data, instanceJSON.meta, newInstance);
-    return newInstance;
-  }
-
-  static generate(data, meta, instance) {
+class EnlinkModuleController {
+  static create(module_, id_, data_, meta_) {
+    let newInstance = new EnlinkModuleInstance(id_, module_);
     let allItems = [];
     //
-    data.nodes.forEach(item => {  // this should be a list 
+    data_.nodes.forEach(item => {  // this should be a list 
       let currentItem = document.createElement("div");
       currentItem.classList.add("enlink");
       //
@@ -76,6 +38,7 @@ class EnlinkModuleManager {
       }
       allItems.push(currentItem);
     });
-    instance.nodes = allItems;
+    newInstance.nodes = allItems;
+    return newInstance;
   }
 }

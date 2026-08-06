@@ -17,7 +17,7 @@ class Enlink(IModule):
             "name": "enlink",
             "priority": 1,
             "dependencies": [],
-            "jsmanager": "EnlinkModuleManager"
+            "controller": "EnlinkModuleController"
         }
 
     @classmethod

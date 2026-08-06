@@ -1,57 +1,20 @@
-class TextModuleInstance {
-  constructor(id, nodes) {
-    this.id = id
-    this.nodes = nodes
-    this.nestedInstances = []
-  }
-  open() {
-    this.nestedInstances.forEach((instance) => {
-      instance.open()
-    })
-  }
-
-  close() {
-    this.nestedInstances.forEach((instance) => {
-      instance.close()
-    })
-  }
+class TextModuleInstance extends ModuleInstance {
+    constructor(id, module, controller) {
+        super(id, module);
+        this.controller = TextModuleController
+    }
 }
 
-class TextModuleManager {
-  static name = "text";
-  // trzymamy instancje we wlasnych klasach
-  static instances = [];
-
-  static getInstance(id) {
-    let foundInstance = TextModuleManager.instances.find((element) => {return element.id == id});
-    if (foundInstance) {
-      return foundInstance;
-    } else {
-      console.log("generating new instance...");
-      let createdInstance = TextModuleManager.createInstance(id);
-      TextModuleManager.instances.push(createdInstance);
-      return createdInstance;
-    }
-  }
-
-  static createInstance(id) {
-    // todo: proper fetch from contentmanager
-    let instanceJSON = registered_modules[TextModuleManager.name].find((element) => {return element.id == id});
-    if (!instanceJSON) {
-      throw new Error("Instance ID "+id+" of "+TextModuleManager.name+" module is not registered!");
-    }
-    let newInstance = new TextModuleInstance(id, null);
-    TextModuleManager.generate(instanceJSON.data, instanceJSON.meta, newInstance);
-    return newInstance;
-  }
-
-  static generate(data, meta, instance) {
+class TextModuleController {
+  static create(module_, id_, data_, meta_) {
+    let newInstance = new TextModuleInstance(id_, module_);
+    
     let root = document.createElement("div");
-    data.nodes.forEach(element => {
-      if (ReferenceResolver.contains_ref(element)) {
+    data_.nodes.forEach(element => {
+      if (RefResolver.contains_ref(element)) {
         // assuming Py part separated refs from rest of the text
         // todo more universal way
-        let nestedInstance = ReferenceResolver.resolve(element);
+        let nestedInstance = RefResolver.resolve(element);
         nestedInstance.nodes.forEach(node => {
           root.appendChild(node);
         });
@@ -62,6 +25,8 @@ class TextModuleManager {
         root.appendChild(newP);
       }
     });
-    instance.nodes = [root];
+    newInstance.nodes.push(root);
+    return newInstance;
   }
 }
+

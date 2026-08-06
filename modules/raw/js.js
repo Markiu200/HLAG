@@ -1,71 +1,41 @@
-class RawModuleInstance {
-  constructor(id) {
-    this.id = id
-    this.nodes = []
-    this.nestedInstances = []
-  }
-  open() {
-    this.nestedInstances.forEach((instance) => {
-      instance.open()
-    })
-  }
-
-  close() {
-    this.nestedInstances.forEach((instance) => {
-      instance.close()
-    })
-  }
+class RawModuleInstance extends ModuleInstance {
+    constructor(id, module, controller) {
+        super(id, module);
+        this.controller = RawModuleController
+    }
+    open() {
+        super.open();
+    }
 }
 
-class RawModuleManager {
-  static name = "raw";
-  // trzymamy instancje we wlasnych klasach
-  static instances = [];
+class RawModuleController {
+    static create(module_, id_, data_, meta_) {
+        let newInstance = new RawModuleInstance(id_, module_);
 
-  static getInstance(id) {
-    let foundInstance = RawModuleManager.instances.find((element) => {return element.id == id});
-    if (foundInstance) {
-      return foundInstance;
-    } else {
-      console.log("generating new instance...");
-      let createdInstance = RawModuleManager.createInstance(id);
-      RawModuleManager.instances.push(createdInstance);
-      return createdInstance;
-    }
-  }
-
-  static createInstance(id) {
-    // todo: proper fetch from contentmanager
-    let instanceJSON = registered_modules[RawModuleManager.name].find((element) => {return element.id == id});
-    if (!instanceJSON) {
-      throw new Error("Instance ID "+id+" of "+RawModuleManager.name+" module is not registered!");
-    }
-    let newInstance = new RawModuleInstance(id);
-    RawModuleManager.generate(instanceJSON.data, instanceJSON.meta, newInstance);
-    return newInstance;
-  }
-
-  static generate(data, meta, instance) {
-    let htmlEnabled = true;
-    if (meta["html"] ?? "" == "disable") {htmlEnabled = false;}
-
-    data.nodes.forEach(node => {
-      if (node["isRef"] == 0) {
-        let newSpan = document.createElement("span");
-        if (htmlEnabled) {
-          newSpan.innerHTML = node["line"];
-          instance.nodes.push(newSpan);
-        } else {
-          newSpan.innerText = node["line"];
-          instance.nodes.push(newSpan);
+        let htmlEnabled = true;
+        if (meta_["html"] ?? "" == "disable") {
+            htmlEnabled = false;
         }
-      } else {
-        let nestedInstance = ReferenceResolver.resolve(node["line"]);
-        nestedInstance.nodes.forEach(n_node => {
-          instance.nodes.push(n_node);
+
+        data_.nodes.forEach(node => {
+            if (node["isRef"] == 0) {
+                let newSpan = document.createElement("span");
+                if (htmlEnabled) {
+                    newSpan.innerHTML = node["line"];
+                    newInstance.nodes.push(newSpan);
+                } else {
+                    newSpan.innerText = node["line"];
+                    newInstance.nodes.push(newSpan);
+                }
+            } else {
+                let nestedInstance = RefResolver.resolve(node["line"]);
+                nestedInstance.nodes.forEach(n_node => {
+                    newInstance.nodes.push(n_node);
+                });
+                newInstance.nestedInstances.push(nestedInstance);
+            }
         });
-        instance.nestedInstances.push(nestedInstance);
-      }
-    });
-  }
+        return newInstance;
+    }
 }
+

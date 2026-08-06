@@ -19,7 +19,7 @@ class RawImage(IModule):
             "name": "raw_image",
             "priority": 1,
             "dependencies": [],
-            "jsmanager": "RawImageModuleManager"
+            "controller": "RawImageModuleController"
         }
 
     @classmethod

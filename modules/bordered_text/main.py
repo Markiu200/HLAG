@@ -17,7 +17,7 @@ class BorderedText(IModule):
             "name": "bordered_text",
             "priority": -1,
             "dependencies": ["text"],
-            "jsmanager": "BorderedTextModuleManager"
+            "controller": "BorderedTextModuleController"
         }
 
     @classmethod
@@ -50,4 +50,5 @@ class BorderedText(IModule):
         result = ModuleFacade.get_module("raw").parse_data(data)
         #
         result.meta["module"] = "bordered_text"
+        result.module = "bordered_text"
         return result

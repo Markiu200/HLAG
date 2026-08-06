@@ -23,7 +23,7 @@ class Raw(IModule):
             "name": "raw",
             "priority": 1,
             "dependencies": [],
-            "jsmanager": "RawModuleManager"
+            "controller": "RawModuleController"
         }
 
     @classmethod

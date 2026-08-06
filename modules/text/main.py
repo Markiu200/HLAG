@@ -3,8 +3,6 @@ from pathlib import PurePath
 # Own imports
 from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
 from module_management import IModule
-#
-from txt_check import TXTCheck
 
 
 def get_module():
@@ -20,7 +18,7 @@ class Text(IModule):
             "name": "text",
             "priority": 1,
             "dependencies": [],
-            "jsmanager": "TextModuleManager"
+            "controller": "TextModuleController"
         }
 
     @classmethod
