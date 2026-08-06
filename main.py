@@ -50,7 +50,7 @@ if __name__ == "__main__":
     initialize_logger()
 
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(r'D:\hlag_links')
+    config.target_path = PurePath(r'D:\hlag_t')
     config.output_path = PurePath(r'D:\hlag')
     config.assets_path = PurePath(r'D:\hlag')
     config.assets_dir_name = "f_assets"
@@ -101,11 +101,6 @@ if __name__ == "__main__":
     # todo navigation manager gets document outline from structure_scanner
     # todo to craft a navigation JSON to be used by JS
     NavigationManager.fetch_content_from_scanner()
-    # TEMPORARY
-    # NavigationManager.generate_jswindows()
-
-    # todo if there's any outline, JS and CSS for navigation are registered
-    # todo in js_manager and css_manager
 
     #
     #   REGISTERING EVERYTHING FOR PRINTING
@@ -113,30 +108,34 @@ if __name__ == "__main__":
     #
 
     # Register document beginnig for printing
-    printer.register(yield_snippet_with_args("beginning", title="TestDocu"))
+    printer.register(yield_snippet_with_args("beginning", title=config.document_title))
 
     # Register document CSS for printing
-    # CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
     # TEMPORARY COMMENTED OUT
+    # CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
     printer.register(CSSManager.print())
 
     # Register middle part of document (after style and open body) for printing
-    printer.register(yield_snippet("after-style"))
+    printer.register(yield_snippet("middle"))
 
     # Register navigation for printing
     printer.register(NavigationManager.print_html())
 
     # ContentManager registers it's container for printing
-    printer.register(ContentManager.print_html_container())
+    printer.register(ContentManager.print_html())
 
-    # Register JS parts for printing - ContentManager
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\content_manager.js"))
-    JSManager.register_other_print(ContentManager.print())
-    # Register JS parts for printing - ReferenceResolver
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\reference_resolver.js"))
-    # Register JS parts for printing - Navigation
-    JSManager.register_other_print(NavigationManager.print_jswindows())
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"assets\js\navigation.js"))
+    # Register JS parts for printing
+    # ReferenceResolver
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"lib\content_manager\ref_resolver.js"))
+    # Modules dependencies
+    JSManager.register_file(PurePath(PurePath(__file__).parent, r"lib\content_manager\dependencies.js"))
+    # Modules
+    ContentManager.queue_module_printing()
+    # ContentManager
+    JSManager.register_print(ContentManager.print_js())
+    # Navigation
+    JSManager.register_print(NavigationManager.print_js())
+    # All of that to the printer
     printer.register(JSManager.print())
 
     # Register document ending for printing
