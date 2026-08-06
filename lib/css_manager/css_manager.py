@@ -10,9 +10,9 @@ class CSSManager:
 
     @classmethod
     def print(cls):
-        yield f"<style>\n"
+        yield f"    <style>\n"
         for file in CSSManager.registered_css_files:
             with open(file) as f:
                 for css_code in f:
                     yield css_code
-        yield "</style>"
+        yield "    </style>\n"
