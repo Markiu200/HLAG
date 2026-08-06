@@ -1,26 +1,24 @@
-import json
+from pathlib import PurePath
 from structure_scanner import StructureScanner, DocumentNode
 from module_management import ModuleManager
-from models import Card, Ref, InstanceDBEntry
+from models import Card, InstanceDBEntry
+from .module_tracker import ModuleTracker
 
 
 class ContentManager:
-    printable_elements_list: list[DocumentNode] = []
-    used_modules: set[str] = set()
-    module_map: dict = dict()
-    instance_db_records: dict = dict()  # refs beda jak {"nazwa": [str_refek]}
-    saved_refs_ids: dict = dict()
+    nodes: list[DocumentNode] = []
+    files_to_register = []
     current_node: DocumentNode
 
     @classmethod
     def fetch_content_from_scanner(cls):
         for node in StructureScanner.tree:
             if node.metadata.get("module") and not node.has_attribute("escaped"):
-                cls.printable_elements_list.append(node)
+                cls.nodes.append(node)
 
     @classmethod
     def parse_files(cls):
-        for element in cls.printable_elements_list:
+        for element in cls.nodes:
             cls.current_node = element
             cls.get_jsref_from_file(element)
 
@@ -46,35 +44,19 @@ class ContentManager:
         return jsref
 
     @classmethod
-    def register_instance(cls, instance_entry: InstanceDBEntry) -> str:  # zwraca JSREF
-        # saved_refs = {module: {id:int, refs:list}}
-        module = instance_entry.module
+    def register_instance(cls, instance_entry: InstanceDBEntry) -> str:
+        res = ModuleTracker.add_record(instance_entry)
+        ref = res[0]
+        register = res[1]
+        if register:
+            cls.files_to_register.append(register)
         #
-        if module not in cls.used_modules:  # not cls.saved_refs_ids.get(module):
-            cls.saved_refs_ids[module] = -1
-            cls.instance_db_records[module] = []
-            cls.used_modules.add(module)
-            ModuleManager.get_module(module).register_files()
-        new_module_id = cls.saved_refs_ids[module] + 1
-        cls.saved_refs_ids[module] = new_module_id
+        jsref = f"[%JSREF({ref.module},{ref.ref_id})%]"
         #
-        jsref = f"[%JSREF({module},{new_module_id})%]"
-        instance_db_record = {
-            "id": new_module_id,
-            "data": instance_entry.data,
-            "meta": instance_entry.meta
-        }
-        cls.instance_db_records[module].append(instance_db_record)
-        #
-        ref = Ref(
-            module=module,
-            ref_id=new_module_id
-        )
         cls.current_node.all_refs.append(ref)
-        # with this order, last ref will be file's own ref.
-        cls.current_node.ref = ref
+        cls.current_node.ref = ref  # with this order, last ref will be file's own ref.
         #
-        print(f"Instance of {module} registered, count {new_module_id}: {ref.module}")
+        print(f"Instance of {ref.module} registered with ID: {ref.ref_id}")
         return jsref
 
     #
@@ -82,21 +64,54 @@ class ContentManager:
     #
 
     @classmethod
-    def generate_module_map(cls) -> str:
-        res = "["
-        for used_module in cls.used_modules:
-            jsmanager = ModuleManager.get_module(used_module).get_info().get("jsmanager")
-            if jsmanager:
-                res = "".join([res, "{", f' "name": "{used_module}", "manager": {jsmanager} ', "},"])
-        res = "".join([res, "];"])
-        return res
+    def print_html(cls):
+        yield '    <main id="main"></main>\n'
 
     @classmethod
-    def print_html_container(cls):
-        yield '<main id="main"></main>'
+    def queue_module_printing(cls):
+        for register in cls.files_to_register:
+            register()
 
     @classmethod
-    def print(cls):
-        yield "".join(["let registered_modules = ", json.dumps(cls.instance_db_records), ";"])
-        yield "\n"
-        yield "".join(["let moduleMap = ", cls.generate_module_map()])
+    def print_instance_db(cls, beginning: str):
+        indented_beginning = "".join(["  ", beginning])
+        yield f"{beginning}static instanceDB = new Map([\n"
+        #
+        instance_db_record_groups = ModuleTracker.get_instance_db_record_groups()
+        for i, instance_db_record_group in enumerate(instance_db_record_groups):
+            if i < len(instance_db_record_groups) - 1:
+                for line in instance_db_record_group.yield_as_js_map_entry():
+                    yield f"{indented_beginning}  {line}"
+                yield ",\n"
+            else:
+                for line in instance_db_record_group.yield_as_js_map_entry():
+                    yield f"{indented_beginning}  {line}"
+                yield "\n"
+        yield f"{beginning}]);"
+
+    @classmethod
+    def print_controller_map(cls, beginning: str):
+        indented_beginning = "".join(["  ", beginning])
+        yield f"{beginning}static controllerMap = new Map([\n"
+        #
+        controller_map_records = ModuleTracker.get_controller_map_records()
+        for i, controller_record in enumerate(controller_map_records):
+            if i < len(controller_map_records) - 1:
+                yield f"{indented_beginning}{controller_record.get_as_js_controller_map_record()},\n"
+            else:
+                yield f"{indented_beginning}{controller_record.get_as_js_controller_map_record()}\n"
+        yield f"{beginning}]);"
+
+    @classmethod
+    def print_js(cls):
+        with open(PurePath(PurePath(__file__).parent, r"content_manager.js")) as f:
+            lines = f.readlines()
+            for line in lines:
+                if "//PLACEHOLDER_FOR_INSTANCEDB" in line:
+                    parts = line.split("//PLACEHOLDER_FOR_INSTANCEDB")
+                    yield from cls.print_instance_db(parts[0])
+                elif "//PLACEHOLDER_FOR_CONTROLLERMAP" in line:
+                    parts = line.split("//PLACEHOLDER_FOR_CONTROLLERMAP")
+                    yield from cls.print_controller_map(parts[0])
+                else:
+                    yield line
