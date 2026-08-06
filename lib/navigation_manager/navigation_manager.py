@@ -1,13 +1,23 @@
 import os
 import json
+from pathlib import PurePath
 # Own imports
 from structure_scanner import StructureScanner, DocumentNode
 
 
+class WindowRecord:
+    def __init__(self, ref_id: int, title: str, contents: list):
+        self.ref_id = ref_id
+        self.title = title
+        self.contents = contents
+
+    def get_as_js_map_record(self) -> str:
+        return f'[{self.ref_id}, new WindowRecord({self.ref_id}, "{self.title}", {json.dumps(self.contents)})]'
+
+
 class NavigationManager:
     nodes_is_outline: list[DocumentNode] = []
-    jswindows = []
-    last_jswindow_id = 0
+    window_map: list[WindowRecord] = []
 
     @classmethod
     def fetch_content_from_scanner(cls):
@@ -17,58 +27,50 @@ class NavigationManager:
                 print(f"Navigation - node found in outline: {node.path}")
 
     @classmethod
-    def generate_jswindows(cls):
-        """Here, a flat list of jswindow is generated, meant to be placed flat
-        in the final document, outside of any JS class."""
-        for node in cls.nodes_is_outline:
-            jswindow = {
-                "id": cls.last_jswindow_id,
-                "title": f"windowid{cls.last_jswindow_id}"
-            }
-            cls.last_jswindow_id += 1
+    def generate_window_map(cls):
+        for i, node in enumerate(cls.nodes_is_outline):
+            record_title = node.metadata.get("title") if node.metadata.get("title") else node.path.name
             #
-            if node.metadata.get("title"):
-                jswindow["title"] = node.metadata.get("title")
-            #
-            contents = []
+            record_contents = []
             for child_node in node.get_children():
                 if child_node.ref:
-                    contents.append({
+                    # This dictionary will be translated to JSON by json.dumps() at print method
+                    record_contents.append({
                         "module": child_node.ref.module,
                         "id": child_node.ref.ref_id
                     })
-            jswindow["contents"] = contents
             #
-            cls.jswindows.append(jswindow)
-        print(json.dumps(cls.jswindows))
-        return cls.jswindows
-
-    @classmethod
-    def generate_nav_tree(cls):
-        """Here is generated tree-like structure of menu items, used by Navigation
-        class to present it's menu items in a pretty way."""
-        pass
+            cls.window_map.append(WindowRecord(
+                ref_id=i,
+                title=record_title,
+                contents=record_contents
+            ))
+            #
+        return cls.window_map
 
     @classmethod
     def print_html(cls):
-        # todo this
-        yield '<nav id="nav"></nav>'
+        yield '    <nav id="nav"></nav>\n'
 
     @classmethod
-    def print_js_manager(cls):
-        # todo this
-        yield "class Navigation {}"
+    def print_window_map(cls, beginning: str):
+        cls.generate_window_map()
+        indented_beginning = "".join(["  ", beginning])
+        yield f"{beginning}static windowMap = new Map([\n"
+        for i, window_record in enumerate(cls.window_map):
+            if i < len(cls.window_map) - 1:
+                yield f"{indented_beginning}{window_record.get_as_js_map_record()},\n"
+            else:
+                yield f"{indented_beginning}{window_record.get_as_js_map_record()}\n"
+        yield f"{beginning}]);"
 
     @classmethod
-    def print_jswindows(cls):
-        res = f"let windows = {cls.generate_jswindows()};"
-        yield res
-
-    @classmethod
-    def print_js_data(cls):
-        # todo this
-        yield """let windows = [
-      {id: 0, title: "Home", contents: [{module: "text", id: 0}, {module: "text", id: 2}]},
-      {id: 1, title: "Data", contents: [{module: "text", id: 1}]},
-      {id: 2, title: "Referenced", contents: [{module: "text", id: 3}]},
-    ];"""
+    def print_js(cls):
+        with open(PurePath(PurePath(__file__).parent, r"navigation.js")) as f:
+            lines = f.readlines()
+            for line in lines:
+                if "//PLACEHOLDER_FOR_WINDOWMAP" in line:
+                    parts = line.split("//PLACEHOLDER_FOR_WINDOWMAP")
+                    yield from cls.print_window_map(parts[0])
+                else:
+                    yield line
