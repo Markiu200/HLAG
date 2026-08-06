@@ -16,7 +16,7 @@ class JSManager:
         cls.append_print("file", path)
 
     @classmethod
-    def register_other_print(cls, callback):
+    def register_print(cls, callback):
         cls.append_print("callback", callback)
 
     @classmethod
@@ -29,4 +29,4 @@ class JSManager:
                         yield js_code
             if element["resource_type"] == "callback":
                 yield from element["resource"]
-        yield "</script>"
+        yield "</script>\n"
