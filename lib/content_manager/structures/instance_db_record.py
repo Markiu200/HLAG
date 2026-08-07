@@ -8,11 +8,22 @@ class InstanceDBRecord:
         self.instance_id = instance_id
 
     def get_as_json(self):
-        result = json.dumps({
-            "id": self.instance_id,
-            "data": self.instance_db_entry.data,
-            "meta": self.instance_db_entry.meta,
-            "instance": "null"
-        })
-        result = result.replace('"null"', "null")
+        checked_data = ""
+        if isinstance(self.instance_db_entry.data, str):
+            checked_data = self.instance_db_entry.data
+        elif isinstance(self.instance_db_entry.data, dict):
+            checked_data = json.dumps(self.instance_db_entry.data)
+
+        checked_meta = ""
+        if isinstance(self.instance_db_entry.meta, str):
+            checked_meta = self.instance_db_entry.meta
+        elif isinstance(self.instance_db_entry.meta, dict):
+            checked_meta = json.dumps(self.instance_db_entry.meta)
+
+        result = "".join([
+            '{"id": ', str(self.instance_id),
+            ', "data": ', checked_data,
+            ', "meta": ', checked_meta,
+            ', "instance": null}'
+        ])
         return result
