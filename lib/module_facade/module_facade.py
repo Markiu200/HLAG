@@ -11,6 +11,8 @@ from assets_manager import AssetsManager
 class ModuleFacade:
     """This class is here to be used by modules - a simple way to get the "singleton"
     kind of classes, and one place to import other stuff from."""
+    content_manager = ContentManager
+
 
     @classmethod
     def register_js(cls, path: PurePath):
