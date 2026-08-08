@@ -60,4 +60,5 @@ article {
 }
 .window-html-container {
     background-color: var(--bg--primary);
+    padding: 6px;
 }
