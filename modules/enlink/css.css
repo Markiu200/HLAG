@@ -17,4 +17,11 @@
     .desc {
         font-style: italic;
     }
+    .images {
+        border: 5px solid black;
+        max-height: 50px;
+        .image {
+            object-fit: contain;
+        }
+    }
 }

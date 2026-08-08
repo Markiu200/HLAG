@@ -10,6 +10,8 @@ class EnlinkModuleController {
     let newInstance = new EnlinkModuleInstance(id_, module_);
     let allItems = [];
     //
+    // data={"nodes": {"title": "", "link": "", "desc": "", "images": ""}}
+    //
     data_.nodes.forEach(item => {  // this should be a list 
       let currentItem = document.createElement("div");
       currentItem.classList.add("enlink");
@@ -35,6 +37,17 @@ class EnlinkModuleController {
         descElement.classList.add("desc");
         descElement.innerHTML = item["desc"];
         currentItem.appendChild(descElement);
+      }
+      if (item["images"]) {
+        let imagesContainer = document.createElement("div");
+        imagesContainer.classList.add("images");
+        item["images"].forEach (el => {
+          let imageContainer = document.createElement("img");
+          imageContainer.setAttribute("src", el);
+          imageContainer.classList.add("image");
+          imagesContainer.appendChild(imageContainer);
+        });
+        currentItem.appendChild(imagesContainer);
       }
       allItems.push(currentItem);
     });

@@ -1,3 +1,4 @@
+import json
 from pathlib import PurePath
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
@@ -6,6 +7,77 @@ from module_management import IModule
 
 def get_module():
     return Enlink
+
+
+class Item:
+    def __init__(self):
+        pass
+
+    def add(self, value: str):
+        pass
+
+    def get(self) -> str:
+        return ""
+
+
+class TextItem(Item):
+    def __init__(self):
+        super().__init__()
+        self.result = ""
+
+    def add(self, value: str):
+        self.result = "".join([self.result, value])
+
+    def get(self):
+        return self.result
+
+
+class ImageItem(Item):
+    node_full_path = ""
+
+    def __init__(self):
+        super().__init__()
+        self.images = []
+
+    def add(self, value: str):
+        pass
+        for image in value.split():
+            image_full_path = PurePath(ImageItem.node_full_path, image)
+            rel_path = ModuleFacade.get_assets_manager().register_asset(image_full_path)
+            self.images.append(json.dumps(rel_path))
+
+    def get(self):
+        images_as_json = ", ".join(self.images)
+        if len(images_as_json) > 0:
+            return "".join(["[", images_as_json, "]"])
+        return 'null'
+
+
+class Record:
+    def __init__(self):
+        self.title = TextItem()
+        self.link = TextItem()
+        self.desc = TextItem()
+        self.images = ImageItem()
+        self.started = False
+
+    def add_part(self, item: str, value: str):
+        self.started = True
+        if item == "title":
+            self.title.add(value)
+        if item == "link":
+            self.link.add(value)
+        if item == "desc":
+            self.desc.add(value)
+        if item == "images":
+            self.images.add(value)
+
+    def get(self):
+        record_json = (f'"title": "{self.title.get()}", '
+                       f'"link": "{self.link.get()}", '
+                       f'"desc": "{self.desc.get()}", '
+                       f'"images": {self.images.get()}')
+        return "".join(["{", record_json, "}"])
 
 
 class Enlink(IModule):
@@ -58,59 +130,46 @@ class Enlink(IModule):
         #  title: About the topic
         #  link: https://thattopic.com/
         #  desc: Here is some good insight about the topic I like.
+        #  images: rel_path rel_path ...
         #
         #  title: ...
         #
         #  Empty line is delimiter more such instances are desired.
         #  Parts can be skipped, but must be in order.
         #
-        items = []
-        item = {"title": "", "link": "", "desc": ""}
-        value = ""
+        records = []
+        current_record = Record()
         last_property = ""
-        item_started = False
+        ImageItem.node_full_path = card.node.get_parent().path
+
         lines = content.splitlines()
         for line in lines:
             if line.startswith("//"):
                 continue
             #
-            if line.startswith("title: "):
-                item_started = True
+            if (line.startswith("title: ") or
+                    line.startswith("link: ") or
+                    line.startswith("desc: ") or
+                    line.startswith("images: ")):
                 parts = line.split(sep=": ")
                 last_property = parts[0]
-                value = parts[1]
+                current_record.add_part(last_property, parts[1])
             #
-            elif line.startswith("link: "):
-                item_started = True
-                parts = line.split(sep=": ")
-                item[last_property] = value
-                last_property = parts[0]
-                value = parts[1]
-            #
-            elif line.startswith("desc: "):
-                item_started = True
-                parts = line.split(sep=": ")
-                item[last_property] = value
-                last_property = parts[0]
-                value = parts[1]
-            #
-            elif len(line) == 0 and item_started:
-                item_started = False
-                item[last_property] = value
+            elif len(line) == 0:
                 last_property = ""
-                value = ""
-                items.append(item)
-                item = {"title": "", "link": "", "desc": ""}
-            elif item_started:
-                value = "".join([value, line])
+                records.append(current_record)
+                current_record = Record()
+            else:
+                current_record.add_part(last_property, line)
         #
-        if item_started:
-            item[last_property] = value
-            items.append(item)
+        if current_record.started:
+            records.append(current_record)
         #
+        result_data = ", ".join(['{"nodes": [', *[record.get() for record in records], "]}"])
+
         result = InstanceDBEntry(
             module=cls.get_info()["name"],
-            data={"nodes": items},
+            data=result_data,
             meta=json.dumps(card.meta)
         )
         return result
