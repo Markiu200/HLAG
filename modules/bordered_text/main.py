@@ -1,6 +1,6 @@
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
+from module_facade import ModuleFacade, DocumentNode, Card, InstanceDBEntry
 from module_management import IModule
 
 
@@ -29,25 +29,25 @@ class BorderedText(IModule):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
 
     @classmethod
-    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, card: Card) -> dict:
         # Use Raw module methods
-        return ModuleFacade.get_module("raw").get_metadata_from_file(node)
+        return ModuleFacade.get_module("raw").get_metadata_from_file(card)
 
     @classmethod
-    def get_metadata_from_data(cls, data: Data) -> dict:
-        return ModuleFacade.get_module("raw").get_metadata_from_data(data)
+    def get_metadata_from_data(cls, card: Card) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_data(card)
 
     @classmethod
-    def replace_orders(cls, data: Data) -> str:
-        return ModuleFacade.get_module("raw").replace_orders(data)
+    def replace_orders(cls, card: Card) -> str:
+        return ModuleFacade.get_module("raw").replace_orders(card)
 
     @classmethod
-    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
-        return ModuleFacade.get_module("raw").parse_file(node)
+    def parse_file(cls, card: Card) -> InstanceDBEntry:
+        return ModuleFacade.get_module("raw").parse_file(card)
 
     @classmethod
-    def parse_data(cls, data: Data) -> InstanceDBEntry:
-        result = ModuleFacade.get_module("raw").parse_data(data)
+    def parse_data(cls, card: Card) -> InstanceDBEntry:
+        result = ModuleFacade.get_module("raw").parse_data(card)
         #
         result.meta["module"] = "bordered_text"
         result.module = "bordered_text"
