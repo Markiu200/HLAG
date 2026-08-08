@@ -110,8 +110,11 @@ if __name__ == "__main__":
     # Register document beginnig for printing
     printer.register(yield_snippet_with_args("beginning", title=config.document_title))
 
+    this_file_dir = PurePath(__file__).parent
+
     # Register document CSS for printing
-    CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
+    CSSManager.register(PurePath(this_file_dir, r"assets\css\default.css"))
+    CSSManager.register(PurePath(this_file_dir, r"lib\navigation_manager\navigation.css"))
     printer.register(CSSManager.print())
 
     # Register middle part of document (after style and open body) for printing
@@ -124,10 +127,13 @@ if __name__ == "__main__":
     printer.register(ContentManager.print_html())
 
     # Register JS parts for printing
+    # state manager
+    JSManager.register_file(PurePath(this_file_dir, r"assets\js\state_manager.js"))
+    JSManager.register_file_delayed(PurePath(this_file_dir, r"assets\js\state_manager_delayed.js"))
     # ReferenceResolver
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"lib\content_manager\ref_resolver.js"))
+    JSManager.register_file(PurePath(this_file_dir, r"lib\content_manager\ref_resolver.js"))
     # Modules dependencies
-    JSManager.register_file(PurePath(PurePath(__file__).parent, r"lib\content_manager\dependencies.js"))
+    JSManager.register_file(PurePath(this_file_dir, r"lib\content_manager\dependencies.js"))
     # Modules
     ContentManager.queue_module_printing()
     # ContentManager
