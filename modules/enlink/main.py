@@ -9,6 +9,12 @@ def get_module():
     return Enlink
 
 
+def replace_characters(line: str):
+    line = line.replace('"', '\\"')
+    line = line.replace("'", "\\'")
+    return line
+
+
 class Item:
     def __init__(self):
         pass
@@ -29,7 +35,7 @@ class TextItem(Item):
         self.result = "".join([self.result, value])
 
     def get(self):
-        return self.result
+        return replace_characters(self.result)
 
 
 class ImageItem(Item):
