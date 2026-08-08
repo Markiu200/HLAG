@@ -13,10 +13,12 @@ class AssetsManager:
     @classmethod
     def initialize(cls):
         if cls.assets_folder_exist():
-            with os.scandir(str(PurePath(config.assets_path, config.assets_dir_name))) as old_assets:
-                for asset in old_assets:
-                    if os.path.isfile(asset.path):
-                        os.remove(asset.path)
+            # temporary commented out - better not remove anything without confirmation for now
+            pass
+            # with os.scandir(str(PurePath(config.assets_path, config.assets_dir_name))) as old_assets:
+            #     for asset in old_assets:
+            #         if os.path.isfile(asset.path):
+            #             os.remove(asset.path)
         else:
             os.mkdir(str(PurePath(config.assets_path, config.assets_dir_name)))
 
