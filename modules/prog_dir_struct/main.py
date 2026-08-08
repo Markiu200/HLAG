@@ -1,5 +1,5 @@
 # Own imports
-from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
+from module_facade import ModuleFacade, DocumentNode, Card, InstanceDBEntry
 from module_management import IModule
 from escaped_check import EscapedCheck
 from dir_meta_check import DirMetaCheck
@@ -29,17 +29,17 @@ class ProgDirStruct(IModule):
         pass
 
     @classmethod
-    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, card: Card) -> dict:
         return dict()
 
     @classmethod
-    def get_metadata_from_data(cls, data: Data) -> dict:
+    def get_metadata_from_data(cls, card: Card) -> dict:
         return dict()
 
     @classmethod
-    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
+    def parse_file(cls, card: Card) -> InstanceDBEntry:
         return InstanceDBEntry("", None, None)
 
     @classmethod
-    def parse_data(cls, data: Data) -> InstanceDBEntry:
+    def parse_data(cls, card: Card) -> InstanceDBEntry:
         return InstanceDBEntry("", None, None)
