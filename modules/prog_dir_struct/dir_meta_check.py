@@ -1,6 +1,6 @@
 import os
 # Own imports
-from module_facade import BaseCheck, DocumentNode, ModuleFacade
+from module_facade import BaseCheck, DocumentNode, ModuleFacade, Card
 
 
 class DirMetaCheck(BaseCheck):
@@ -10,6 +10,12 @@ class DirMetaCheck(BaseCheck):
             for child in dir_node.children:
                 if os.path.isfile(child.path):
                     if child.path.name == "_meta.txt" or child.path.name == "_metafile.txt":
-                        got_meta = ModuleFacade.get_module("raw").get_metadata_from_file(child)
+                        card = Card(
+                            node=child,
+                            file=True,
+                            meta=dict(),
+                            content=None
+                        )
+                        got_meta = ModuleFacade.get_module("raw").get_metadata_from_file(card)
                         dir_node.add_metadata(got_meta)
         return result
