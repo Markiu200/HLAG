@@ -46,28 +46,26 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
+    def get_metadata_from_file(cls, card: Card) -> dict:
         """
-        :param node: DocumentNode of the file in question - it gets it's path from there,
-        but it should't be used to actually modify the metadata.
+        :param card: -todo-
         :return: dict of metadata it found and some information about the read itself
         """
         pass
 
     @classmethod
     @abstractmethod
-    def get_metadata_from_data(cls, data: Data) -> dict:
+    def get_metadata_from_data(cls, card: Card) -> dict:
         """
         This will be most likely used when dealing with references.
-        :param data: Data structure to read metadata from - Data.content for reading, and Data.meta for passing current metadata.
-        but it should't be used to actually modify the metadata.
+        :param card: -todo-
         :return: dict of metadata it found and some information about the read itself
         """
         pass
 
     @classmethod
     @abstractmethod
-    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
+    def parse_file(cls, card: Card) -> InstanceDBEntry:
         """This method is what produces our final dict() of information to be used
         by ContentManager to craft the JSREF. All the references there might have been
         should have been replaced before.
@@ -76,7 +74,7 @@ class IModule(ABC):
 
     @classmethod
     @abstractmethod
-    def parse_data(cls, data: Data) -> InstanceDBEntry:
+    def parse_data(cls, card: Card) -> InstanceDBEntry:
         """This method is what produces our final dict() of information to be used
         by ContentManager to craft the JSREF. All the references there might have been
         should have been replaced before.
