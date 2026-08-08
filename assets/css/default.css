@@ -19,19 +19,26 @@
     --brad-inner: calc(var(--brad-outer) - var(--frame-space));
 }
 body {
-    display: flex;
-    margin: 0;
-    min-block-size: 100vh;
-    padding: var(--frame-space);
-    background: linear-gradient(32deg, hsl(193 6 76), hsl(196 9 69) 50%);
-    font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  margin: 0;
+  min-block-size: 100vh;
+  max-block-size: 100vh;
+  /* padding: var(--frame-space); */
+  background: linear-gradient(32deg, hsl(193 6 76), hsl(196 9 69) 50%);
+  font-family: Arial, Helvetica, sans-serif;
 }
-main {
-    display: flex;
-    flex-flow: column;
-    flex: 1 0 auto;
+#main {
+  padding: var(--frame-space);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 .window-html-container {
-    background-color: var(--bg--primary);
-    padding: 6px;
+  background-color: var(--bg--primary);
+  padding: 6px;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 1;
 }
