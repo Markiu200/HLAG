@@ -48,7 +48,7 @@ class RawImage(IModule):
     def parse_data(cls, card: Card) -> InstanceDBEntry:
         items = []
         if card.meta.get("imgSrc") == "file":
-            items.append(ModuleFacade.get_assets_manager().register_asset(PurePath(card.node.path)))
+            items.append(ModuleFacade.get_assets_manager().register_asset(card.node.path))
         else:
             # todo If it is used as order
             pass

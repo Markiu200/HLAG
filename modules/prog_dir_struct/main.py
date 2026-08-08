@@ -1,5 +1,4 @@
-# Own imports
-from module_facade import ModuleFacade, DocumentNode, Card, InstanceDBEntry
+from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
 from escaped_check import EscapedCheck
 from dir_meta_check import DirMetaCheck

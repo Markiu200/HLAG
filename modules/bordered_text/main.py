@@ -1,6 +1,6 @@
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode, Card, InstanceDBEntry
+from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
 
 
