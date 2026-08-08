@@ -61,8 +61,7 @@ class Raw(IModule):
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
-        append_brs = False if card.meta.get("autobr") == "disable" else True
-        enable_html = False if card.meta.get("html") == "disable" else True
+        ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disable" else True
 
         content = cls.replace_orders(card)
@@ -72,14 +71,15 @@ class Raw(IModule):
         current_data = ""
         splitted = content.splitlines(keepends=True)
         #
-        for i in range(len(splitted)):
+        for line in splitted:
             # --- references ---
             if enable_references:
-                current_line = splitted[i]
-                jsref_found = re.search(pattern, current_line)
+                if ignore_lines and line.startswith(ignore_lines):
+                    continue
+                jsref_found = re.search(pattern, line)
                 if jsref_found:
                     while jsref_found:
-                        parts = current_line.split(sep=jsref_found.group(), maxsplit=1)
+                        parts = line.split(sep=jsref_found.group(), maxsplit=1)
                         # append left part (if any) to current_data and flush
                         if len(parts[0]) + len(current_data) > 0:
                             data_list.append({
@@ -96,14 +96,10 @@ class Raw(IModule):
                         # search again in what is left
                         jsref_found = re.search(pattern, current_data)
                 else:
-                    current_data = "".join([current_data, splitted[i]])
+                    current_data = "".join([current_data, line])
             else:
                 # --- add line ---
-                current_data = "".join([current_data, splitted[i]])
-            # --- br ---
-            # if append_brs:
-            #     if i != len(splitted) - 1:
-            #         current_data = "".join([current_data, "</br>"])
+                current_data = "".join([current_data, line])
         # finish
         if len(current_data) > 0:
             data_list.append({
