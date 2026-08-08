@@ -1,7 +1,7 @@
 import re
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
+from module_facade import ModuleFacade, DocumentNode, Card, InstanceDBEntry
 from module_management import IModule
 
 
@@ -30,28 +30,29 @@ class Text(IModule):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
 
     @classmethod
-    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
-        return ModuleFacade.get_module("raw").get_metadata_from_file(node)
+    def get_metadata_from_file(cls, card: Card) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_file(card)
 
     @classmethod
-    def get_metadata_from_data(cls, data: Data) -> dict:
-        return ModuleFacade.get_module("raw").get_metadata_from_string(data)
+    def get_metadata_from_data(cls, card: Card) -> dict:
+        return ModuleFacade.get_module("raw").get_metadata_from_string(card)
 
     @classmethod
-    def replace_orders(cls, data: Data) -> str:
-        return ModuleFacade.get_module("raw").replace_orders(data)
+    def replace_orders(cls, card: Card) -> str:
+        return ModuleFacade.get_module("raw").replace_orders(card)
 
     @classmethod
-    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
-        past_meta_location = node.metadata.get("cursor", 0)
-        with open(node.path) as f:
+    def parse_file(cls, card: Card) -> InstanceDBEntry:
+        past_meta_location = card.node.metadata.get("cursor", 0)
+        with open(card.node.path) as f:
             f.seek(past_meta_location)
-            content = f.read()
-        return cls.parse_data(Data(content=content, meta=node.metadata))
+            card.content = f.read()
+        card.file = False
+        return cls.parse_data(card)
 
     @classmethod
-    def parse_data(cls, data: Data) -> InstanceDBEntry:
-        content = cls.replace_orders(data)
+    def parse_data(cls, card: Card) -> InstanceDBEntry:
+        content = cls.replace_orders(card)
         lines = []
         #
         current_line = ""
@@ -66,6 +67,6 @@ class Text(IModule):
         result = InstanceDBEntry(
             module=cls.get_info()["name"],
             data={"nodes": lines},
-            meta=data.meta
+            meta=card.meta
         )
         return result
