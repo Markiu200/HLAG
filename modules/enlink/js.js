@@ -5,7 +5,29 @@ class EnlinkModuleInstance extends ModuleInstance {
     }
 }
 
+class EnlinkImageScreen {
+  constructor() {
+    this.HTMLContainer = document.createElement("div");
+    this.HTMLContainer.classList.add("enlink-popup-image-screen");
+    this.imageElement = document.createElement("img");
+    this.imageElement.classList.add("enlink-popup-image-image");
+    this.HTMLContainer.appendChild(this.imageElement);
+    //
+    this.HTMLContainer.addEventListener("click", this.close.bind(this))
+    document.body.insertAdjacentElement("afterbegin", this.HTMLContainer);
+  }
+  close() {
+    this.HTMLContainer.style.display = "none";
+  }
+  open(image) {
+    this.imageElement.setAttribute("src", image);
+    this.HTMLContainer.style.display = "block";
+  }
+}
+
 class EnlinkModuleController {
+  static popupImageScreen = new EnlinkImageScreen;
+
   static create(module_, id_, data_, meta_) {
     let newInstance = new EnlinkModuleInstance(id_, module_);
     let allItems = [];
@@ -45,6 +67,9 @@ class EnlinkModuleController {
           let imageContainer = document.createElement("img");
           imageContainer.setAttribute("src", el);
           imageContainer.classList.add("image");
+          imageContainer.addEventListener("click", (e) => {
+            newInstance.controller.popupImage(e, el);
+          })
           imagesContainer.appendChild(imageContainer);
         });
         currentItem.appendChild(imagesContainer);
@@ -54,4 +79,11 @@ class EnlinkModuleController {
     newInstance.nodes = allItems;
     return newInstance;
   }
+
+  static popupImage(event, image) {
+    console.log(event);
+    console.log(image);
+    EnlinkModuleController.popupImageScreen.open(image);
+  }
 }
+
