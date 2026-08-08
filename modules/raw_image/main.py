@@ -50,8 +50,10 @@ class RawImage(IModule):
         if card.meta.get("imgSrc") == "file":
             items.append(ModuleFacade.get_assets_manager().register_asset(card.node.path))
         else:
-            # todo If it is used as order
-            pass
+            line = card.content.strip()
+            image_full_path = PurePath(card.node.get_parent().path, line)
+            rel_path = ModuleFacade.get_assets_manager().register_asset(image_full_path)
+            items.append(rel_path)
         #
         result = InstanceDBEntry(
             module=cls.get_info()["name"],
