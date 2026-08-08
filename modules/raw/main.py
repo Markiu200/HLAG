@@ -63,6 +63,7 @@ class Raw(IModule):
     def replace_characters(cls, line: str):
         line = line.replace('"', '\\"')
         line = line.replace("'", "\\'")
+        line = line.replace("/", "\\/")
         return line
 
     @classmethod

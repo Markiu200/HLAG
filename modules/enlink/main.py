@@ -12,6 +12,7 @@ def get_module():
 def replace_characters(line: str):
     line = line.replace('"', '\\"')
     line = line.replace("'", "\\'")
+    line = line.replace("/", "\\/")
     return line
 
 
