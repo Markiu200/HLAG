@@ -1,7 +1,7 @@
 from pathlib import PurePath
 from structure_scanner import StructureScanner, DocumentNode
 from module_management import ModuleManager
-from models import Card, InstanceDBEntry
+from models import Card, InstanceDBEntry, Ref
 from .module_tracker import ModuleTracker
 
 
@@ -18,46 +18,48 @@ class ContentManager:
 
     @classmethod
     def parse_files(cls):
-        for element in cls.nodes:
-            cls.current_node = element
-            cls.get_jsref_from_file(element)
+        for node in cls.nodes:
+            cls.current_node = node
+            node_card = Card(
+                node=node,
+                file=True,
+                meta=node.metadata,
+                content=None
+            )
+            node.ref = cls.get_ref(node_card)
 
     @classmethod
-    def get_jsref_from_file(cls, node: DocumentNode) -> str:
-        # Get current module from metadata, then using it read metadata in file
-        module = ModuleManager.get_module(node.metadata.get("module"))
-        found_meta = module.get_metadata_from_file(node)
-        # Update metadata and then fetch module again to see if it changed
-        node.add_metadata(found_meta)
-        module = ModuleManager.get_module(node.metadata.get("module"))
-        # Get jscard from using module's method
-        instance_entry = module.parse_file(node)
-        # Having file finally parsed, generate, register and return jsref
-        jsref = cls.register_instance(instance_entry)
-        return jsref
+    def get_ref(cls, card: Card) -> Ref:
+        # Step 1 - check if we're dealing with a file
+        if card.file:
+            # Step 1.1 - read metadata from file using module that understands the file
+            module = ModuleManager.get_module(card.meta.get("module"))
+            got_meta = module.get_metadata(card)
+            # Step 1.2 - Update card with that metadata
+            for key, value in got_meta.items():
+                card.meta[key] = value
+        # Step 2 - get module from metadata
+        module = ModuleManager.get_module(card.meta.get("module"))
+        if not module:
+            raise RuntimeError(f"Module \"{card.meta.get('module')}\" was requested, but such module was never registered.")
+        # Step 3 - order instance record from the module
+        instance_record = module.parse(card)
+        # Step 4 - register that instance and fetch Ref record
+        ref = cls.register_instance(instance_record, card)
+        return ref
 
     @classmethod
-    def get_jsref_from_card(cls, card: Card) -> str:
-        module = ModuleManager.get_module(card.module)
-        instance_entry = module.parse_data(card.data)
-        jsref = cls.register_instance(instance_entry)
-        return jsref
-
-    @classmethod
-    def register_instance(cls, instance_entry: InstanceDBEntry) -> str:
-        res = ModuleTracker.add_record(instance_entry)
-        ref = res[0]
-        register = res[1]
-        if register:
-            cls.files_to_register.append(register)
-        #
-        jsref = f"[%JSREF({ref.module},{ref.ref_id})%]"
-        #
-        cls.current_node.all_refs.append(ref)
-        cls.current_node.ref = ref  # with this order, last ref will be file's own ref.
+    def register_instance(cls, instance_record: InstanceDBEntry, card: Card) -> Ref:
+        report = ModuleTracker.add_record(instance_record)
+        ref = report.ref
+        register_method = report.module_file_register_method
+        if register_method:
+            cls.files_to_register.append(register_method)
+            #
+        card.node.all_refs.append(ref)
         #
         print(f"Instance of {ref.module} registered with ID: {ref.ref_id}")
-        return jsref
+        return ref
 
     #
     #   PRINTING RELATED METHODS
