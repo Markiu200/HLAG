@@ -55,13 +55,13 @@ def _match_tags(content: str, tag_end: int):
             continue
 
 
-def replace_orders(data: Data) -> str:
+def replace_orders(card: Card) -> str:
     """All references should be found and replaced before parsing contents. Module
     itself should know how to recognize a reference.
-    :param data: Structure containing contents and metadata of the file - it should be loaded into memory entirely.
+    :param card: -todo- Structure containing contents and metadata of the file - it should be loaded into memory entirely.
     :return: The same content, but with JSREFs in place - ready for parsing.
     """
-    content = data.content
+    content = card.content
     #
     reference_regex = r'\[%(.*?):(.*?)%]'
     #
@@ -86,10 +86,15 @@ def replace_orders(data: Data) -> str:
             new_reference.content = content[new_reference.end:end_reference.begin]
             new_reference.end = end_reference.end
             #
-            jsref = ModuleFacade.get_content_manager().get_jsref_from_card(Card(
-                module=value,
-                data=Data(new_reference.content, meta=data.meta)
-            ))
+            new_meta = dict(card.meta)
+            new_meta["module"] = value
+            order_card = Card(
+                node=card.node,
+                file=False,
+                meta=new_meta,
+                content=new_reference.content
+            )
+            jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
             content = content.replace(content[new_reference.begin:new_reference.end], jsref)
         #
         if key == "ins":

@@ -1,7 +1,7 @@
 import re
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, DocumentNode, Data, InstanceDBEntry
+from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
 #
 from txt_check import TXTCheck
@@ -35,36 +35,37 @@ class Raw(IModule):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
 
     @classmethod
-    def get_metadata_from_file(cls, node: DocumentNode) -> dict:
-        return rmff.get_metadata_from_file(node.path)
+    def get_metadata_from_file(cls, card: Card) -> dict:
+        return rmff.get_metadata_from_file(card.node.path)
 
     @classmethod
-    def get_metadata_from_data(cls, data: Data) -> dict:
-        return rmfl.read_metadata_from_lines([data.content])
+    def get_metadata_from_data(cls, card: Card) -> dict:
+        return rmfl.read_metadata_from_lines([card.content])
 
     @classmethod
-    def replace_orders(cls, data: Data) -> str:
+    def replace_orders(cls, card: Card) -> str:
         """
-        :param data: Data structure of the file (content & meta)
+        :param card: -todo-
         :return: content from Data structure, but with orders replaced with jsrefs
         """
-        return rr.replace_orders(data)
+        return rr.replace_orders(card)
 
     @classmethod
-    def parse_file(cls, node: DocumentNode) -> InstanceDBEntry:
-        past_meta_location = node.metadata.get("cursor", 0)
-        with open(node.path) as f:
+    def parse_file(cls, card: Card) -> InstanceDBEntry:
+        past_meta_location = card.node.metadata.get("cursor", 0)
+        with open(card.node.path) as f:
             f.seek(past_meta_location)
-            content = f.read()
-        return cls.parse_data(Data(content=content, meta=node.metadata))
+            card.content = f.read()
+        card.file = False
+        return cls.parse_data(card)
 
     @classmethod
-    def parse_data(cls, data: Data) -> InstanceDBEntry:
-        append_brs = False if data.meta.get("autobr") == "disable" else True
-        enable_html = False if data.meta.get("html") == "disable" else True
-        enable_references = False if data.meta.get("references") == "disable" else True
+    def parse_data(cls, card: Card) -> InstanceDBEntry:
+        append_brs = False if card.meta.get("autobr") == "disable" else True
+        enable_html = False if card.meta.get("html") == "disable" else True
+        enable_references = False if card.meta.get("references") == "disable" else True
 
-        content = cls.replace_orders(data)
+        content = cls.replace_orders(card)
 
         pattern = r'\[%JSREF\(.*?\)%]'
         data_list = []
@@ -113,6 +114,6 @@ class Raw(IModule):
         result_entry = InstanceDBEntry(
             module=cls.get_info()["name"],
             data={"nodes": data_list},
-            meta=data.meta
+            meta=card.meta
         )
         return result_entry
