@@ -111,8 +111,7 @@ if __name__ == "__main__":
     printer.register(yield_snippet_with_args("beginning", title=config.document_title))
 
     # Register document CSS for printing
-    # TEMPORARY COMMENTED OUT
-    # CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
+    CSSManager.register(PurePath(PurePath(__file__).parent, r"assets\css\default.css"))
     printer.register(CSSManager.print())
 
     # Register middle part of document (after style and open body) for printing

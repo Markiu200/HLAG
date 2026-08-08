@@ -58,6 +58,3 @@ article {
 #snackbar.show {
     visibility: visible; /* Show the snackbar */
 }
-.window-html-container {
-    background-color: var(--bg--primary);
-}
