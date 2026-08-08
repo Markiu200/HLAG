@@ -157,7 +157,8 @@ class Enlink(IModule):
             #
             elif len(line) == 0:
                 last_property = ""
-                records.append(current_record)
+                if current_record.started:
+                    records.append(current_record)
                 current_record = Record()
             else:
                 current_record.add_part(last_property, line)
