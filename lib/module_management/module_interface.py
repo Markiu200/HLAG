@@ -1,9 +1,22 @@
 from abc import ABC, abstractmethod
-from structure_scanner.document_tree import DocumentNode
-from models import Data, InstanceDBEntry
+from models import Card, InstanceDBEntry
 
 
 class IModule(ABC):
+    @classmethod
+    def get_metadata(cls, card: Card) -> dict:
+        if card.file:
+            return cls.get_metadata_from_file(card)
+        else:
+            return cls.get_metadata_from_data(card)
+
+    @classmethod
+    def parse(cls, card: Card) -> InstanceDBEntry:
+        if card.file:
+            return cls.parse_file(card)
+        else:
+            return cls.parse_data(card)
+
     @classmethod
     @abstractmethod
     def get_info(cls) -> dict:
