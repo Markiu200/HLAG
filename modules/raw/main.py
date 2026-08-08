@@ -70,7 +70,7 @@ class Raw(IModule):
         pattern = r'\[%JSREF\(.*?\)%]'
         data_list = []
         current_data = ""
-        splitted = content.splitlines()
+        splitted = content.splitlines(keepends=True)
         #
         for i in range(len(splitted)):
             # --- references ---
@@ -101,9 +101,9 @@ class Raw(IModule):
                 # --- add line ---
                 current_data = "".join([current_data, splitted[i]])
             # --- br ---
-            if append_brs:
-                if i != len(splitted) - 1:
-                    current_data = "".join([current_data, "</br>"])
+            # if append_brs:
+            #     if i != len(splitted) - 1:
+            #         current_data = "".join([current_data, "</br>"])
         # finish
         if len(current_data) > 0:
             data_list.append({

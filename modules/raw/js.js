@@ -19,13 +19,16 @@ class RawModuleController {
 
         data_.nodes.forEach(node => {
             if (node["isRef"] == 0) {
-                let newSpan = document.createElement("span");
+                let newPre = document.createElement("pre");
+                newPre.style.fontFamily = "inherit";
+                newPre.style.display = "inline";
+                newPre.style.margin = 0;
                 if (htmlEnabled) {
-                    newSpan.innerHTML = node["line"];
-                    newInstance.nodes.push(newSpan);
+                    newPre.innerHTML = node["line"];
+                    newInstance.nodes.push(newPre);
                 } else {
-                    newSpan.innerText = node["line"];
-                    newInstance.nodes.push(newSpan);
+                    newPre.innerText = node["line"];
+                    newInstance.nodes.push(newPre);
                 }
             } else {
                 let nestedInstance = RefResolver.resolve(node["line"]);
