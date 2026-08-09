@@ -104,12 +104,24 @@ class Raw(IModule):
         if len(current_data) > 0:
             data_list.append({
                 "isRef": 0,
-                "line": cls.json_sanitize(current_data)
+                "line": current_data
             })
         #
+        result_data = '{"nodes": ['
+        for i, item in enumerate(data_list):
+            result_data = "".join([
+                result_data,
+                "{",
+                f'"isRef": {item["isRef"]}, "line": {cls.json_sanitize(item["line"])}',
+                "}"]
+            )
+            if i < len(data_list) - 1:
+                result_data = "".join([result_data, ", "])
+        result_data = "".join([result_data, "]}"])
+
         result_entry = InstanceDBEntry(
             module=cls.get_info()["name"],
-            data={"nodes": data_list},
+            data=result_data,
             meta=card.meta
         )
         return result_entry
