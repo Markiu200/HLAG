@@ -18,6 +18,12 @@ class IModule(ABC):
             return cls.parse_data(card)
 
     @classmethod
+    def json_sanitize(cls, line: str):
+        result = line.replace("$", "\\$")
+        result = result.replace("\\", "\\\\")
+        return fr"`{result}`"
+
+    @classmethod
     @abstractmethod
     def get_info(cls) -> dict:
         """

@@ -60,13 +60,6 @@ class Raw(IModule):
         return cls.parse_data(card)
 
     @classmethod
-    def replace_characters(cls, line: str):
-        line = line.replace('"', '\\"')
-        line = line.replace("'", "\\'")
-        line = line.replace("/", "\\/")
-        return line
-
-    @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
         ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disable" else True
@@ -111,7 +104,7 @@ class Raw(IModule):
         if len(current_data) > 0:
             data_list.append({
                 "isRef": 0,
-                "line": cls.replace_characters(current_data)
+                "line": cls.json_sanitize(current_data)
             })
         #
         result_entry = InstanceDBEntry(

@@ -9,13 +9,6 @@ def get_module():
     return Enlink
 
 
-def replace_characters(line: str):
-    line = line.replace('"', '\\"')
-    line = line.replace("'", "\\'")
-    line = line.replace("/", "\\/")
-    return line
-
-
 class Item:
     def __init__(self):
         pass
@@ -36,7 +29,7 @@ class TextItem(Item):
         self.result = "".join([self.result, value])
 
     def get(self):
-        return replace_characters(self.result)
+        return IModule.json_sanitize(self.result)
 
 
 class ImageItem(Item):
@@ -80,9 +73,9 @@ class Record:
             self.images.add(value)
 
     def get(self):
-        record_json = (f'"title": "{self.title.get()}", '
-                       f'"link": "{self.link.get()}", '
-                       f'"desc": "{self.desc.get()}", '
+        record_json = (f'"title": {self.title.get()}, '
+                       f'"link": {self.link.get()}, '
+                       f'"desc": {self.desc.get()}, '
                        f'"images": {self.images.get()}')
         return "".join(["{", record_json, "}"])
 
@@ -173,7 +166,8 @@ class Enlink(IModule):
         if current_record.started:
             records.append(current_record)
         #
-        result_data = ", ".join(['{"nodes": [', *[record.get() for record in records], "]}"])
+        result_nodes = ", ".join([*[record.get() for record in records]])
+        result_data = "".join(['{"nodes": [', result_nodes, ']}'])
 
         result = InstanceDBEntry(
             module=cls.get_info()["name"],
