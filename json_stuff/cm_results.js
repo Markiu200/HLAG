@@ -1,3 +1,0 @@
-// PyCM zwraca coś takiego:
-
-{}

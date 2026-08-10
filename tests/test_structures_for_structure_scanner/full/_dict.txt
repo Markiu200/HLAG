@@ -1,7 +1,0 @@
-[%>type:dictionary]
-<TheDictGroup>
-	<MainElement attr="myattr">
-		<Name></Name>
-		<Desc></Desc>
-	</MainElement>
-</TheDict>

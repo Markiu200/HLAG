@@ -1,3 +1,0 @@
-[%>title:Only title but leading new line and some untagged text after that]
-
-hey

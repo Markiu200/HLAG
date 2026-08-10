@@ -1,2 +1,0 @@
-[%>title:Title and type with wrong value]
-[%>type:otherz]
