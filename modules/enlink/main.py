@@ -151,7 +151,7 @@ class Enlink(IModule):
                     line.startswith("link: ") or
                     line.startswith("desc: ") or
                     line.startswith("images: ")):
-                parts = line.split(sep=": ")
+                parts = line.split(sep=": ", maxsplit=1)
                 last_property = parts[0]
                 current_record.add_part(last_property, parts[1])
             #
