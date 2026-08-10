@@ -50,15 +50,18 @@ if __name__ == "__main__":
     initialize_logger()
 
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(r'D:\hlag_t')
-    config.output_path = PurePath(r'D:\hlag')
-    config.assets_path = PurePath(r'D:\hlag')
-    config.assets_dir_name = "f_assets"
+    config.target_path = PurePath(
+        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links\structure')
+    config.output_path = PurePath(
+        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
+    config.assets_path = PurePath(
+        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
+    config.assets_dir_name = "assets"
     config.modules_path = PurePath(r'D:\hlag\modules')
-    config.output_name = "document_output.html"
-    config.document_title = "DocuTest"
+    config.output_name = "used_links.html"
+    config.document_title = "Links used for HLAG project"
     config.embed_images = True
-    config.base_path_length = 2
+    config.base_path_length = len(config.target_path.parts)
 
     # todo module_manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist

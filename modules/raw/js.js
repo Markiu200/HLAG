@@ -12,23 +12,26 @@ class RawModuleController {
     static create(module_, id_, data_, meta_) {
         let newInstance = new RawModuleInstance(id_, module_);
 
+        let newElement = null
         let htmlEnabled = true;
         if (meta_["html"] ?? "" == "disable") {
             htmlEnabled = false;
+            newElement = document.createElement("pre");
+            newElement.style.fontFamily = "inherit";
+            newElement.style.display = "inline";
+            newElement.style.margin = 0;
+        } else {
+            newElement = document.createElement("span");
         }
 
         data_.nodes.forEach(node => {
             if (node["isRef"] == 0) {
-                let newPre = document.createElement("pre");
-                newPre.style.fontFamily = "inherit";
-                newPre.style.display = "inline";
-                newPre.style.margin = 0;
                 if (htmlEnabled) {
-                    newPre.innerHTML = node["line"];
-                    newInstance.nodes.push(newPre);
+                    newElement.innerHTML = node["line"];
+                    newInstance.nodes.push(newElement);
                 } else {
-                    newPre.innerText = node["line"];
-                    newInstance.nodes.push(newPre);
+                    newElement.innerText = node["line"];
+                    newInstance.nodes.push(newElement);
                 }
             } else {
                 let nestedInstance = RefResolver.resolve(node["line"]);
