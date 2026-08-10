@@ -2,7 +2,7 @@ import re
 
 
 def get_metadata_from_string(data: str):
-    tag_regex = r'\[%>(.*?):(.*?)]'
+    tag_regex = r'\[%>(.*?):(.*?)<]'
     metadata = dict()
     cursor = 0
 

@@ -5,7 +5,7 @@ import read_metadata_from_lines as rmfl
 
 
 def get_metadata_from_file(path: PurePath) -> dict:
-    tag_regex = r'\[%>(.*?):(.*?)]'
+    tag_regex = r'\[%>(.*?):(.*?)<]'
     metadata = dict()
     lines = []
 
