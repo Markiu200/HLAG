@@ -63,6 +63,11 @@ if __name__ == "__main__":
     config.embed_images = True
     config.base_path_length = len(config.target_path.parts)
 
+    # todo asset manager doesn't create assets folder if not needed
+    # todo output directory created if doesn't exist
+    # todo documentation on usage of modules
+    # todo fix module manager importing wrong files
+
     # todo module_manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
     modules_directory = PurePath(PurePath(__file__).parent, "modules")
