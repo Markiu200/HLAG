@@ -60,6 +60,11 @@ class Raw(IModule):
         return cls.parse_data(card)
 
     @classmethod
+    def ignore_lines_filter(cls, pattern: str, line: str):
+        parts = line.split(pattern)
+        return parts[0]
+
+    @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
         ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disable" else True
@@ -72,10 +77,11 @@ class Raw(IModule):
         splitted = content.splitlines(keepends=True)
         #
         for line in splitted:
-            # --- references ---
-            if enable_references:
-                if ignore_lines and line.startswith(ignore_lines):
+            if ignore_lines:
+                if line.startswith(ignore_lines):
                     continue
+                line = cls.ignore_lines_filter(pattern=ignore_lines, line=line)
+            if enable_references:
                 jsref_found = re.search(pattern, line)
                 if jsref_found:
                     while jsref_found:
