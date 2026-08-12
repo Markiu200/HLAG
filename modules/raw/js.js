@@ -16,20 +16,19 @@ class RawModuleController {
         let htmlEnabled = true;
         if (meta_["html"] ?? "" == "disable") {
             htmlEnabled = false;
-            newElement = document.createElement("pre");
-            newElement.style.fontFamily = "inherit";
-            newElement.style.display = "inline";
-            newElement.style.margin = 0;
-        } else {
-            newElement = document.createElement("span");
         }
 
         data_.nodes.forEach(node => {
             if (node["isRef"] == 0) {
                 if (htmlEnabled) {
+                    newElement = document.createElement("pre");
+                    newElement.style.fontFamily = "inherit";
+                    newElement.style.display = "inline";
+                    newElement.style.margin = 0;
                     newElement.innerHTML = node["line"];
                     newInstance.nodes.push(newElement);
                 } else {
+                    newElement = document.createElement("span");
                     newElement.innerText = node["line"];
                     newInstance.nodes.push(newElement);
                 }
