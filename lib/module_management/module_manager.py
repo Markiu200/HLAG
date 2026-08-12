@@ -54,6 +54,7 @@ class ModuleManager:
     @classmethod
     def initiate_modules(cls):
         for module in cls.found_modules:
+            # todo fix that sometimes it will register a check with a same name from different directory (even if not imported)
             module.module.register_checks()
 
     @classmethod

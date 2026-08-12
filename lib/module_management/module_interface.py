@@ -21,6 +21,7 @@ class IModule(ABC):
     def json_sanitize(cls, line: str):
         result = line.replace("\\", "\\\\")
         result = result.replace("$", "\\$")
+        result = result.replace("`", "\\`")
         return fr"`{result}`"
 
     @classmethod

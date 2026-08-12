@@ -13,7 +13,6 @@ class ModuleFacade:
     kind of classes, and one place to import other stuff from."""
     content_manager = ContentManager
 
-
     @classmethod
     def register_js(cls, path: PurePath):
         JSManager.register_file(path)
