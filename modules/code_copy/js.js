@@ -12,7 +12,7 @@ class CodeCopyModuleInstance extends ModuleInstance {
     this.testSpan2 = document.createElement("button");
     this.testSpan2.innerText = "change";
     this.testSpan2.parentModule = this
-    this.testSpan2.addEventListener("click", (e) => {e.target.parentModule.switchCode(1);})
+    this.testSpan2.addEventListener("click", (e) => {e.target.parentModule.copyCode();})
     this.root.appendChild(this.testSpan1)
     this.root.appendChild(this.testSpan2)
     // Initialize defaults
@@ -25,7 +25,6 @@ class CodeCopyModuleInstance extends ModuleInstance {
     this.update()
     this.nodes.push(this.root)
   }
-
   changeVariable(variable, newValue) {
     this.codeList.forEach(codeItem => {
       codeItem["variables"].forEach(var_ => {
@@ -37,7 +36,6 @@ class CodeCopyModuleInstance extends ModuleInstance {
     this.craft()
     this.update()
   }
-
   switchCode(codeNumber) {
     if (codeNumber < this.codeList.length && codeNumber >= 0) {
       this.selected = codeNumber;
@@ -45,7 +43,6 @@ class CodeCopyModuleInstance extends ModuleInstance {
     this.craft()
     this.update()
   }
-
   craft() {
     let codeParts = this.codeList[this.selected]["code"];
     let newCode = "";
@@ -59,9 +56,11 @@ class CodeCopyModuleInstance extends ModuleInstance {
     });
     this.currentCode = newCode;
   }
-
   update() {
     this.testSpan1.innerText = this.currentCode;
+  }
+  copyCode() {
+    navigator.clipboard.writeText(this.testSpan1.innerText);
   }
 }
 
