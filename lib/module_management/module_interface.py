@@ -18,7 +18,9 @@ class IModule(ABC):
             return cls.parse_data(card)
 
     @classmethod
-    def json_sanitize(cls, line: str):
+    def json_sanitize(cls, line: str | None):
+        if line is None:
+            return 'null'
         result = line.replace("\\", "\\\\")
         result = result.replace("$", "\\$")
         result = result.replace("`", "\\`")
