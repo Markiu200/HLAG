@@ -37,10 +37,13 @@ class CodeVariables:
         if len(self.variables) > 0:
             listed_vars = []
             for var in self.variables:
+                prepared_default = IModule.json_sanitize(var.get("default"))
+                if prepared_default == "null":
+                    prepared_default = IModule.json_sanitize(f'<{var.get("variable")}>')
                 one_var = "".join([
                     '[', str(var.get("position")), ', ',
                     '{"variable": ', IModule.json_sanitize(var.get("variable")),
-                    ', "default": ', IModule.json_sanitize(var.get("default")), '}]'])
+                    ', "default": ', prepared_default, '}]'])
                 listed_vars.append(one_var)
             result_mid = ", ".join(listed_vars)
             result = "".join(['new Map([', result_mid, '])'])

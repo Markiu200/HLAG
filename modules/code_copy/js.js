@@ -4,16 +4,22 @@ class CodeCopyModuleInstance extends ModuleInstance {
     this.controller = CodeCopyModuleController
     //
     this.codeList = codeList
-    this.currentCode = ""
+    this.currentCode = "";
+    this.selected = 0;
     // Create DOM elements
     this.root = document.createElement("div");
     this.testSpan1 = document.createElement("span");
-    this.testSpan2 = document.createElement("span");
+    this.testSpan2 = document.createElement("button");
+    this.testSpan2.innerText = "change";
+    this.testSpan2.parentModule = this
+    this.testSpan2.addEventListener("click", (e) => {e.target.parentModule.switchCode(1);})
     this.root.appendChild(this.testSpan1)
     this.root.appendChild(this.testSpan2)
     // Initialize defaults
-    this.codeList[0]["variables"].forEach(variable => {
-      variable["current"] = variable["default"];
+    this.codeList.forEach(codeItem => {
+      codeItem["variables"].forEach(variable => {
+        variable["current"] = variable["default"];
+      });
     });
     this.craft()
     this.update()
@@ -21,21 +27,31 @@ class CodeCopyModuleInstance extends ModuleInstance {
   }
 
   changeVariable(variable, newValue) {
-    let changedVariable = this.codeList[0]["variables"].forEach(var_ => {
+    this.codeList.forEach(codeItem => {
+      codeItem["variables"].forEach(var_ => {
         if (var_["variable"] == variable) {
           var_["current"] = newValue;
         }
+      });
     });
     this.craft()
     this.update()
   }
 
+  switchCode(codeNumber) {
+    if (codeNumber < this.codeList.length && codeNumber >= 0) {
+      this.selected = codeNumber;
+    }
+    this.craft()
+    this.update()
+  }
+
   craft() {
-    let codeParts = this.codeList[0]["code"];
+    let codeParts = this.codeList[this.selected]["code"];
     let newCode = "";
     codeParts.forEach(part => {
       if (typeof part == "number") {
-        let map = this.codeList[0]["variables"];
+        let map = this.codeList[this.selected]["variables"];
         newCode += map.get(part)["current"];
       } else {
         newCode += part;
