@@ -38,12 +38,12 @@ class CodeVariables:
             listed_vars = []
             for var in self.variables:
                 one_var = "".join([
-                    '{"position": ', str(var["position"]),
-                    ', "variable": ', IModule.json_sanitize(var.get("variable")),
-                    ', "default": ', IModule.json_sanitize(var.get("default")), '}'])
+                    '[', str(var.get("position")), ', ',
+                    '{"variable": ', IModule.json_sanitize(var.get("variable")),
+                    ', "default": ', IModule.json_sanitize(var.get("default")), '}]'])
                 listed_vars.append(one_var)
             result_mid = ", ".join(listed_vars)
-            result = "".join(['[', result_mid, ']'])
+            result = "".join(['new Map([', result_mid, '])'])
             return result
         else:
             return "null"
