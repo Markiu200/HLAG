@@ -5,6 +5,10 @@ import read_metadata_from_lines as rmfl
 
 
 def get_metadata_from_file(path: PurePath) -> dict:
+    """'cursor' is set to either \n
+        * last character of last line that contained meta tag, \n
+        * last character of meta tag in line that contains any other characters outside meta tags.
+        :return: [dict] of found metadata in given file."""
     tag_regex = r'\[%>(.*?):(.*?)<]'
     metadata = dict()
     lines = []
