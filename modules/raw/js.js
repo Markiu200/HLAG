@@ -17,18 +17,26 @@ class RawModuleController {
         if (meta_["html"] ?? "" == "disable") {
             htmlEnabled = false;
         }
+        let preEnabled = true;
+        if (meta_["preformat"] ?? "" == "disable") {
+            preEnabled = false;
+        }
 
         data_.nodes.forEach(node => {
             if (node["isRef"] == 0) {
-                if (htmlEnabled) {
+                if (preEnabled) {
                     newElement = document.createElement("pre");
                     newElement.style.fontFamily = "inherit";
                     newElement.style.display = "inline";
                     newElement.style.margin = 0;
+                } else {
+                    newElement = document.createElement("span");
+                }
+                //
+                if (htmlEnabled) {
                     newElement.innerHTML = node["line"];
                     newInstance.nodes.push(newElement);
                 } else {
-                    newElement = document.createElement("span");
                     newElement.innerText = node["line"];
                     newInstance.nodes.push(newElement);
                 }
