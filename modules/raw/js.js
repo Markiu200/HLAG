@@ -14,11 +14,11 @@ class RawModuleController {
 
         let newElement = null
         let htmlEnabled = true;
-        if (meta_["html"] ?? "" == "disable") {
+        if (meta_["html"] == "disabled") {
             htmlEnabled = false;
         }
         let preEnabled = true;
-        if (meta_["preformat"] ?? "" == "disable") {
+        if (meta_["preformat"] == "disabled") {
             preEnabled = false;
         }
 

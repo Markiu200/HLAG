@@ -58,6 +58,7 @@ class Raw(IModule):
             f.seek(past_meta_location)
             card.content = f.read()
         card.file = False
+        print("IN FILE", card.node.metadata.get("cursor", 0))
         return cls.parse_data(card)
 
     @classmethod
@@ -67,10 +68,18 @@ class Raw(IModule):
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
+        content_metadata = rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
+        if len(content_metadata) > 0:
+            for key, value in content_metadata.items():
+                card.meta[key] = value
+        card.content = card.content[card.meta["cursor"]:]
+        print(card.meta)
+
         ignore_lines = card.meta.get("ignore-lines")
-        enable_references = False if card.meta.get("references") == "disable" else True
+        enable_references = False if card.meta.get("references") == "disabled" else True
 
         content = cls.replace_orders(card)
+        print("IN CARD", card.node.metadata.get("cursor", 0))
 
         pattern = r'\[%JSREF\(.*?\)%]'
         data_list = []

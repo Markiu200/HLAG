@@ -1,7 +1,7 @@
 import read_metadata_from_string as rmfs
 
 
-def read_metadata_from_lines(lines: list[str]):
+def read_metadata_from_lines(lines: list[str], newline_sequence: str) -> dict:
     """'cursor' is set to either \n
         * last character of last line that contained meta tag, \n
         * last character of meta tag in line that contains any other characters outside meta tags.
@@ -22,7 +22,7 @@ def read_metadata_from_lines(lines: list[str]):
             # Previous method call (to parse one line) makes sure that remaining content is not another meta tag.
             break
         cursor += line_after_cursor_length  # If there is nothing more other than whitespaces - add them to cursor and keep iterating
-        cursor += line_after_len
+        cursor += len(newline_sequence) - 1  # If newline sequence is "\r\n" then move cursor further to match the sequence
 
     metadata["cursor"] = cursor
 

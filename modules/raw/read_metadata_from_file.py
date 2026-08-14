@@ -11,22 +11,40 @@ def get_metadata_from_file(path: PurePath) -> dict:
         :return: [dict] of found metadata in given file."""
     tag_regex = r'\[%>(.*?):(.*?)<]'
     metadata = dict()
-    lines = []
+    newline_sequence = ""
+    lines_with_meta = []
 
     with open(path, "rb") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            # This keeps original newline combinations, instead of auto translating them to "\n"
-            line = line.decode()
-            #
-            reg_search = re.match(tag_regex, line.lstrip())
-            lines.append(line)
-            if not reg_search:
-                break
+        # Step 1 - write down newline sequence
+        has_things_in_it = True
+        first_line = f.readline()
+        if not first_line:
+            has_things_in_it = False
+        else:
+            first_line = first_line.decode()
+            if first_line.endswith("\n"):  # Saving newline sequence for similar need, but for methods that have no access to original file
+                if first_line.endswith("\r\n"):
+                    newline_sequence = "\r\n"
+                else:
+                    newline_sequence = "\n"
+            if first_line.endswith("\r"):
+                newline_sequence = "\r"
+            metadata["newlineSeq"] = newline_sequence
 
-    got = rmfl.read_metadata_from_lines(lines)
+        # Step 2 - iterate over lines and see and write down all lines with meta tags in them
+        if has_things_in_it:
+            f.seek(0)
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                line = str(line)
+                reg_search = re.match(tag_regex, line.lstrip())
+                lines_with_meta.append(line)
+                if not reg_search:
+                    break
+
+    got = rmfl.read_metadata_from_lines(lines_with_meta, newline_sequence)
     if len(got) > 0:
         for key, value in got.items():
             metadata[key] = value
