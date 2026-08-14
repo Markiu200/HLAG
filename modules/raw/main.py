@@ -33,6 +33,7 @@ class Raw(IModule):
     @classmethod
     def register_files(cls):
         ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
+        ModuleFacade.register_css(PurePath(cls.module_path, "raw.css"))
 
     @classmethod
     def get_metadata_from_file(cls, card: Card) -> dict:

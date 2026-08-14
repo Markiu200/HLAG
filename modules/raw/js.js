@@ -26,11 +26,10 @@ class RawModuleController {
             if (node["isRef"] == 0) {
                 if (preEnabled) {
                     newElement = document.createElement("pre");
-                    newElement.style.fontFamily = "inherit";
-                    newElement.style.display = "inline";
-                    newElement.style.margin = 0;
+                    newElement.classList.add("raw");
                 } else {
                     newElement = document.createElement("span");
+                    newElement.classList.add("raw");
                 }
                 //
                 if (htmlEnabled) {
