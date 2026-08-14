@@ -12,7 +12,6 @@ class RawModuleController {
     static create(module_, id_, data_, meta_) {
         let newInstance = new RawModuleInstance(id_, module_);
 
-        let newElement = null
         let htmlEnabled = true;
         if (meta_["html"] == "disabled") {
             htmlEnabled = false;
@@ -23,12 +22,11 @@ class RawModuleController {
         }
 
         data_.nodes.forEach(node => {
+            let newElement = document.createElement("span");
             if (node["isRef"] == 0) {
                 if (preEnabled) {
-                    newElement = document.createElement("pre");
-                    newElement.classList.add("raw");
+                    newElement.classList.add("raw-break");
                 } else {
-                    newElement = document.createElement("span");
                     newElement.classList.add("raw");
                 }
                 //
