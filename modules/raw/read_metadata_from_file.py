@@ -38,7 +38,7 @@ def get_metadata_from_file(path: PurePath) -> dict:
                 line = f.readline()
                 if not line:
                     break
-                line = str(line)
+                line = str(line.decode()).replace("\r\n", "\n")
                 reg_search = re.match(tag_regex, line.lstrip())
                 lines_with_meta.append(line)
                 if not reg_search:
