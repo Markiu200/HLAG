@@ -79,7 +79,7 @@ class Raw(IModule):
 
         content = cls.replace_orders(card)
 
-        pattern = r'\[%JSREF\(.*?\)%]'
+        pattern = r'\[&_JSREF\(.*?\)_&]'
         data_list = []
         current_data = ""
         splitted = content.splitlines(keepends=True)

@@ -4,4 +4,4 @@ class Ref:
         self.ref_id = ref_id
 
     def as_string(self) -> str:
-        return f"[%JSREF({self.module},{self.ref_id})%]"
+        return f"[&_JSREF({self.module},{self.ref_id})_&]"
