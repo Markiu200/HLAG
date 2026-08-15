@@ -16,7 +16,7 @@ class ProgDirStruct(IModule):
     def get_info(cls) -> dict:
         return {
             "name": "prog_dir_struct",
-            "priority": 1,
+            "priority": 10,
             "dependencies": []
         }
 

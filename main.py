@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # todo documentation on usage of modules
     # todo fix module manager importing wrong files
 
-    # todo module_manager is instantiated
+    # Module manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
     modules_directory = PurePath(PurePath(__file__).parent, "modules")
     ModuleManager.set_module_dir_patch(modules_directory)
@@ -87,8 +87,7 @@ if __name__ == "__main__":
     # Initialize assets folder
     AssetsManager.initialize()
 
-    # printer is instantiated
-    # todo consider making it singleton
+    # Printer is instantiated
     printer = Printer()
     printer.set_output_file_path(PurePath(config.output_path, config.output_name))
 
@@ -108,7 +107,7 @@ if __name__ == "__main__":
 
     # todo navigation manager gets document outline from structure_scanner
     # todo to craft a navigation JSON to be used by JS
-    NavigationManager.fetch_content_from_scanner()
+    # NavigationManager.fetch_content_from_scanner()
 
     #
     #   REGISTERING EVERYTHING FOR PRINTING
@@ -129,7 +128,8 @@ if __name__ == "__main__":
     printer.register(yield_snippet("middle"))
 
     # Register navigation for printing
-    printer.register(NavigationManager.print_html())
+    # printer.register(NavigationManager.print_html())
+    printer.register(yield_snippet("nav"))
 
     # ContentManager registers it's container for printing
     printer.register(ContentManager.print_html())
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     # ContentManager
     JSManager.register_print(ContentManager.print_js())
     # Navigation
-    JSManager.register_print(NavigationManager.print_js())
+    # JSManager.register_print(NavigationManager.print_js())
     # All of that to the printer
     printer.register(JSManager.print())
 
