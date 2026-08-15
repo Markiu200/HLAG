@@ -10,10 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class Module:
-    def __init__(self, name: str, module_file, module_class: IModule):
+    def __init__(self, name: str, module_file, module_class: IModule, module_info: dict):
         self.name = name
         self.module_file = module_file
         self.module_class = module_class
+        self.module_info = module_info
 
 
 class ModuleManager:
@@ -41,10 +42,12 @@ class ModuleManager:
             for a_module in modules_directory_list:
                 module_file = importlib.import_module(f"{a_module}.main")
                 module = module_file.get_module_main_class()
+                module_info = module.get_info()
                 cls.found_modules.append(Module(
-                    name=a_module,
+                    name=module_info.get("name", a_module),
                     module_file=module_file,
-                    module_class=module
+                    module_class=module,
+                    module_info=module_info
                 ))
         except Exception as e:
             logger.critical(f"Error occurred during user modules import.")
@@ -52,6 +55,7 @@ class ModuleManager:
 
     @classmethod
     def initiate_modules(cls):
+        cls.found_modules.sort(key=lambda a_module: a_module.module_info.get("priority", 0))
         for registered_module_item in cls.found_modules:
             registered_module_item.module_class.register_checks()
 
