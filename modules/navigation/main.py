@@ -107,6 +107,12 @@ class PyDocNavigation(IModule):
 
     @classmethod
     def print_js(cls):
+        # Content using this data will be printed later.
+        # Print is already queued in JSManager, and will trigger cls.print_js(),
+        # which in turn refers to that data.
+        #
+        cls.fetch_content_from_scanner()
+        #
         with open(PurePath(PurePath(__file__).parent, r"js.js")) as f:
             lines = f.readlines()
             for line in lines:
@@ -122,11 +128,6 @@ class PyDocNavigation(IModule):
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
-        # Content using this data will be printed later.
-        # Print is already queued in JSManager, and will trigger cls.print_js(),
-        # which in turn refers to that data.
-        cls.fetch_content_from_scanner()
-        #
         return InstanceDBEntry(
             module=cls.get_info()["name"],
             data="``",

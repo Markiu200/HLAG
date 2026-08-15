@@ -46,7 +46,7 @@ class Raw(IModule):
     @classmethod
     def replace_orders(cls, card: Card) -> str:
         """
-        :param card: -todo-
+        :param card: Card with "content" set to string in question.
         :return: content from Data structure, but with orders replaced with jsrefs
         """
         return cls.rr.replace_orders(card)
@@ -58,7 +58,6 @@ class Raw(IModule):
             f.seek(past_meta_location)
             card.content = f.read()
         card.file = False
-        print("IN FILE", card.node.metadata.get("cursor", 0))
         return cls.parse_data(card)
 
     @classmethod
@@ -79,7 +78,6 @@ class Raw(IModule):
         enable_references = False if card.meta.get("references") == "disabled" else True
 
         content = cls.replace_orders(card)
-        print("IN CARD", card.node.metadata.get("cursor", 0))
 
         pattern = r'\[%JSREF\(.*?\)%]'
         data_list = []
