@@ -10,7 +10,7 @@ import read_metadata_from_file as rmff
 import read_metadata_from_lines as rmfl
 
 
-def get_module():
+def get_module_main_class():
     return Raw
 
 

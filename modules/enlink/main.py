@@ -5,7 +5,7 @@ from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
 
 
-def get_module():
+def get_module_main_class():
     return Enlink
 
 

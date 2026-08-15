@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class Module:
-    def __init__(self, name: str, module_import, module: IModule):
+    def __init__(self, name: str, module_file, module_class: IModule):
         self.name = name
-        self.module_import = module_import
-        self.module = module
+        self.module_file = module_file
+        self.module_class = module_class
 
 
 class ModuleManager:
@@ -40,12 +40,12 @@ class ModuleManager:
         try:
             for a_module in modules_directory_list:
                 sys.path.append(str(PurePath(cls.modules_dir_path, a_module)))
-                module_import = importlib.import_module(f"{a_module}.main")
-                module = module_import.get_module()
+                module_file = importlib.import_module(f"{a_module}.main")
+                module = module_file.get_module_main_class()
                 cls.found_modules.append(Module(
                     name=a_module,
-                    module_import=module_import,
-                    module=module
+                    module_file=module_file,
+                    module_class=module
                 ))
         except Exception as e:
             logger.critical(f"Error occurred during user modules import.")
@@ -53,12 +53,12 @@ class ModuleManager:
 
     @classmethod
     def initiate_modules(cls):
-        for module in cls.found_modules:
+        for registered_module_item in cls.found_modules:
             # todo fix that sometimes it will register a check with a same name from different directory (even if not imported)
-            module.module.register_checks()
+            registered_module_item.module_class.register_checks()
 
     @classmethod
     def get_module(cls, module_name: str) -> IModule:
-        for module in cls.found_modules:
-            if module.name == module_name:
-                return module.module
+        for registered_module_item in cls.found_modules:
+            if registered_module_item.name == module_name:
+                return registered_module_item.module_class

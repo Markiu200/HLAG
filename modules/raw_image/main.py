@@ -6,7 +6,7 @@ from module_management import IModule
 from img_check import ImgCheck
 
 
-def get_module():
+def get_module_main_class():
     return RawImage
 
 

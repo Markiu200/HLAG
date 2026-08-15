@@ -4,7 +4,7 @@ from escaped_check import EscapedCheck
 from dir_meta_check import DirMetaCheck
 
 
-def get_module():
+def get_module_main_class():
     return ProgDirStruct
 
 
