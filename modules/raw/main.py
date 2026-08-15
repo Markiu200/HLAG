@@ -72,7 +72,6 @@ class Raw(IModule):
             for key, value in content_metadata.items():
                 card.meta[key] = value
         card.content = card.content[card.meta["cursor"]:]
-        print(card.meta)
 
         ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disabled" else True
@@ -92,23 +91,23 @@ class Raw(IModule):
             if enable_references:
                 jsref_found = re.search(pattern, line)
                 if jsref_found:
+                    remainder = line
                     while jsref_found:
-                        parts = line.split(sep=jsref_found.group(), maxsplit=1)
-                        # append left part (if any) to current_data and flush
-                        if len(parts[0]) + len(current_data) > 0:
+                        parts = remainder.split(sep=jsref_found.group(), maxsplit=1)
+                        if len(parts[0]) + len(current_data) > 0:  # append left part (if any) to current_data and flush
                             data_list.append({
                                 "isRef": 0,
                                 "line": "".join([current_data, parts[0]])
                             })
-                        # append that find and flush
-                        data_list.append({
+                            current_data = ""
+                        data_list.append({  # append that find and flush
                             "isRef": 1,
                             "line": jsref_found.group()
                         })
-                        # current_data is now right side
-                        current_data = parts[1]
-                        # search again in what is left
-                        jsref_found = re.search(pattern, current_data)
+                        remainder = parts[1]
+                        jsref_found = re.search(pattern, remainder)  # search again in what is left
+                        if not jsref_found:
+                            current_data = parts[1]
                 else:
                     current_data = "".join([current_data, line])
             else:
