@@ -38,6 +38,18 @@ class ModuleFacade:
         return ContentManager
 
     @classmethod
+    def get_js_manager(cls):
+        return JSManager
+
+    @classmethod
+    def get_css_manager(cls):
+        return CSSManager
+
+    @classmethod
+    def get_structure_scanner(cls):
+        return StructureScanner
+
+    @classmethod
     def get_assets_manager(cls):
         return AssetsManager
 
