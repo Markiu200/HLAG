@@ -10,4 +10,8 @@ html_snippets = {
     "middle": "  </head>\n  <body>\n",
 
     "ending": "  </body>\n</html>",
+
+    "nav": '    <nav id="nav"></nav>\n',
+
+    "main": '    <main id="main"></main>\n',
 }
