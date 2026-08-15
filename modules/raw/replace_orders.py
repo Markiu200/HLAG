@@ -95,7 +95,7 @@ def replace_orders(card: Card) -> str:
                 content=new_reference.content
             )
             jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
-            content = content.replace(content[new_reference.begin:new_reference.end], jsref)
+            content = content.replace(content[new_reference.begin:new_reference.end], jsref, 1)
         #
         if key == "ins":
             # todo
