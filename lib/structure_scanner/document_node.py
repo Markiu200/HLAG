@@ -1,6 +1,7 @@
 from pathlib import PurePath
 from models import Ref
 from config import config
+from os.path import sep
 
 
 class DocumentNode:
@@ -15,6 +16,7 @@ class DocumentNode:
         self.all_refs: list[Ref] = []
         #
         self.set_metadata("relPath", self.get_rel_path())
+        self.set_metadata("hostPath", self.get_metadata("relPath"))
 
     def __eq__(self, other: 'DocumentNode'):
         return (self.path == other.path
@@ -31,7 +33,7 @@ class DocumentNode:
             yield child
 
     def get_rel_path(self):
-        return str(self.path).replace(str(config.target_path), "")
+        return str(self.path).replace(str(config.target_path), "_").replace(sep, "_")
 
     def add_child(self, child_node: 'DocumentNode'):
         if not isinstance(child_node, DocumentNode):

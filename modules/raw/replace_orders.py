@@ -64,6 +64,7 @@ def replace_orders(card: Card) -> str:
     content = card.content
     #
     reference_regex = r'\[%(.*?):(.*?)%]'
+    nested_item_count = 0
     #
     while True:
         reg_search = re.search(reference_regex, content)
@@ -87,6 +88,9 @@ def replace_orders(card: Card) -> str:
             new_reference.end = end_reference.end
             #
             new_meta = dict(card.meta)
+            if new_meta.get("relPath"):
+                new_meta["relPath"] = "_".join([new_meta["relPath"], str(nested_item_count)])
+                nested_item_count += 1
             new_meta["module"] = value
             order_card = Card(
                 node=card.node,

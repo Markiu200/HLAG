@@ -40,6 +40,9 @@ class StructureScanner:
         root_node = DocumentNode(path=cls.root_directory)
         # todo incorporate that into config
         root_node.set_metadata("title", "Home")
+        root_node.set_metadata("relPath", "_")
+        root_node.set_metadata("hostPath", "_")
+        root_node.set_metadata("relLink", "_")
         cls.tree = DocumentTree(root=root_node)
         cls._scan(cls.tree.get_root())
 
