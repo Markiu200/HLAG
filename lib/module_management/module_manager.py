@@ -39,7 +39,6 @@ class ModuleManager:
 
         try:
             for a_module in modules_directory_list:
-                sys.path.append(str(PurePath(cls.modules_dir_path, a_module)))
                 module_file = importlib.import_module(f"{a_module}.main")
                 module = module_file.get_module_main_class()
                 cls.found_modules.append(Module(
@@ -54,7 +53,6 @@ class ModuleManager:
     @classmethod
     def initiate_modules(cls):
         for registered_module_item in cls.found_modules:
-            # todo fix that sometimes it will register a check with a same name from different directory (even if not imported)
             registered_module_item.module_class.register_checks()
 
     @classmethod

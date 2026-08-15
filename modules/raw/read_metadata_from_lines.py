@@ -1,4 +1,5 @@
-import read_metadata_from_string as rmfs
+from importlib import import_module
+rmfs = import_module(f"raw.read_metadata_from_string")
 
 
 def read_metadata_from_lines(lines: list[str], newline_sequence: str) -> dict:

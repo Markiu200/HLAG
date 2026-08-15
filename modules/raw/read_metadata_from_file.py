@@ -1,7 +1,7 @@
 from pathlib import PurePath
 import re
-# Own imports
-import read_metadata_from_lines as rmfl
+from importlib import import_module
+rmfl = import_module(f"raw.read_metadata_from_lines")
 
 
 def get_metadata_from_file(path: PurePath) -> dict:

@@ -1,9 +1,8 @@
 from pathlib import PurePath
+from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
-#
-from img_check import ImgCheck
 
 
 def get_module_main_class():
@@ -12,6 +11,7 @@ def get_module_main_class():
 
 class RawImage(IModule):
     module_path = PurePath(__file__).parent
+    img_check = import_module(f"raw_image.img_check")
 
     @classmethod
     def get_info(cls) -> dict:
@@ -24,7 +24,7 @@ class RawImage(IModule):
 
     @classmethod
     def register_checks(cls):
-        ModuleFacade.register_check(ImgCheck())
+        ModuleFacade.register_check(cls.img_check.ImgCheck())
 
     @classmethod
     def register_files(cls):

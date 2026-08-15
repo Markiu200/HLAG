@@ -1,7 +1,7 @@
+from importlib import import_module
+#
 from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
-from escaped_check import EscapedCheck
-from dir_meta_check import DirMetaCheck
 
 
 def get_module_main_class():
@@ -9,6 +9,9 @@ def get_module_main_class():
 
 
 class ProgDirStruct(IModule):
+    escaped_check = import_module(f"prog_dir_struct.escaped_check")
+    dir_meta_check = import_module(f"prog_dir_struct.dir_meta_check")
+
     @classmethod
     def get_info(cls) -> dict:
         return {
@@ -19,9 +22,9 @@ class ProgDirStruct(IModule):
 
     @classmethod
     def register_checks(cls):
-        ModuleFacade.register_initial_dir_check(EscapedCheck())
-        ModuleFacade.register_check(EscapedCheck())
-        ModuleFacade.register_final_dir_check(DirMetaCheck())
+        ModuleFacade.register_initial_dir_check(cls.escaped_check.EscapedCheck())
+        ModuleFacade.register_check(cls.escaped_check.EscapedCheck())
+        ModuleFacade.register_final_dir_check(cls.dir_meta_check.DirMetaCheck())
 
     @classmethod
     def register_files(cls):

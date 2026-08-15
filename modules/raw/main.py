@@ -1,13 +1,9 @@
 import re
 from pathlib import PurePath
+from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
-#
-from txt_check import TXTCheck
-import replace_orders as rr
-import read_metadata_from_file as rmff
-import read_metadata_from_lines as rmfl
 
 
 def get_module_main_class():
@@ -16,6 +12,10 @@ def get_module_main_class():
 
 class Raw(IModule):
     module_path = PurePath(__file__).parent
+    txt_check = import_module(f"raw.txt_check")
+    rr = import_module(f"raw.replace_orders")
+    rmff = import_module(f"raw.read_metadata_from_file")
+    rmfl = import_module(f"raw.read_metadata_from_lines")
 
     @classmethod
     def get_info(cls) -> dict:
@@ -28,7 +28,7 @@ class Raw(IModule):
 
     @classmethod
     def register_checks(cls):
-        ModuleFacade.register_check(TXTCheck())
+        ModuleFacade.register_check(cls.txt_check.TXTCheck())
 
     @classmethod
     def register_files(cls):
@@ -37,11 +37,11 @@ class Raw(IModule):
 
     @classmethod
     def get_metadata_from_file(cls, card: Card) -> dict:
-        return rmff.get_metadata_from_file(card.node.path)
+        return cls.rmff.get_metadata_from_file(card.node.path)
 
     @classmethod
     def get_metadata_from_data(cls, card: Card) -> dict:
-        return rmfl.read_metadata_from_lines([card.content])
+        return cls.rmfl.read_metadata_from_lines([card.content])
 
     @classmethod
     def replace_orders(cls, card: Card) -> str:
@@ -49,7 +49,7 @@ class Raw(IModule):
         :param card: -todo-
         :return: content from Data structure, but with orders replaced with jsrefs
         """
-        return rr.replace_orders(card)
+        return cls.rr.replace_orders(card)
 
     @classmethod
     def parse_file(cls, card: Card) -> InstanceDBEntry:
@@ -68,7 +68,7 @@ class Raw(IModule):
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
-        content_metadata = rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
+        content_metadata = cls.rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
         if len(content_metadata) > 0:
             for key, value in content_metadata.items():
                 card.meta[key] = value
