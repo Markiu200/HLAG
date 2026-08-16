@@ -105,10 +105,10 @@ class TagMatcherResult:
         self.spliced = spliced
         self.spliced_expanded = []
         for part in spliced:
-            if isinstance(part, Middle):
-                self.spliced_expanded.append(part)
-            else:
+            if isinstance(part, RightPart):
                 self.spliced_expanded.extend(part.outer())
+            else:
+                self.spliced_expanded.append(part)
 
     def get_tree(self) -> list[Part]:
         return self.spliced
@@ -128,7 +128,7 @@ class TagMatcher:
 
     @classmethod
     def match_list(cls, splitted_string: tuple, tag_pairs: list[TagPair]):
-        # Step 1 - Prepare arguments
+        # Step 1 - Prepare sets
         left_tags = set()
         right_tags = set()
         for pair in tag_pairs:
@@ -164,7 +164,12 @@ class TagMatcher:
                     try:
                         looking_at = stack.pop()
                     except IndexError:
-                        raise RuntimeError(f"Ending tag {part.tag} did not meet the starting tag before end of list")
+                        replacement_part = Middle(part.tag)
+                        part.stack.reverse()
+                        stack.extend(part.stack)  # Return everything it took
+                        part = replacement_part
+                        meet_left = True
+                        continue
                     if isinstance(looking_at, LeftPart) and looking_at.tag in part.pair.left:
                         meet_left = True
                         looking_at.pair_with(part)
