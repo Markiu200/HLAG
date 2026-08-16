@@ -3,7 +3,7 @@ import re
 
 def get_metadata_from_string(line: str) -> dict:
     """:return: [dict] of found metadata in line. 'cursor' is set to end of last found meta tag, or 0 if none found."""
-    tag_regex = r'\[%>(.*?):(.*?)<]'
+    tag_regex = r'\[=>(.*?):(.*?)<=]'
     metadata = dict()
     cursor = 0
 
