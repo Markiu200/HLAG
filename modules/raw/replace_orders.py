@@ -91,6 +91,8 @@ def replace_orders(card: Card) -> str:
             if new_meta.get("relPath"):
                 new_meta["relPath"] = "_".join([new_meta["relPath"], str(nested_item_count)])
                 nested_item_count += 1
+            if new_meta.get("relLink"):
+                new_meta.pop("relLink")
             new_meta["module"] = value
             order_card = Card(
                 node=card.node,
