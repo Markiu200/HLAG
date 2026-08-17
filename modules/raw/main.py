@@ -55,25 +55,25 @@ class Raw(IModule):
     @classmethod
     def parse_file(cls, card: Card) -> InstanceDBEntry:
         # return cls.parse_data(card)
-        with open(card.node.path) as f:
-            card.content = f.read()
+
+        return cls.parse_data(card)
         # card.file = False
         #
-        tree = card.meta.get("fileMeta")
-        tag_encountered = False
-        if tree is not None:
-            for item in tree:
-                if item.is_tag():
-                    outer = item.get_outer()
-                    card.content = card.content.replace(outer, "", 1)
-                    tag_encountered = True
-                else:
-                    if item.tag.startswith("\n") and tag_encountered:
-                        card.content = card.content.replace("\n", "", 1)
-                    if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
-                        break
-            card.meta.pop("fileMeta")
-        return cls.parse_data(card)
+        # tree = card.meta.get("fileMeta")
+        # tag_encountered = False
+        # if tree is not None:
+        #     for item in tree:
+        #         if item.is_tag():
+        #             outer = item.get_outer()
+        #             card.content = card.content.replace(outer, "", 1)
+        #             tag_encountered = True
+        #         else:
+        #             if item.tag.startswith("\n") and tag_encountered:
+        #                 card.content = card.content.replace("\n", "", 1)
+        #             if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+        #                 break
+        #     card.meta.pop("fileMeta")
+        # return cls.parse_data(card)
 
         # past_meta_location = card.node.metadata.get("cursor", 0)
         # with open(card.node.path) as f:
@@ -83,7 +83,7 @@ class Raw(IModule):
         # return cls.parse_data(card)
 
     @classmethod
-    def craft(cls, items: list[Part]) -> str:
+    def craft(cls, items: list[Part], card: Card) -> Card:
         new_content = ""
         encountered_meta = False
         for item in items:
@@ -93,13 +93,17 @@ class Raw(IModule):
                 new_content = "".join([new_content, item.tag])
             elif isinstance(item, RightPart) and item.get_left().tag == "[-[":
                 encountered_meta = True
+                parts = item.inner_text.split("=", 1)
+                if len(parts) == 2:
+                    card.meta[parts[0]] = parts[1]
             elif isinstance(item, RightPart) and item.get_left().tag == "[%>mod:":
                 parts = item.inner_text.split("=", 1)
                 if len(parts) == 2 and parts[1].startswith("\n"):
                     starting_bit = "".join([item.get_left().tag, parts[0], "="])
                     item.outer_text = item.outer_text.replace(f"{starting_bit}\n", starting_bit, 1)
                 new_content = "".join([new_content, item.outer_text])
-        return new_content
+        card.content = new_content
+        return card
         # elif item.is_tag() and item.get_left() == "[%>mod:":
         #     parts = item.inner_text.split("=", 1)
         #     if len(parts) == 2 and parts[1].startswith("\n"):
@@ -111,6 +115,10 @@ class Raw(IModule):
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
+        if card.file:
+            with open(card.node.path) as f:
+                card.content = f.read()
+            card.meta.pop("fileMeta")
         meta_tags = TagPair({"[-["}, {"]-]"})
         order_tags = TagPair({"[%>mod:"}, {"<%]"})
         items = TagMatcher.match(card.content, [meta_tags, order_tags]).get_tree()
@@ -121,7 +129,7 @@ class Raw(IModule):
                 if len(parts) == 2:
                     card.meta[parts[0]] = parts[1]
         # Get formatted text
-        new_content = cls.craft(items)
+        cls.craft(items, card)
 
         # tag_encountered = False
         # # new_content = ""
@@ -142,7 +150,7 @@ class Raw(IModule):
         #     else:
         #         new_content = "".join([new_content, item.tag])
 
-        card.content = new_content
+        # card.content = new_content
 
         # meta_tags = TagPair({"[-["}, {"]-]"})
         # items = TagMatcher.match(card.content, [meta_tags]).get_tree()
@@ -160,7 +168,6 @@ class Raw(IModule):
         #             card.content = card.content.replace("\n", "", 1)
         #         if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
         #             break
-
 
         # content_metadata = cls.rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
         # if len(content_metadata) > 0:
