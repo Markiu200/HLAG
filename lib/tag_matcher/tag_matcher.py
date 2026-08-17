@@ -194,6 +194,5 @@ class TagMatcher:
     def split(cls, string: str, tags: set) -> tuple:
         re_pattern_mid = "|".join([re.escape(tag) for tag in tags])
         re_pattern = rf"({re_pattern_mid})"
-        # re_pattern = re_pattern.replace("\\\\]", "]")
         new_splitted_string = re.split(re_pattern, string)
         return tuple(item for item in new_splitted_string if item != '')
