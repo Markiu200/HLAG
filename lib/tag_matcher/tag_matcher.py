@@ -69,7 +69,7 @@ class RightPart(Part):
         return "".join(str(item) for item in self.outer())
 
     def get_inner(self) -> str:
-        return "".join(self.inner())
+        return "".join(str(item) for item in self.inner())
 
     def is_tag(self) -> bool:
         return True
@@ -115,6 +115,11 @@ class TagMatcherResult:
 
     def get_expanded(self) -> list[Part]:
         return self.spliced_expanded
+
+    def get_first_tag(self) -> Part:
+        for part in self.spliced_expanded:
+            if part.is_tag():
+                return part
 
 
 class TagMatcher:
