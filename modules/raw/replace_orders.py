@@ -84,7 +84,6 @@ def replace_orders(card: Card) -> str:
             )
             jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
             new_content = "".join([new_content, jsref])
-            # content = content.replace(content[new_reference.begin:new_reference.end], jsref, 1)
         else:
             new_content = "".join([new_content, item.tag])
     return new_content

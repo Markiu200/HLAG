@@ -31,7 +31,7 @@ def get_metadata_from_file(path: PurePath) -> dict:
         else:
             if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
                 break
-    metadata["fileMeta"] = items
+    # metadata["fileMeta"] = items
     return metadata
 
 
