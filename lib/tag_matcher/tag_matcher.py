@@ -32,8 +32,10 @@ class RightPart(Part):
         super().__init__(tag)
         self.pair = pair
         self.left_part = None
-        self.stack: list[Part] = []
+        self.stack: list[Part] = []  # tree
         self.has_tags = False
+        self.inner_text = ""
+        self.outer_text = ""
 
     def take(self, part: Part):
         if isinstance(part, RightPart) or isinstance(part, LeftPart):
@@ -43,6 +45,8 @@ class RightPart(Part):
     def end(self, part: Part):
         self.left_part = part
         self.stack.reverse()
+        self.inner_text = self.get_inner()
+        self.outer_text = self.get_outer()
 
     def inner(self) -> list:
         result = []
@@ -190,5 +194,6 @@ class TagMatcher:
     def split(cls, string: str, tags: set) -> tuple:
         re_pattern_mid = "|".join([re.escape(tag) for tag in tags])
         re_pattern = rf"({re_pattern_mid})"
+        # re_pattern = re_pattern.replace("\\\\]", "]")
         new_splitted_string = re.split(re_pattern, string)
         return tuple(item for item in new_splitted_string if item != '')
