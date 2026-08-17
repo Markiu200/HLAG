@@ -59,12 +59,16 @@ class Raw(IModule):
         # card.file = False
         #
         tree = card.meta.get("fileMeta")
+        tag_encountered = False
         if tree is not None:
             for item in tree:
                 if item.is_tag():
                     outer = item.get_outer()
                     card.content = card.content.replace(outer, "", 1)
+                    tag_encountered = True
                 else:
+                    if item.tag.startswith("\n") and tag_encountered:
+                        card.content = card.content.replace("\n", "", 1)
                     if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
                         break
             card.meta.pop("fileMeta")
@@ -81,6 +85,7 @@ class Raw(IModule):
     def parse_data(cls, card: Card) -> InstanceDBEntry:
         meta_tags = TagPair({"[-["}, {"]-]"})
         items = TagMatcher.match(card.content, [meta_tags]).get_tree()
+        tag_encountered = False
         for item in items:
             if item.is_tag():
                 parts = item.get_inner().split("=", 1)
@@ -88,7 +93,10 @@ class Raw(IModule):
                     card.meta[parts[0]] = parts[1]
                 outer = item.get_outer()
                 card.content = card.content.replace(outer, "", 1)
+                tag_encountered = True
             else:
+                if item.tag.startswith("\n") and tag_encountered:
+                    card.content = card.content.replace("\n", "", 1)
                 if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
                     break
 
