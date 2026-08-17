@@ -4,7 +4,7 @@ from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
-from tag_matcher import TagPair, TagMatcher
+from tag_matcher import TagPair, TagMatcher, LeftPart, RightPart, Middle, Part
 
 
 def get_module_main_class():
@@ -54,6 +54,7 @@ class Raw(IModule):
 
     @classmethod
     def parse_file(cls, card: Card) -> InstanceDBEntry:
+        # return cls.parse_data(card)
         with open(card.node.path) as f:
             card.content = f.read()
         # card.file = False
@@ -82,23 +83,83 @@ class Raw(IModule):
         # return cls.parse_data(card)
 
     @classmethod
+    def craft(cls, items: list[Part]) -> str:
+        new_content = ""
+        encountered_meta = False
+        for item in items:
+            if isinstance(item, Middle):
+                if encountered_meta and item.tag.startswith("\n"):
+                    item.tag = item.tag.replace("\n", "", 1)
+                new_content = "".join([new_content, item.tag])
+            elif isinstance(item, RightPart) and item.get_left().tag == "[-[":
+                encountered_meta = True
+            elif isinstance(item, RightPart) and item.get_left().tag == "[%>mod:":
+                parts = item.inner_text.split("=", 1)
+                if len(parts) == 2 and parts[1].startswith("\n"):
+                    starting_bit = "".join([item.get_left().tag, parts[0], "="])
+                    item.outer_text = item.outer_text.replace(f"{starting_bit}\n", starting_bit, 1)
+                new_content = "".join([new_content, item.outer_text])
+        return new_content
+        # elif item.is_tag() and item.get_left() == "[%>mod:":
+        #     parts = item.inner_text.split("=", 1)
+        #     if len(parts) == 2 and parts[1].startswith("\n"):
+        #         item.inner_text = item.inner_text.replace("\n", "", 1)
+        #     tag_encountered = True
+        #     new_content = "".join([new_content, item.get_left().tag, item.inner_text, item.get_right().tag])
+        # else:
+        #     new_content = "".join([new_content, item.tag])
+
+    @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
         meta_tags = TagPair({"[-["}, {"]-]"})
-        items = TagMatcher.match(card.content, [meta_tags]).get_tree()
-        tag_encountered = False
+        order_tags = TagPair({"[%>mod:"}, {"<%]"})
+        items = TagMatcher.match(card.content, [meta_tags, order_tags]).get_tree()
+        # Get meta
         for item in items:
-            if item.is_tag():
-                parts = item.get_inner().split("=", 1)
+            if item.is_tag() and item.get_left().tag == "[-[":
+                parts = item.inner_text.split("=", 1)
                 if len(parts) == 2:
                     card.meta[parts[0]] = parts[1]
-                outer = item.get_outer()
-                card.content = card.content.replace(outer, "", 1)
-                tag_encountered = True
-            else:
-                if item.tag.startswith("\n") and tag_encountered:
-                    card.content = card.content.replace("\n", "", 1)
-                if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
-                    break
+        # Get formatted text
+        new_content = cls.craft(items)
+
+        # tag_encountered = False
+        # # new_content = ""
+        # for item in items:
+        #     if isinstance(item, LeftPart):
+        #         continue
+        #     elif item.is_tag() and item.get_left() == "[-[":
+        #         parts = item.inner_text.split("=", 1)
+        #         if len(parts) == 2:
+        #             card.meta[parts[0]] = parts[1]
+        #         tag_encountered = True
+        #     elif item.is_tag() and item.get_left() == "[%>mod:":
+        #         parts = item.inner_text.split("=", 1)
+        #         if len(parts) == 2 and parts[1].startswith("\n"):
+        #             item.inner_text = item.inner_text.replace("\n", "", 1)
+        #         tag_encountered = True
+        #         new_content = "".join([new_content, item.get_left().tag, item.inner_text, item.get_right().tag])
+        #     else:
+        #         new_content = "".join([new_content, item.tag])
+
+        card.content = new_content
+
+        # meta_tags = TagPair({"[-["}, {"]-]"})
+        # items = TagMatcher.match(card.content, [meta_tags]).get_tree()
+        # tag_encountered = False
+        # for item in items:
+        #     if item.is_tag():
+        #         parts = item.get_inner().split("=", 1)
+        #         if len(parts) == 2:
+        #             card.meta[parts[0]] = parts[1]
+        #         outer = item.get_outer()
+        #         card.content = card.content.replace(outer, "", 1)
+        #         tag_encountered = True
+        #     else:
+        #         if item.tag.startswith("\n") and tag_encountered:
+        #             card.content = card.content.replace("\n", "", 1)
+        #         if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+        #             break
 
 
         # content_metadata = cls.rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
