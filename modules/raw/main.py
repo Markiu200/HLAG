@@ -4,6 +4,7 @@ from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
 from module_management import IModule
+from tag_matcher import TagPair, TagMatcher
 
 
 def get_module_main_class():
@@ -53,30 +54,56 @@ class Raw(IModule):
 
     @classmethod
     def parse_file(cls, card: Card) -> InstanceDBEntry:
-        past_meta_location = card.node.metadata.get("cursor", 0)
         with open(card.node.path) as f:
-            f.seek(past_meta_location)
             card.content = f.read()
-        card.file = False
+        # card.file = False
+        #
+        tree = card.meta.get("fileMeta")
+        if tree is not None:
+            for item in tree:
+                if item.is_tag():
+                    outer = item.get_outer()
+                    card.content = card.content.replace(outer, "", 1)
+                else:
+                    if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                        break
+            card.meta.pop("fileMeta")
         return cls.parse_data(card)
 
-    @classmethod
-    def ignore_lines_filter(cls, pattern: str, line: str):
-        parts = line.split(pattern)
-        return parts[0]
+        # past_meta_location = card.node.metadata.get("cursor", 0)
+        # with open(card.node.path) as f:
+        #     f.seek(past_meta_location)
+        #     card.content = f.read()
+        # card.file = False
+        # return cls.parse_data(card)
 
     @classmethod
     def parse_data(cls, card: Card) -> InstanceDBEntry:
-        content_metadata = cls.rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
-        if len(content_metadata) > 0:
-            for key, value in content_metadata.items():
-                card.meta[key] = value
-        card.content = card.content[card.meta["cursor"]:]
+        meta_tags = TagPair({"[-["}, {"]-]"})
+        items = TagMatcher.match(card.content, [meta_tags]).get_tree()
+        for item in items:
+            if item.is_tag():
+                parts = item.get_inner().split("=", 1)
+                if len(parts) == 2:
+                    card.meta[parts[0]] = parts[1]
+                outer = item.get_outer()
+                card.content = card.content.replace(outer, "", 1)
+            else:
+                if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                    break
+
+
+        # content_metadata = cls.rmfl.read_metadata_from_lines(card.content.splitlines(), card.meta.get("newlineSeq", ""))
+        # if len(content_metadata) > 0:
+        #     for key, value in content_metadata.items():
+        #         card.meta[key] = value
+        # card.content = card.content[card.meta["cursor"]:]
 
         ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disabled" else True
 
         content = cls.replace_orders(card)
+        # content = card.content
 
         pattern = r'\[&_JSREF\(.*?\)_&]'
         data_list = []
@@ -138,3 +165,8 @@ class Raw(IModule):
             meta=card.meta
         )
         return result_entry
+
+    @classmethod
+    def ignore_lines_filter(cls, pattern: str, line: str):
+        parts = line.split(pattern)
+        return parts[0]

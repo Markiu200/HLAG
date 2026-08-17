@@ -1,8 +1,30 @@
 from importlib import import_module
+from tag_matcher import TagMatcher, TagPair
 rmfs = import_module(f"raw.read_metadata_from_string")
 
 
 def read_metadata_from_lines(lines: list[str], newline_sequence: str) -> dict:
+    content = lines[0]
+    starting_tag = "[-["
+    ending_tag = "]-]"
+    meta_tags = TagPair({starting_tag}, {ending_tag})
+    tag_lines = []
+    metadata = dict()
+    #
+    items = TagMatcher.match("".join(tag_lines), [meta_tags]).get_tree()
+    for item in items:
+        if item.is_tag():
+            parts = item.get_inner().split("=", 1)
+            if len(parts) == 2:
+                metadata[parts[0]] = parts[1]
+        else:
+            if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                break
+    metadata["fileMeta"] = items
+    return metadata
+
+
+def read_metadata_from_lines2(lines: list[str], newline_sequence: str) -> dict:
     """'cursor' is set to either \n
         * last character of last line that contained meta tag, \n
         * last character of meta tag in line that contains any other characters outside meta tags.

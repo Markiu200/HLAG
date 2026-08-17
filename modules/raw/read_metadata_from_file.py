@@ -1,10 +1,41 @@
 from pathlib import PurePath
 import re
 from importlib import import_module
+from tag_matcher import TagMatcher, TagPair
 rmfl = import_module(f"raw.read_metadata_from_lines")
 
 
 def get_metadata_from_file(path: PurePath) -> dict:
+    starting_tag = "[-["
+    ending_tag = "]-]"
+    meta_tags = TagPair({starting_tag}, {ending_tag})
+    tag_lines = []
+    metadata = dict()
+    #
+    with open(path, "r") as f:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            if starting_tag in line:
+                tag_lines.append(line)
+            else:
+                break
+    #
+    items = TagMatcher.match("".join(tag_lines), [meta_tags]).get_tree()
+    for item in items:
+        if item.is_tag():
+            parts = item.get_inner().split("=", 1)
+            if len(parts) == 2:
+                metadata[parts[0]] = parts[1]
+        else:
+            if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                break
+    metadata["fileMeta"] = items
+    return metadata
+
+
+def get_metadata_from_file2(path: PurePath) -> dict:
     """'cursor' is set to either \n
         * last character of last line that contained meta tag, \n
         * last character of meta tag in line that contains any other characters outside meta tags.

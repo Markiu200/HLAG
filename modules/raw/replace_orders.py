@@ -1,6 +1,7 @@
 import re
 from module_facade import ModuleFacade
 from models import Data, Card
+from tag_matcher import TagMatcher, TagPair
 
 
 class BaseOrder:
@@ -56,6 +57,56 @@ def _match_tags(content: str, tag_end: int):
 
 
 def replace_orders(card: Card) -> str:
+    meta_tags = TagPair({"[%>mod:"}, {"<%]"})
+    nested_item_count = 0
+    new_content = ""
+    #
+    items = TagMatcher.match(card.content, [meta_tags]).get_tree()
+    for item in items:
+        if item.is_tag():
+            order = item.get_inner()
+            parts = order.split("=", 1)
+            module_name = parts[0]
+            content = parts[1]
+            #
+            new_meta = dict(card.meta)
+            if new_meta.get("relPath"):
+                new_meta["relPath"] = "_".join([new_meta["relPath"], str(nested_item_count)])
+                nested_item_count += 1
+            if new_meta.get("relLink"):
+                new_meta.pop("relLink")
+            new_meta["module"] = module_name
+            order_card = Card(
+                node=card.node,
+                file=False,
+                meta=new_meta,
+                content=content
+            )
+            jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
+            new_content = "".join([new_content, jsref])
+            # content = content.replace(content[new_reference.begin:new_reference.end], jsref, 1)
+        else:
+            new_content = "".join([new_content, item.tag])
+    return new_content
+
+            # new_meta = dict(card.meta)
+            # if new_meta.get("relPath"):
+            #     new_meta["relPath"] = "_".join([new_meta["relPath"], str(nested_item_count)])
+            #     nested_item_count += 1
+            # if new_meta.get("relLink"):
+            #     new_meta.pop("relLink")
+            # new_meta["module"] = item.get_inner()
+            # order_card = Card(
+            #     node=card.node,
+            #     file=False,
+            #     meta=new_meta,
+            #     content=new_reference.content
+            # )
+            # jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
+            # content = content.replace(content[new_reference.begin:new_reference.end], jsref, 1)
+
+
+def replace_orders2(card: Card) -> str:
     """All references should be found and replaced before parsing contents. Module
     itself should know how to recognize a reference.
     :param card: -todo- Structure containing contents and metadata of the file - it should be loaded into memory entirely.
