@@ -10,7 +10,7 @@ from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from content_manager import ContentManager
-from navigation_manager import NavigationManager
+from linker import Linker
 #
 import gui
 
@@ -66,7 +66,6 @@ if __name__ == "__main__":
     # todo asset manager doesn't create assets folder if not needed
     # todo output directory created if doesn't exist
     # todo documentation on usage of modules
-    # todo fix module manager importing wrong files
 
     # Module manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
@@ -105,10 +104,6 @@ if __name__ == "__main__":
     # Content manager translates files to JSREF things
     ContentManager.parse_files()
 
-    # todo navigation manager gets document outline from structure_scanner
-    # todo to craft a navigation JSON to be used by JS
-    # NavigationManager.fetch_content_from_scanner()
-
     #
     #   REGISTERING EVERYTHING FOR PRINTING
     #   register them in appropriate order
@@ -121,14 +116,12 @@ if __name__ == "__main__":
 
     # Register document CSS for printing
     CSSManager.register(PurePath(this_file_dir, r"assets\css\default.css"))
-    CSSManager.register(PurePath(this_file_dir, r"lib\navigation_manager\navigation.css"))
     printer.register(CSSManager.print())
 
     # Register middle part of document (after style and open body) for printing
     printer.register(yield_snippet("middle"))
 
     # Register navigation for printing
-    # printer.register(NavigationManager.print_html())
     printer.register(yield_snippet("nav"))
 
     # ContentManager registers it's container for printing
@@ -138,6 +131,8 @@ if __name__ == "__main__":
     # state manager
     JSManager.register_file(PurePath(this_file_dir, r"assets\js\state_manager.js"))
     JSManager.register_file_delayed(PurePath(this_file_dir, r"assets\js\state_manager_delayed.js"))
+    # Linker
+    JSManager.register_print(Linker.print_js())
     # ReferenceResolver
     JSManager.register_file(PurePath(this_file_dir, r"lib\content_manager\ref_resolver.js"))
     # Modules dependencies
@@ -146,8 +141,6 @@ if __name__ == "__main__":
     ContentManager.queue_module_printing()
     # ContentManager
     JSManager.register_print(ContentManager.print_js())
-    # Navigation
-    # JSManager.register_print(NavigationManager.print_js())
     # All of that to the printer
     printer.register(JSManager.print())
 
