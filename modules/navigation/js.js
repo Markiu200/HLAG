@@ -79,6 +79,29 @@ class Navigation {
         });
     }
 
+    static openLink(e, ref) {
+      // check which window has the reffered instance
+      let foundWindowId = 0;
+      let i = 0;
+      Navigation.windowMap.forEach(window => {
+        let contents =  window.contents;
+        contents.forEach(ref_ => {
+          if (ref_["module"] == ref["module"] && ref_["id"] == ref["instance_id"]) {
+            foundWindowId = i;
+          }
+        });
+        i += 1;
+      });
+      // open it
+      if (foundWindowId) {
+        if (e.shiftKey) {
+            Navigation.toggleWindow(foundWindowId);
+        } else {
+            Navigation.switchToWindow(foundWindowId);
+        }
+      }
+    }
+
     static openStartpage() {
         if (!Navigation.startpage) {
             let raws = ContentManager.instanceDB.get("raw");
@@ -118,6 +141,7 @@ class Navigation {
         }
     }
 }
+Linker.register((e, ref) => {Navigation.openLink(e, ref)});
 Navigation.generateNavigation();
 StateManager.register("Navigation", Navigation.saveState, Navigation.loadState);
 Navigation.openStartpage();
