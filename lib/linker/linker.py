@@ -1,4 +1,5 @@
 import ast
+from pathlib import PurePath
 # Own imports
 from content_manager import ContentManager
 from models import Ref
@@ -56,4 +57,12 @@ class Linker:
         pairs = cls.pair(links, hosts)
         pairs_combined = ", ".join((pair.print() for pair in pairs))
         result = "".join(['static linkMap = new Map([', pairs_combined, ']);'])
-        yield ""
+        #
+        with open(PurePath(PurePath(__file__).parent, r"linker.js")) as f:
+            lines = f.readlines()
+            for line in lines:
+                if "////PLACEHOLDER_FOR_LINKMAP" in line:
+                    parts = line.split("////PLACEHOLDER_FOR_LINKMAP")
+                    yield "".join([parts[0], result])
+                else:
+                    yield line
