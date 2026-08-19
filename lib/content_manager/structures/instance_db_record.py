@@ -1,11 +1,12 @@
 import json
-from models import InstanceDBEntry
+from models import InstanceDBEntry, Ref
 
 
 class InstanceDBRecord:
-    def __init__(self, instance_db_entry: InstanceDBEntry, instance_id: int):
+    def __init__(self, instance_db_entry: InstanceDBEntry, instance_id: int, ref: Ref):
         self.instance_db_entry = instance_db_entry
         self.instance_id = instance_id
+        self.ref = ref
 
     def get_as_json(self):
         checked_data = ""
