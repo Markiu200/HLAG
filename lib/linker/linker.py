@@ -2,6 +2,7 @@ import ast
 from pathlib import PurePath
 # Own imports
 from content_manager import ContentManager
+from structure_scanner import StructureScanner
 from models import Ref
 
 
@@ -17,7 +18,23 @@ class LinkRecord:
 
 class Linker:
     @classmethod
-    def fetch_content_from_scanner(cls) -> (dict, dict):
+    def collect_and_pair_from_scanner(cls) -> list[LinkRecord]:
+        pairs = []
+        for node in StructureScanner.tree:
+            if node.has_attribute("directory"):
+                host_path = node.metadata.get("hostPath", None)
+                first_item = None
+                if len(node.children) > 0:
+                    first_item = node.children[0]
+                if host_path and first_item:
+                    pairs.append(LinkRecord(
+                        link=host_path,
+                        ref=first_item.ref
+                    ))
+        return pairs
+
+    @classmethod
+    def collect_from_content(cls) -> (dict, dict):
         instances = ContentManager.get_instance_records()
         links = dict()
         hosts = dict()
@@ -53,10 +70,14 @@ class Linker:
 
     @classmethod
     def print_js(cls):
-        links, hosts = cls.fetch_content_from_scanner()
-        pairs = cls.pair(links, hosts)
-        pairs_combined = ", ".join((pair.print() for pair in pairs))
-        result = "".join(['static linkMap = new Map([', pairs_combined, ']);'])
+        links, hosts = cls.collect_from_content()
+        content_pairs = cls.pair(links, hosts)
+        directory_links = cls.collect_and_pair_from_scanner()
+        all_pairs = content_pairs
+        all_pairs.extend(directory_links)
+
+        pairs_combined = ", ".join((pair.print() for pair in all_pairs))
+        result = "".join(['static linkMap = new Map([', pairs_combined, ']);\n'])
         #
         with open(PurePath(PurePath(__file__).parent, r"linker.js")) as f:
             lines = f.readlines()
