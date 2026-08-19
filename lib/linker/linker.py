@@ -61,8 +61,8 @@ class Linker:
         with open(PurePath(PurePath(__file__).parent, r"linker.js")) as f:
             lines = f.readlines()
             for line in lines:
-                if "////PLACEHOLDER_FOR_LINKMAP" in line:
-                    parts = line.split("////PLACEHOLDER_FOR_LINKMAP")
+                if "//PLACEHOLDER_FOR_LINKMAP" in line:
+                    parts = line.split("//PLACEHOLDER_FOR_LINKMAP")
                     yield "".join([parts[0], result])
                 else:
                     yield line
