@@ -11,6 +11,7 @@ def get_module_main_class():
 class ProgDirStruct(IModule):
     escaped_check = import_module(f"prog_dir_struct.escaped_check")
     dir_meta_check = import_module(f"prog_dir_struct.dir_meta_check")
+    directory_check = import_module(f"prog_dir_struct.directory_check")
 
     @classmethod
     def get_info(cls) -> dict:
@@ -23,6 +24,7 @@ class ProgDirStruct(IModule):
     @classmethod
     def register_checks(cls):
         ModuleFacade.register_initial_dir_check(cls.escaped_check.EscapedCheck())
+        ModuleFacade.register_initial_dir_check(cls.directory_check.DirectoryCheck())
         ModuleFacade.register_check(cls.escaped_check.EscapedCheck())
         ModuleFacade.register_final_dir_check(cls.dir_meta_check.DirMetaCheck())
 
