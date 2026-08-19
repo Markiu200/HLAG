@@ -82,18 +82,17 @@ class Navigation {
     static openLink(e, ref) {
       // check which window has the reffered instance
       let foundWindowId = 0;
-      let i = 0;
-      Navigation.windowMap.forEach(window => {
-        let contents =  window.contents;
-        contents.forEach(ref_ => {
-          if (ref_["module"] == ref["module"] && ref_["id"] == ref["instance_id"]) {
-            foundWindowId = i;
-          }
+      for (let window of Navigation.windowMap) {
+        let foundWindowRecord = window[1]["contents"].find((el) => {
+          if (el["module"] == ref["module"] && el["id"] == ref["instance_id"]) {return true;}
         });
-        i += 1;
-      });
+        if (foundWindowRecord) {
+          break;
+        }
+        foundWindowId += 1;
+      }
       // open it
-      if (foundWindowId) {
+      if (foundWindowId < Navigation.windowMap.size) {
         if (e.shiftKey) {
             Navigation.toggleWindow(foundWindowId);
         } else {
