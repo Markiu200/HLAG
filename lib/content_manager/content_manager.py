@@ -38,12 +38,15 @@ class ContentManager:
             # Step 1.2 - Update card with that metadata
             for key, value in got_meta.items():
                 card.meta[key] = value
+
         # Step 2 - get module from metadata
         module = ModuleManager.get_module(card.meta.get("module"))
         if not module:
             raise RuntimeError(f"Module \"{card.meta.get('module')}\" was requested, but such module was never registered.")
+
         # Step 3 - order instance record from the module
         instance_record = module.parse(card)
+
         # Step 4 - register that instance and fetch Ref record
         ref = cls.register_instance(instance_record, card)
         return ref
@@ -60,6 +63,14 @@ class ContentManager:
         #
         print(f"Instance of {ref.module} registered with ID: {ref.ref_id}")
         return ref
+
+    @classmethod
+    def get_instance_records(cls):
+        groups = ModuleTracker.get_instance_db_record_groups()
+        unpacked = []
+        for group in groups:
+            unpacked.extend([instance for instance in group.instance_list])
+        return unpacked
 
     #
     #   PRINTING RELATED METHODS
