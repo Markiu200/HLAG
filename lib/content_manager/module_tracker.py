@@ -25,17 +25,20 @@ class ModuleTracker:
         module = instance_entry.module
         tracked_module = cls.tracked_modules.get(module)
         if tracked_module:
+            next_id = tracked_module.next_id
+            ref = Ref(
+                module=module,
+                ref_id=next_id
+            )
             instance_db_record = InstanceDBRecord(
                 instance_db_entry=instance_entry,
-                instance_id=tracked_module.next_id
+                instance_id=tracked_module.next_id,
+                ref=ref
             )
             tracked_module.instance_db_record_group.add_record(instance_db_record)
             tracked_module.next_id += 1
             return RecordReport(
-                ref=Ref(
-                    module=module,
-                    ref_id=instance_db_record.instance_id
-                )
+                ref=ref
             )
         else:
             controller = ModuleManager.get_module(module).get_info().get("controller")
