@@ -68,10 +68,10 @@ class PyDocNavigation {
             let requestedWindow = ContentManager.openWindow(windowRequest);
             if (requestedWindow) {
                 requestingNavItem.open();
-                Navigation.savedRequests.push(new PyDocNavigation.SavedRequest(requestingNavItem, requestedWindow));
-                return true;
+                const newSavedRequest = new PyDocNavigation.SavedRequest(requestingNavItem, requestedWindow);
+                return newSavedRequest;
             }
-            return false;
+            return -1;
         }
         /**
          * @param {SavedRequest} savedRequest 
@@ -81,12 +81,9 @@ class PyDocNavigation {
             if (close_success) {
                 savedRequest.navItem.close();
                 const index = Navigation.savedRequests.indexOf(savedRequest);
-                if (index != -1) {
-                    Navigation.savedRequests.splice(index, 1);
-                }
-                return true;
+                return index;
             }
-            return false;
+            return -1;
         }
         //
         // Internal state handling
@@ -98,10 +95,14 @@ class PyDocNavigation {
                     return savedRequest.navItem.link == navItem.link;
                 });
             if (openedRequest) {
-                Navigation.dismissWindow(openedRequest);
+                const dismissedIndex = Navigation.dismissWindow(openedRequest);
+                if (dismissedIndex != -1) {
+                    Navigation.savedRequests.splice(dismissedIndex, 1);
+                }
             } else {
                 const newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
-                Navigation.requestWindow(newRequest, navItem);
+                const newSavedRequest = Navigation.requestWindow(newRequest, navItem);
+                Navigation.savedRequests.push(newSavedRequest);
             }
         }
         /**
@@ -111,8 +112,10 @@ class PyDocNavigation {
             Navigation.savedRequests.forEach(savedRequest => {
                 Navigation.dismissWindow(savedRequest);
             });
-            let newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
-            Navigation.requestWindow(newRequest, navItem);
+            Navigation.savedRequests.splice(0);
+            const newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
+            const newSavedRequest = Navigation.requestWindow(newRequest, navItem);
+            Navigation.savedRequests.push(newSavedRequest);
         }
         //
         //
