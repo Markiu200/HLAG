@@ -118,7 +118,7 @@ class PyDocNavigation {
             Navigation.savedRequests.push(newSavedRequest);
         }
         //
-        //
+        // Menu generation code
         static generateNavigation() {
             for (const [link, data] of Navigation.menuMap.entries()) {
               let button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
@@ -126,25 +126,14 @@ class PyDocNavigation {
             }
         }
         //
-        //
-        static openLink(e, ref) {
-            // check which window has the reffered instance
-            let foundWindowId = 0;
-            for (let window of Navigation.windowMap) {
-                let foundWindowRecord = window[1]["contents"].find((el) => {
-                if (el["module"] == ref["module"] && el["id"] == ref["instance_id"]) {return true;}
-                });
-                if (foundWindowRecord) {
-                break;
-                }
-                foundWindowId += 1;
-            }
-            // open it
-            if (foundWindowId < Navigation.windowMap.size) {
+        // Link handling
+        static openLink(e, link, ref) {
+            const navItem = Navigation.menuMap.get(link);
+            if (navItem) {
                 if (e.shiftKey) {
-                    Navigation.toggleWindow(foundWindowId);
+                    PyDocNavigation.Navigation.toggleWindow(navItem);
                 } else {
-                    Navigation.switchToWindow(foundWindowId);
+                    PyDocNavigation.Navigation.switchToWindow(navItem);
                 }
             }
         }
@@ -188,7 +177,7 @@ class PyDocNavigation {
         }
     }
 }
-// Linker.register((e, ref) => {PyDocNavigation.Navigation.openLink(e, ref)});
+Linker.register((e, ref) => {PyDocNavigation.Navigation.openLink(e, ref)});
 PyDocNavigation.Navigation.generateNavigation();
 // StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
 // PyDocNavigation.Navigation.openStartpage();
