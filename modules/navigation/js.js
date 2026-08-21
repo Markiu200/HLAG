@@ -67,15 +67,26 @@ class PyDocNavigation {
         static requestWindow(windowRequest, requestingNavItem) {
             let requestedWindow = ContentManager.openWindow(windowRequest);
             if (requestedWindow) {
-                Navigation.savedRequests.push(new SavedRequest(requestingNavItem, requestedWindow));
                 requestingNavItem.open();
+                Navigation.savedRequests.push(new PyDocNavigation.SavedRequest(requestingNavItem, requestedWindow));
+                return true;
             }
+            return false;
         }
-        static dismissWindow(windowId) {
-            let found = Navigation.windowMap.get(windowId);
-            let index = Navigation.requestedWindows.indexOf(found);
-            ContentManager.closeWindow(found);
-            Navigation.requestedWindows.splice(index, 1);
+        /**
+         * @param {SavedRequest} savedRequest 
+         */
+        static dismissWindow(savedRequest) {
+            const close_success = ContentManager.closeWindow(savedRequest.requestedWindow);
+            if (close_success) {
+                savedRequest.navItem.close();
+                const index = Navigation.savedRequests.indexOf(savedRequest);
+                if (index != -1) {
+                    Navigation.savedRequests.splice(index, 1);
+                }
+                return true;
+            }
+            return false;
         }
         //
         // Internal state handling
@@ -96,10 +107,8 @@ class PyDocNavigation {
          */
         static switchToWindow(navItem) {
             Navigation.savedRequests.forEach(savedRequest => {
-                ContentManager.closeWindow(savedRequest.requestedWindow);
-                savedRequest.navItem.close();
+                Navigation.dismissWindow(savedRequest);
             });
-            Navigation.savedRequests.splice(0);
             let newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
             Navigation.requestWindow(newRequest, navItem);
         }
