@@ -94,12 +94,14 @@ class PyDocNavigation {
          * @param {NavItem} navItem 
          */
         static toggleWindow(navItem) {
-            if (Navigation.requestedWindows.find((element) => {
-                    return element.id == windowId;
-                })) {
-                Navigation.dismissWindow(windowId);
+            const openedRequest = Navigation.savedRequests.find((savedRequest) => {
+                    return savedRequest.navItem.link == navItem.link;
+                });
+            if (openedRequest) {
+                Navigation.dismissWindow(openedRequest);
             } else {
-                Navigation.requestWindow(windowId);
+                const newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
+                Navigation.requestWindow(newRequest, navItem);
             }
         }
         /**
