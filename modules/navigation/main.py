@@ -19,46 +19,44 @@ class NavItem:
         self.children: list['NavItem'] = []
         self.instances: list[Ref] = []
 
-    def print(self):
-        # [link, {"parent": null, "type": type, "link": link, "title": title, "children": [*children], "instances": [*instances]}]
+    @classmethod
+    def copy(cls, other: 'NavItem'):
+        new_nav_item = NavItem(
+            parent=other.parent,
+            nav_type=other.nav_type,
+            link=other.link,
+            title=other.title,
+        )
+        new_nav_item.children = list(other.children)
+        new_nav_item.instances = list(other.instances)
+        return new_nav_item
+
+    def as_string(self):
+        # [link, {"parent": null, "children": [*children], "type": type, "title": title, "instances": [*instances]}]
         result = "".join(['["',
                           self.link,
-                          '", {"parent": null, "children": ',
-                          self.children,
-                          ', "type": ',
+                          '", {"parent": null, "children": [',
+                          self.children_as_string(),
+                          '], "type": `',
                           self.nav_type,
-                          ', "title": ',
+                          '`, "title": `',
                           self.title,
-                          ', "instances": [',
+                          '`, "instances": [',
                           self.instances_as_string(),
                           ']}]'])
         return result
 
-    def instances_as_string(self):
+    def children_as_string(self) -> str:
+        children_string_list = []
+        for child in self.children:
+            children_string_list.append(child.as_string())
+        return ", ".join(children_string_list)
+
+    def instances_as_string(self) -> str:
         instances_list = []
         for instance in self.instances:
             instances_list.append("".join(['{"module": "', instance.module, '", "instance_id": ', str(instance.ref_id), '}']))
         return ", ".join(instances_list)
-
-
-# class Leaf(NavItem):
-#     def __init__(self, parent, link: str, title: str):
-#         super().__init__(parent, link, title)
-#
-#
-# class Branch(NavItem):
-#     def __init__(self, parent, link: str, title: str):
-#         super().__init__(parent, link, title)
-#
-#
-# class Separator(NavItem):
-#     def __init__(self, parent, link: str, title: str):
-#         super().__init__(parent, link, title)
-#
-#
-# class Header(NavItem):
-#     def __init__(self, parent, link: str, title: str):
-#         super().__init__(parent, link, title)
 
 
 class PyDocNavigation(IModule):
@@ -168,39 +166,18 @@ class PyDocNavigation(IModule):
                 new_item = NavItem(parent=node, nav_type="header", link=link, title=title)
                 nav_item.children.append(new_item)
 
-    # @classmethod
-    # def generate_window_map(cls):
-    #     for i, node in enumerate(cls.nodes_is_outline):
-    #         record_title = node.metadata.get("title") if node.metadata.get("title") else node.path.name
-    #         #
-    #         record_contents = []
-    #         for child_node in node.get_children():
-    #             if child_node.ref:
-    #                 # This dictionary will be translated to JSON by json.dumps() at print method
-    #                 record_contents.append({
-    #                     "module": child_node.ref.module,
-    #                     "id": child_node.ref.ref_id
-    #                 })
-    #         #
-    #         cls.window_map.append(WindowRecord(
-    #             ref_id=i,
-    #             title=record_title,
-    #             contents=record_contents
-    #         ))
-    #         #
-    #     return cls.window_map
-    #
-    # @classmethod
-    # def print_window_map(cls, beginning: str):
-    #     cls.generate_window_map()
-    #     indented_beginning = "".join(["  ", beginning])
-    #     yield f"{beginning}static windowMap = new Map([\n"
-    #     for i, window_record in enumerate(cls.window_map):
-    #         if i < len(cls.window_map) - 1:
-    #             yield f"{indented_beginning}{window_record.get_as_js_map_record()},\n"
-    #         else:
-    #             yield f"{indented_beginning}{window_record.get_as_js_map_record()}\n"
-    #     yield f"{beginning}]);"
+    @classmethod
+    def separate_home(cls) -> list[NavItem]:
+        home = NavItem.copy(cls.nav_tree)
+        rest = home.children
+        home.children = []
+        outline = [home, *rest]
+        return outline
+
+    @classmethod
+    def as_js_map(cls):
+        outline_as_string = ", ".join((item.as_string() for item in cls.separate_home()))
+        return "".join(['static menuMap = new Map([', outline_as_string, ']);\n'])
 
     @classmethod
     def print_js(cls):
@@ -210,13 +187,11 @@ class PyDocNavigation(IModule):
         #
         cls.build()
         #
-        yield ""
-        # with open(PurePath(PurePath(__file__).parent, r"js.js")) as f:
-        #     lines = f.readlines()
-        #     for line in lines:
-        #         if "//PLACEHOLDER_FOR_WINDOWMAP" in line:
-        #             parts = line.split("//PLACEHOLDER_FOR_WINDOWMAP")
-        #             yield from cls.print_window_map(parts[0])
-        #         else:
-        #             yield line
-
+        with open(PurePath(PurePath(__file__).parent, r"js.js")) as f:
+            lines = f.readlines()
+            for line in lines:
+                if "//PLACEHOLDER_FOR_MENUMAP" in line:
+                    parts = line.split("//PLACEHOLDER_FOR_MENUMAP")
+                    yield "".join([parts[0], cls.as_js_map()])
+                else:
+                    yield line
