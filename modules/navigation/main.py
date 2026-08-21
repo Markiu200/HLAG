@@ -55,7 +55,7 @@ class NavItem:
     def instances_as_string(self) -> str:
         instances_list = []
         for instance in self.instances:
-            instances_list.append("".join(['{"module": "', instance.module, '", "instance_id": ', str(instance.ref_id), '}']))
+            instances_list.append("".join(['{"module": "', instance.module, '", "id": ', str(instance.ref_id), '}']))
         return ", ".join(instances_list)
 
 
