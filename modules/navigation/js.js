@@ -13,34 +13,63 @@ class PyDocNavigation {
             this.instances = instances;
             this.level = level;
             this.buttonDiv = this.createDiv()
+            this.buttonDiv.addEventListener("click", this.clickEvent.bind(this));
         }
         createDiv() {
             let htmlElement = document.createElement("div");
             htmlElement.innerText = `Title: ${this.title} Link: ${this.link}`;
             return htmlElement;
         }
-        // clickEvent(e) {
-        //     if (e.shiftKey) {
-        //         Navigation.toggleWindow(this.windowId);
-        //     } else {
-        //         Navigation.switchToWindow(this.windowId);
-        //     }
-        // }
+        close() {
+            console.log("navitem closed");
+        }
+        open() {
+            console.log("navitem opened");
+        }
+        clickEvent(e) {
+            if (e.shiftKey) {
+                PyDocNavigation.Navigation.toggleWindow(this);
+            } else {
+                PyDocNavigation.Navigation.switchToWindow(this);
+            }
+        }
+    }
+    //
+    //
+    //
+    static SavedRequest = class SavedRequest {
+        /**
+         * @param {NavItem} navItem 
+         * @param {RequestedWindow} requestedWindow 
+         */
+        constructor(navItem, requestedWindow) {
+            /** @type {NavItem} */
+            this.navItem = navItem;
+            /** @type {RequestedWindow} */
+            this.requestedWindow = requestedWindow;
+        }
     }
     //
     //
     //
     static Navigation = class Navigation {
         //PLACEHOLDER_FOR_MENUMAP
-        static requestedWindows = [];
+        /** @type {SavedRequest[]} */
+        static savedRequests = [];
         static navigationDiv = document.getElementById("nav");
         //
         static startpage = null;
         //
-        static requestWindow(windowId) {
-            let found = Navigation.windowMap.get(windowId);
-            ContentManager.openWindow(found);
-            Navigation.requestedWindows.push(found);
+        // ContentManager requests
+        /**
+         * @param {ContentManagerWindowRequest} windowRequest 
+         */
+        static requestWindow(windowRequest, requestingNavItem) {
+            let requestedWindow = ContentManager.openWindow(windowRequest);
+            if (requestedWindow) {
+                Navigation.savedRequests.push(new SavedRequest(requestingNavItem, requestedWindow));
+                requestingNavItem.open();
+            }
         }
         static dismissWindow(windowId) {
             let found = Navigation.windowMap.get(windowId);
@@ -48,7 +77,12 @@ class PyDocNavigation {
             ContentManager.closeWindow(found);
             Navigation.requestedWindows.splice(index, 1);
         }
-        static toggleWindow(windowId) {
+        //
+        // Internal state handling
+        /**
+         * @param {NavItem} navItem 
+         */
+        static toggleWindow(navItem) {
             if (Navigation.requestedWindows.find((element) => {
                     return element.id == windowId;
                 })) {
@@ -57,12 +91,17 @@ class PyDocNavigation {
                 Navigation.requestWindow(windowId);
             }
         }
-        static switchToWindow(windowId) {
-            Navigation.requestedWindows.forEach(element => {
-                ContentManager.closeWindow(element);
+        /**
+         * @param {NavItem} navItem 
+         */
+        static switchToWindow(navItem) {
+            Navigation.savedRequests.forEach(savedRequest => {
+                ContentManager.closeWindow(savedRequest.requestedWindow);
+                savedRequest.navItem.close();
             });
-            Navigation.requestedWindows.splice(0)
-            Navigation.requestWindow(windowId);
+            Navigation.savedRequests.splice(0);
+            let newRequest = new ContentManagerWindowRequest(navItem.link, navItem.title, navItem.instances);
+            Navigation.requestWindow(newRequest, navItem);
         }
         //
         //
@@ -135,8 +174,8 @@ class PyDocNavigation {
         }
     }
 }
-Linker.register((e, ref) => {PyDocNavigation.Navigation.openLink(e, ref)});
+// Linker.register((e, ref) => {PyDocNavigation.Navigation.openLink(e, ref)});
 PyDocNavigation.Navigation.generateNavigation();
-StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
-PyDocNavigation.Navigation.openStartpage();
+// StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
+// PyDocNavigation.Navigation.openStartpage();
 
