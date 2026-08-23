@@ -21,10 +21,10 @@ class PyDocNavigation {
             return htmlElement;
         }
         close() {
-            console.log("navitem closed");
+            // console.log("navitem closed");
         }
         open() {
-            console.log("navitem opened");
+            // console.log("navitem opened");
         }
         clickEvent(e) {
             if (e.shiftKey) {
@@ -32,6 +32,16 @@ class PyDocNavigation {
             } else {
                 PyDocNavigation.Navigation.switchToWindow(this);
             }
+        }
+    }
+    //
+    static Branch = class Branch extends PyDocNavigation.NavItem {
+        constructor(link, parent, title, children, instances, level) {
+            super(link, parent, title, children, instances, level);
+            this.twoParterDiv = document.createElement("div");
+            this.twoParterDiv.appendChild(this.buttonDiv);
+            this.childrenDOMElement = document.createElement("div");
+            this.twoParterDiv.appendChild(this.childrenDOMElement);
         }
     }
     //
@@ -120,9 +130,18 @@ class PyDocNavigation {
         //
         // Menu generation code
         static generateNavigation() {
-            for (const [link, data] of Navigation.menuMap.entries()) {
-              let button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-              PyDocNavigation.Navigation.navigationDiv.appendChild(button.buttonDiv);
+            Navigation.generateNavigationRecursive(PyDocNavigation.Navigation.navigationDiv, Navigation.menuMap.entries())
+        }
+        static generateNavigationRecursive(parent, map) {
+            for (const [link, data] of map) {
+              if (data.children.length > 0) {
+                let button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                Navigation.generateNavigationRecursive(button.childrenDOMElement, button.children);
+                parent.appendChild(button.twoParterDiv);
+              } else {
+                let button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                parent.appendChild(button.buttonDiv);
+              }
             }
         }
         //
