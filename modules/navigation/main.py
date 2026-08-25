@@ -32,10 +32,10 @@ class NavItem:
         return new_nav_item
 
     def as_string(self):
-        # [link, {"parent": null, "children": [*children], "type": type, "title": title, "instances": [*instances]}]
+        # [link, {"hostDir": hostDir, "children": [*children], "type": type, "title": title, "instances": [*instances]}]
         result = "".join(['["',
                           self.link,
-                          '", {"parent": null, "children": [',
+                          '", {"hostDir": `', self.parent.metadata.get("hostPath"), '`, "children": [',
                           self.children_as_string(),
                           '], "type": `',
                           self.nav_type,
@@ -113,7 +113,7 @@ class PyDocNavigation(IModule):
         root = structure_scanner.tree.root
         title = root.metadata.get("title") if root.metadata.get("title") else root.path.name
         link = root.metadata.get("relPath")
-        nav_root = NavItem(parent=None, nav_type="root", title=title, link=link)
+        nav_root = NavItem(parent=root, nav_type="root", title=title, link=link)
         cls.collect_refs(root, nav_root)
         cls.nav_tree = nav_root
         # Scan
