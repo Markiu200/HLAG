@@ -184,14 +184,8 @@ class PyDocNavigation {
         //
         static openStartpage() {
             if (!Navigation.startpage) {
-                let raws = ContentManager.instanceDB.get("raw");
-                
-                raws.forEach(el => {
-                    if (el["meta"]["startpage"]) {Navigation.startpage = el["meta"]["startpage"];}
-                })
-                if (Navigation.startpage) {
-                    Navigation.switchToWindow(parseInt(Navigation.startpage));
-                }
+                Navigation.startpage = Navigation.refMap.get("_");
+                Navigation.switchToWindow(this.startpage["instance"]);
             }
         }
         static saveState() {
@@ -223,5 +217,5 @@ class PyDocNavigation {
 Linker.register((e, link, response) => {PyDocNavigation.Navigation.openLink(e, link, response)});
 PyDocNavigation.Navigation.generateNavigation();
 // StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
-// PyDocNavigation.Navigation.openStartpage();
+PyDocNavigation.Navigation.openStartpage();
 
