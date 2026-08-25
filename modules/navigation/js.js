@@ -49,11 +49,11 @@ class PyDocNavigation {
     //
     static SavedRequest = class SavedRequest {
         /**
-         * @param {NavItem} navItem 
+         * @param {PyDocNavigation.NavItem} navItem 
          * @param {RequestedWindow} requestedWindow 
          */
         constructor(navItem, requestedWindow) {
-            /** @type {NavItem} */
+            /** @type {PyDocNavigation.NavItem} */
             this.navItem = navItem;
             /** @type {RequestedWindow} */
             this.requestedWindow = requestedWindow;
@@ -67,6 +67,7 @@ class PyDocNavigation {
         /** @type {SavedRequest[]} */
         static savedRequests = [];
         static navigationDiv = document.getElementById("nav");
+        static refMap = new Map();  // Each item is a representation of directory and it's direct module instances
         //
         static startpage = null;
         //
@@ -134,26 +135,49 @@ class PyDocNavigation {
         }
         static generateNavigationRecursive(parent, map) {
             for (const [link, data] of map) {
+              let button = null;
               if (data.children.length > 0) {
-                let button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
                 Navigation.generateNavigationRecursive(button.childrenDOMElement, button.children);
                 parent.appendChild(button.twoParterDiv);
+                data["instance"] = button;
               } else {
-                let button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
                 parent.appendChild(button.buttonDiv);
+                data["instance"] = button;
               }
+              // Expand refMap with all module instances and menu item link pairs
+              data["instances"].forEach(instance => {
+                let mix = instance["module"] + instance["id"];
+                Navigation.refMap.set(mix, {"link": link, "instance": button});
+              });
+              // Expand refMap link to link pair (redundant, but helps the algorith)
+              Navigation.refMap.set(link, {"link": link, "instance": button});
             }
         }
         //
         // Link handling
-        static openLink(e, link, ref) {
-            const navItem = Navigation.menuMap.get(link);
-            if (navItem) {
+        static openLink(e, link, response) {
+            const hostPath = response["host"]["hostPath"];
+            let item = null;
+            let mapped = Navigation.refMap.get(hostPath);
+            if (mapped) {  // First hit
+              item = mapped["instance"];
+            } else {  // Else search by Ref
+              const refMix = response["host"]["hostRef"]["module"] + response["host"]["hostRef"]["id"];
+              let mapped = Navigation.refMap.get(refMix);
+              if (mapped) {
+                item = mapped["instance"];
+              }
+            }
+            if (item) {
                 if (e.shiftKey) {
-                    PyDocNavigation.Navigation.toggleWindow(navItem);
+                    PyDocNavigation.Navigation.toggleWindow(item);
                 } else {
-                    PyDocNavigation.Navigation.switchToWindow(navItem);
+                    PyDocNavigation.Navigation.switchToWindow(item);
                 }
+            } else {
+                console.log("openLink item not found.")
             }
         }
         //
@@ -196,7 +220,7 @@ class PyDocNavigation {
         }
     }
 }
-Linker.register((e, ref) => {PyDocNavigation.Navigation.openLink(e, ref)});
+Linker.register((e, link, response) => {PyDocNavigation.Navigation.openLink(e, link, response)});
 PyDocNavigation.Navigation.generateNavigation();
 // StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
 // PyDocNavigation.Navigation.openStartpage();
