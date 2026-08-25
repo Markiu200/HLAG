@@ -7,76 +7,100 @@ from models import Ref
 
 
 class LinkRecord:
-    def __init__(self, link: str, ref: Ref):
+    def __init__(self, link: str, rel_path: str, rel_ref: Ref, host_path: str, host_ref: Ref):
         self.link = link
-        self.ref = ref
+        self.rel_path = rel_path
+        self.rel_ref = rel_ref
+        self.host_path = host_path
+        self.host_ref = host_ref
+        #
+        self.rel_ref_string = "null"
+        if rel_ref:
+            self.rel_ref_string = "".join(['{"module": `', self.rel_ref.module, '`, "id": ', str(self.rel_ref.ref_id), '}'])
+        self.host_ref_string = "null"
+        if host_ref:
+            self.host_ref_string = "".join(['{"module": `', self.host_ref.module, '`, "id": ', str(self.host_ref.ref_id), '}'])
 
-    def print(self):
-        # ["link", {"module": "module", "instance_id": "instance_id"}]
-        return "".join(['["', self.link, '", {"module": "', self.ref.module, '", "instance_id": "', str(self.ref.ref_id), '"}]'])
+    def as_json(self):
+        # ["link", {"subject": {"relPath": "relPath", "linkRef": {"module": "module", "id": id}}, "host": {"hostPath": "hostPath", "hostRef": {"module": "module", "id": id}}}]
+        return "".join(['["', self.link, '", {',
+                        '"subject": {"relPath": `', self.rel_path, '`, "relRef": ', self.rel_ref_string, '}, ',
+                        '"host": {"hostPath": `', self.host_path, '`, "hostRef": ', self.host_ref_string, '}}]'])
 
 
 class Linker:
+    link_map: list[LinkRecord] = []
+
     @classmethod
-    def collect_and_pair_from_scanner(cls) -> list[LinkRecord]:
-        pairs = []
+    def pair_directories(cls):
+        """"""
         for node in StructureScanner.tree:
             if node.has_attribute("directory"):
                 host_path = node.metadata.get("hostPath", None)
-                first_item = None
-                if len(node.children) > 0:
-                    first_item = node.children[0]
-                if host_path and first_item:
-                    pairs.append(LinkRecord(
+                rel_path = node.metadata.get("relPath", None)
+                rel_link = node.metadata.get("relLink", None)
+                if host_path:
+                    cls.link_map.append(LinkRecord(
                         link=host_path,
-                        ref=first_item.ref
+                        rel_path=rel_path,
+                        rel_ref=node.ref,
+                        host_path=host_path,
+                        host_ref=node.ref
                     ))
-        return pairs
+                    if rel_link:
+                        cls.link_map.append(LinkRecord(
+                            link=rel_link,
+                            rel_path=rel_path,
+                            rel_ref=node.ref,
+                            host_path=host_path,
+                            host_ref=node.ref
+                        ))
 
     @classmethod
-    def collect_from_content(cls) -> (dict, dict):
-        instances = ContentManager.get_instance_records()
+    def pair_files(cls):
         links = dict()
         hosts = dict()
-        for instance in instances:
+        for instance in ContentManager.get_instance_records():  # For each registered module instance (as InstanceDBRecord)
             entry_meta = instance.instance_db_entry.meta
-            if isinstance(entry_meta, str):
+            if isinstance(entry_meta, str):  # Try to translate str into dict, if metadata is saved as str
                 try:
                     entry_meta = ast.literal_eval(entry_meta)
                 except ValueError or TypeError or SyntaxError or MemoryError or RecursionError:
                     continue
+            #
+            host_path = entry_meta.get("hostPath", None)
             rel_path = entry_meta.get("relPath", None)
             rel_link = entry_meta.get("relLink", None)
-            host_path = entry_meta.get("hostPath", None)
+            # All rel_links and rel_paths go to one dict, and all their hosts to another, for easier substitution later
             if rel_path:
-                links[rel_path] = host_path
+                links[rel_path] = {"host_path": host_path, "instance": instance}
             if rel_link:
-                links[rel_link] = host_path
+                links[rel_link] = {"host_path": host_path, "instance": instance}
             if host_path:
                 hosts[host_path] = instance
-        return links, hosts
-
-    @classmethod
-    def pair(cls, links, hosts) -> list:
-        pairs = []
-        for link, host in links.items():
-            host_for_link = hosts.get(host)
-            host_ref = host_for_link.ref
-            pairs.append(LinkRecord(
+            #
+        for link, data in links.items():
+            host_of_link = hosts.get(data["host_path"])
+            rel_path = data["instance"].instance_db_entry.meta.get("relPath")
+            if not rel_path:
+                rel_path = link
+            rel_ref = data["instance"].ref
+            host_path = data["host_path"]
+            host_ref = host_of_link.ref
+            #
+            cls.link_map.append(LinkRecord(
                 link=link,
-                ref=host_ref
+                rel_path=rel_path,
+                rel_ref=rel_ref,
+                host_path=host_path,
+                host_ref=host_ref
             ))
-        return pairs
 
     @classmethod
     def print_js(cls):
-        links, hosts = cls.collect_from_content()
-        content_pairs = cls.pair(links, hosts)
-        directory_links = cls.collect_and_pair_from_scanner()
-        all_pairs = content_pairs
-        all_pairs.extend(directory_links)
-
-        pairs_combined = ", ".join((pair.print() for pair in all_pairs))
+        cls.pair_files()
+        cls.pair_directories()
+        pairs_combined = ", ".join((pair.as_json() for pair in cls.link_map))
         result = "".join(['static linkMap = new Map([', pairs_combined, ']);\n'])
         #
         with open(PurePath(PurePath(__file__).parent, r"linker.js")) as f:
