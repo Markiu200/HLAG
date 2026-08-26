@@ -55,7 +55,7 @@ class PyDocNavigation {
         constructor(navItem, requestedWindow) {
             /** @type {PyDocNavigation.NavItem} */
             this.navItem = navItem;
-            /** @type {RequestedWindow} */
+            /** @type {RequestedWindow} */  // Defined at ContentManager JS
             this.requestedWindow = requestedWindow;
         }
     }
@@ -135,24 +135,24 @@ class PyDocNavigation {
         }
         static generateNavigationRecursive(parent, map) {
             for (const [link, data] of map) {
-              let button = null;
-              if (data.children.length > 0) {
-                button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                Navigation.generateNavigationRecursive(button.childrenDOMElement, button.children);
-                parent.appendChild(button.twoParterDiv);
-                data["instance"] = button;
-              } else {
-                button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                parent.appendChild(button.buttonDiv);
-                data["instance"] = button;
-              }
-              // Expand refMap with all module instances and menu item link pairs
-              data["instances"].forEach(instance => {
-                let mix = instance["module"] + instance["id"];
-                Navigation.refMap.set(mix, {"link": link, "instance": button});
-              });
-              // Expand refMap link to link pair (redundant, but helps the algorith)
-              Navigation.refMap.set(link, {"link": link, "instance": button});
+                let button = null;
+                if (data.children.length > 0) {
+                    button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                    Navigation.generateNavigationRecursive(button.childrenDOMElement, button.children);
+                    parent.appendChild(button.twoParterDiv);
+                    data["instance"] = button;
+                } else {
+                    button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                    parent.appendChild(button.buttonDiv);
+                    data["instance"] = button;
+                }
+                // Expand refMap with all module instances and menu item link pairs
+                data["instances"].forEach(instance => {
+                    let mix = instance["module"] + instance["id"];
+                    Navigation.refMap.set(mix, {"link": link, "instance": button});
+                });
+                // Expand refMap link to link pair (redundant, but helps the algorith)
+                Navigation.refMap.set(link, {"link": link, "instance": button});
             }
         }
         //
@@ -188,34 +188,49 @@ class PyDocNavigation {
                 Navigation.switchToWindow(this.startpage["instance"]);
             }
         }
+        //
+        // State management
         static saveState() {
-            let requestedWindows = []
-            Navigation.requestedWindows.forEach(el => {
-                requestedWindows.push(el.id);
+            let currentlyOpenedLinks = []
+            Navigation.savedRequests.forEach(savedRequest => {
+                currentlyOpenedLinks.push(savedRequest.navItem.link);
             })
             const state = {
-                "requestedWindows": requestedWindows
+                "currentlyOpenedLinks": currentlyOpenedLinks
             }
-            localStorage.setItem("Navigation", JSON.stringify(state));
+            localStorage.setItem("PyDocNavigation", JSON.stringify(state));
         }
         static loadState() {
-            const loadedStateObject = JSON.parse(localStorage.getItem("Navigation"));
-            if (loadedStateObject && loadedStateObject["requestedWindows"]) {
+            const loadedStateObject = JSON.parse(localStorage.getItem("PyDocNavigation"));
+            if (loadedStateObject && loadedStateObject["currentlyOpenedLinks"]) {
                 // close all windows
-                Navigation.requestedWindows.forEach(element => {
-                    ContentManager.closeWindow(element);
+                Navigation.savedRequests.forEach(savedRequest => {
+                    Navigation.dismissWindow(savedRequest);
                 });
-                Navigation.requestedWindows.splice(0)
-                // open saved ones
-                loadedStateObject["requestedWindows"].forEach(el => {
-                    Navigation.toggleWindow(parseInt(el));
-                })
+                Navigation.savedRequests.splice(0);
+                // check if links are still the same
+                let allOk = true;
+                for (const link of loadedStateObject["currentlyOpenedLinks"]) {
+                    if (!Navigation.refMap.get(link)) {
+                        allOk = false;
+                        console.log("Directory structure or link names changed, state not loaded.");
+                        localStorage.removeItem("PyDocNavigation");
+                    }
+                }
+                // if all ok, open saved windows
+                if (allOk) {
+                    Navigation.startpage = true;  // Prevents from opening default startpage
+                    for (const link of loadedStateObject["currentlyOpenedLinks"]) {
+                        const navItem = Navigation.refMap.get(link);
+                        Navigation.toggleWindow(navItem["instance"]);
+                    }
+                }
             }
         }
     }
 }
 Linker.register((e, link, response) => {PyDocNavigation.Navigation.openLink(e, link, response)});
 PyDocNavigation.Navigation.generateNavigation();
-// StateManager.register("Navigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
+StateManager.register("PyDocNavigation", PyDocNavigation.Navigation.saveState, PyDocNavigation.Navigation.loadState);
 PyDocNavigation.Navigation.openStartpage();
 
