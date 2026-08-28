@@ -52,7 +52,22 @@ class PyDocNavigation {
     static Branch = class Branch extends PyDocNavigation.NavItem {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
             super(link, parent, title, childrenMapEntries, instances, level);
-            this.htmlNavItemArrow.innerText = `🞂`;
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);;
+            this.isCollapsed = false;
+            this.htmlNavItemArrow.addEventListener("click", this.collapseClickEvent.bind(this));
+        }
+        collapse() {
+            this.isCollapsed = true;
+            this.htmlNavItemChildrenContainer.style.display = "none";
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F782);;
+        }
+        expand() {
+            this.isCollapsed = false;
+            this.htmlNavItemChildrenContainer.style.display = "flex";
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);
+        }
+        collapseClickEvent(e) {
+            if (this.isCollapsed) {this.expand();} else {this.collapse();}
         }
     }
     //
