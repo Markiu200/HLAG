@@ -5,4 +5,45 @@
   flex-basis: 250px;
   flex-grow: 0;
   flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+  font-size: smaller;
 }
+#nav .nav-item { /* Holds title and arrow */
+  display: flex;
+  flex-direction: row;
+
+  .nav-item--title { /* Title */
+    display: flex;
+    flex-grow: 1;
+    user-select: none;
+  }
+  .nav-item--title:hover {
+    cursor: pointer;
+    color: #0095c4;
+  }
+  .nav-item--arrow { /* Arrow for Branches */
+    display: flex;
+    flex-basis: 25px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    user-select: none;
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-item--arrow:hover {
+    cursor: pointer;
+    color: #0095c4;
+  }
+}
+#nav .nav-item-children-container { /* Holds children */
+  display: flex;
+  flex-direction: column;
+}
+#nav .nav-item-container { /* Holds NavItem (title and arrow) and children container */
+  display: flex;
+  flex-direction: column;
+}
+#nav .active {
+  .nav-item--title, .nav-item--arrow {color: hsl(194, 100%, 26%);}
+}
+

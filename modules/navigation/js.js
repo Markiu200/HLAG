@@ -12,19 +12,32 @@ class PyDocNavigation {
             this.children = children;
             this.instances = instances;
             this.level = level;
-            this.buttonDiv = this.createDiv()
-            this.buttonDiv.addEventListener("click", this.clickEvent.bind(this));
-        }
-        createDiv() {
-            let htmlElement = document.createElement("div");
-            htmlElement.innerText = `Title: ${this.title} Link: ${this.link}`;
-            return htmlElement;
+            //
+            this.htmlNavItemTitle = document.createElement("div");
+            this.htmlNavItemTitle.classList.add("nav-item--title");
+            this.htmlNavItemTitle.innerHTML = `<a>${this.title}</a>`;
+            this.htmlNavItemArrow = document.createElement("div");
+            this.htmlNavItemArrow.classList.add("nav-item--arrow");
+            //
+            this.htmlNavItem = document.createElement("div");
+            this.htmlNavItem.classList.add("nav-item");
+            this.htmlNavItem.appendChild(this.htmlNavItemArrow);
+            this.htmlNavItem.appendChild(this.htmlNavItemTitle);
+            //
+            this.htmlNavItemContainer = document.createElement("div");
+            this.htmlNavItemContainer.classList.add("nav-item-container");
+            this.htmlNavItemChildrenContainer = document.createElement("div");
+            this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
+            this.htmlNavItemContainer.appendChild(this.htmlNavItem);
+            this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
+            //
+            this.htmlNavItemTitle.addEventListener("click", this.clickEvent.bind(this));
         }
         close() {
-            // console.log("navitem closed");
+            this.htmlNavItem.classList.remove("active");
         }
         open() {
-            // console.log("navitem opened");
+            this.htmlNavItem.classList.add("active");
         }
         clickEvent(e) {
             if (e.shiftKey) {
@@ -38,10 +51,7 @@ class PyDocNavigation {
     static Branch = class Branch extends PyDocNavigation.NavItem {
         constructor(link, parent, title, children, instances, level) {
             super(link, parent, title, children, instances, level);
-            this.twoParterDiv = document.createElement("div");
-            this.twoParterDiv.appendChild(this.buttonDiv);
-            this.childrenDOMElement = document.createElement("div");
-            this.twoParterDiv.appendChild(this.childrenDOMElement);
+            this.htmlNavItemArrow.innerText = `🞂`;
         }
     }
     //
@@ -135,24 +145,24 @@ class PyDocNavigation {
         }
         static generateNavigationRecursive(parent, map) {
             for (const [link, data] of map) {
-                let button = null;
+                let navItem = null;
                 if (data.children.length > 0) {
-                    button = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                    Navigation.generateNavigationRecursive(button.childrenDOMElement, button.children);
-                    parent.appendChild(button.twoParterDiv);
-                    data["instance"] = button;
+                    navItem = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                    Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.children);
+                    parent.appendChild(navItem.htmlNavItemContainer);
+                    data["instance"] = navItem;
                 } else {
-                    button = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                    parent.appendChild(button.buttonDiv);
-                    data["instance"] = button;
+                    navItem = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
+                    parent.appendChild(navItem.htmlNavItemContainer);
+                    data["instance"] = navItem;
                 }
                 // Expand refMap with all module instances and menu item link pairs
                 data["instances"].forEach(instance => {
                     let mix = instance["module"] + instance["id"];
-                    Navigation.refMap.set(mix, {"link": link, "instance": button});
+                    Navigation.refMap.set(mix, {"link": link, "instance": navItem});
                 });
-                // Expand refMap link to link pair (redundant, but helps the algorith)
-                Navigation.refMap.set(link, {"link": link, "instance": button});
+                // Expand refMap link to link pair (redundant, but helps the algorithm)
+                Navigation.refMap.set(link, {"link": link, "instance": navItem});
             }
         }
         //
