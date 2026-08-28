@@ -5,11 +5,12 @@
 
 class PyDocNavigation {
     static NavItem = class NavItem {
-        constructor(link, parent, title, children, instances, level) {
+        constructor(link, parent, title, childrenMapEntries, instances, level) {
             this.link = link
             this.parent = parent;
             this.title = title;
-            this.children = children;
+            this.childrenNavItems = [];
+            this.childrenMapEntries = childrenMapEntries;
             this.instances = instances;
             this.level = level;
             //
@@ -49,8 +50,8 @@ class PyDocNavigation {
     }
     //
     static Branch = class Branch extends PyDocNavigation.NavItem {
-        constructor(link, parent, title, children, instances, level) {
-            super(link, parent, title, children, instances, level);
+        constructor(link, parent, title, childrenMapEntries, instances, level) {
+            super(link, parent, title, childrenMapEntries, instances, level);
             this.htmlNavItemArrow.innerText = `🞂`;
         }
     }
@@ -141,20 +142,25 @@ class PyDocNavigation {
         //
         // Menu generation code
         static generateNavigation() {
-            Navigation.generateNavigationRecursive(PyDocNavigation.Navigation.navigationDiv, Navigation.menuMap.entries())
+            Navigation.generateNavigationRecursive(PyDocNavigation.Navigation.navigationDiv, Navigation.menuMap.entries(), null);
         }
-        static generateNavigationRecursive(parent, map) {
+        static generateNavigationRecursive(containingHTMLElement, map, parentNavItem) {
             for (const [link, data] of map) {
                 let navItem = null;
+                // Decide between Branch, Leaf, Header and Separator
                 if (data.children.length > 0) {
-                    navItem = new PyDocNavigation.Branch(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                    Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.children);
-                    parent.appendChild(navItem.htmlNavItemContainer);
+                    navItem = new PyDocNavigation.Branch(link, parentNavItem, data["title"], data["children"], data["instances"], 0);
+                    Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.childrenMapEntries, navItem);
+                    containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                 } else {
-                    navItem = new PyDocNavigation.NavItem(link, data["parent"], data["title"], data["children"], data["instances"], 0);
-                    parent.appendChild(navItem.htmlNavItemContainer);
+                    navItem = new PyDocNavigation.NavItem(link, parentNavItem, data["title"], data["children"], data["instances"], 0);
+                    containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
+                }
+                //
+                if (navItem.parent) {
+                    navItem.parent.childrenNavItems.push(navItem);
                 }
                 // Expand refMap with all module instances and menu item link pairs
                 data["instances"].forEach(instance => {
