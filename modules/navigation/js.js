@@ -75,7 +75,7 @@ class PyDocNavigation {
             //
             this.htmlNavItemChildrenContainer = document.createElement("div");
             this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
-            this.htmlNavItemChildrenContainer.style.paddingLeft = (10).toString() + "px";
+            this.htmlNavItemChildrenContainer.style.paddingLeft = "10px";
             this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
             //
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);;

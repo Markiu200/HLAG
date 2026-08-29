@@ -157,7 +157,7 @@ class PyDocNavigation(IModule):
             if os.path.isdir(str(node.path)) and node.has_attribute("escaped") and node.metadata.get("nav-separator"):
                 # If file and is escaped - Separator item
                 title = node.metadata.get("nav-separator") if node.metadata.get("nav-separator") else node.path.name
-                link = ""
+                link = node.metadata.get("relPath")
                 new_item = NavItem(parent=node, nav_type="separator", link=link, title=title)
                 nav_item.children.append(new_item)
 
