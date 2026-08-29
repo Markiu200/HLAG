@@ -80,8 +80,15 @@ class Linker:
                 hosts[host_path] = instance
             #
         for link, data in links.items():
+            entry_meta = data["instance"].instance_db_entry.meta
+            if isinstance(entry_meta, str):  # Try to translate str into dict, if metadata is saved as str
+                try:
+                    entry_meta = ast.literal_eval(entry_meta)
+                except ValueError or TypeError or SyntaxError or MemoryError or RecursionError:
+                    continue
+            #
             host_of_link = hosts.get(data["host_path"])
-            rel_path = data["instance"].instance_db_entry.meta.get("relPath")
+            rel_path = entry_meta.get("relPath")
             if not rel_path:
                 rel_path = link
             rel_ref = data["instance"].ref
