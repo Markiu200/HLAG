@@ -298,12 +298,19 @@ class PyDocNavigation {
         //
         // State management
         static saveState() {
-            let currentlyOpenedLinks = []
+            let currentlyOpenedLinks = [];
             Navigation.savedRequests.forEach(savedRequest => {
                 currentlyOpenedLinks.push(savedRequest.navItem.link);
             })
+            let collapseMap = [];
+            for (const [link, data] of PyDocNavigation.Navigation.refMap) {
+                    if (data["instance"] && data["instance"] instanceof PyDocNavigation.Branch) {
+                        collapseMap.push([link, data["instance"].isCollapsed]);
+                    }
+                };
             const state = {
-                "currentlyOpenedLinks": currentlyOpenedLinks
+                "currentlyOpenedLinks": currentlyOpenedLinks,
+                "collapseMap": collapseMap
             }
             localStorage.setItem("PyDocNavigation", JSON.stringify(state));
         }
@@ -331,6 +338,19 @@ class PyDocNavigation {
                         const navItem = Navigation.refMap.get(link);
                         Navigation.toggleWindow(navItem["instance"]);
                     }
+                }
+                // expand or collapse Branches
+                if (loadedStateObject["collapseMap"]) {
+                    loadedStateObject["collapseMap"].forEach(saved => {
+                        const navItem = PyDocNavigation.Navigation.refMap.get(saved[0]);  // saved[0] is "link" part
+                        if (navItem && navItem["instance"] && navItem["instance"] instanceof PyDocNavigation.Branch) {
+                            if (saved[1]) {  // if isCollapsed is true
+                                navItem["instance"].collapse();
+                            } else {
+                                navItem["instance"].expand();
+                            }
+                        }
+                    });
                 }
             }
         }
