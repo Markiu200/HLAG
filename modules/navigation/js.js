@@ -19,6 +19,7 @@ class PyDocNavigation {
             this.htmlNavItemTitle.innerHTML = `<a>${this.title}</a>`;
             this.htmlNavItemArrow = document.createElement("div");
             this.htmlNavItemArrow.classList.add("nav-item--arrow");
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x25AA);
             //
             this.htmlNavItem = document.createElement("div");
             this.htmlNavItem.classList.add("nav-item");
