@@ -13,14 +13,12 @@ class PyDocNavigation {
             this.childrenMapEntries = childrenMapEntries;
             this.instances = instances;
             this.level = level;
-            this.isActive = false;
             //
             this.htmlNavItemTitle = document.createElement("div");
             this.htmlNavItemTitle.classList.add("nav-item--title");
             this.htmlNavItemTitle.innerHTML = `<a>${this.title}</a>`;
             this.htmlNavItemArrow = document.createElement("div");
             this.htmlNavItemArrow.classList.add("nav-item--arrow");
-            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x25AA);
             //
             this.htmlNavItem = document.createElement("div");
             this.htmlNavItem.classList.add("nav-item");
@@ -34,7 +32,14 @@ class PyDocNavigation {
             this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
             this.htmlNavItemContainer.appendChild(this.htmlNavItem);
             this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
-            //
+        }
+    }
+    //
+    static Leaf = class Leaf extends PyDocNavigation.NavItem {
+        constructor(link, parent, title, childrenMapEntries, instances, level) {
+            super(link, parent, title, childrenMapEntries, instances, level);
+            this.isActive = false;
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x25AA);
             this.htmlNavItemTitle.addEventListener("click", this.clickEvent.bind(this));
         }
         close() {
@@ -60,7 +65,7 @@ class PyDocNavigation {
         }
     }
     //
-    static Branch = class Branch extends PyDocNavigation.NavItem {
+    static Branch = class Branch extends PyDocNavigation.Leaf {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
             super(link, parent, title, childrenMapEntries, instances, level);
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);;
@@ -111,7 +116,7 @@ class PyDocNavigation {
     }
     //
     //
-    static Root = class Root extends PyDocNavigation.NavItem {
+    static Root = class Root extends PyDocNavigation.Leaf {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
             super(link, parent, title, childrenMapEntries, instances, level);
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x2B9E);
@@ -266,7 +271,7 @@ class PyDocNavigation {
                     data["instance"] = navItem;
                     Navigation.intOfBranches += 1;
                 } else {  // Leaf
-                    navItem = new PyDocNavigation.NavItem(link, parentNavItem, data["title"], data["children"], data["instances"], level);
+                    navItem = new PyDocNavigation.Leaf(link, parentNavItem, data["title"], data["children"], data["instances"], level);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                 }
