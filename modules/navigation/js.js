@@ -75,7 +75,7 @@ class PyDocNavigation {
             //
             this.htmlNavItemChildrenContainer = document.createElement("div");
             this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
-            this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
+            this.htmlNavItemChildrenContainer.style.paddingLeft = (10).toString() + "px";
             this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
             //
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);;
@@ -280,6 +280,10 @@ class PyDocNavigation {
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                     Navigation.intOfBranches += 1;
+                } else if (data["type"] == "separator") {  // Separator
+                    navItem = new PyDocNavigation.Separator(link, parentNavItem, data["title"]);
+                    containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
+                    data["instance"] = navItem;
                 } else {  // Leaf
                     navItem = new PyDocNavigation.Leaf(link, parentNavItem, data["title"], data["instances"]);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
