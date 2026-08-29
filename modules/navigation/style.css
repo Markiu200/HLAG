@@ -8,10 +8,21 @@
   font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
   font-size: smaller;
 }
+#nav .nav-item--separator {
+  padding-top: 15px;
+  padding-left: 2px;
+}
 #nav .nav-item { /* Holds title and arrow */
   display: flex;
   flex-direction: row;
 
+  .nav-item--title--separator { /* Title but for Separators */
+    display: flex;
+    flex-grow: 1;
+    user-select: none;
+    font-size: medium;
+    color: hsl(0, 0%, 30%)
+  }
   .nav-item--title { /* Title */
     display: flex;
     flex-grow: 1;

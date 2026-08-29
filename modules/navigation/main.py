@@ -62,6 +62,7 @@ class NavItem:
 class PyDocNavigation(IModule):
     module_path = PurePath(__file__).parent
     navigation_meta_check = import_module(f"navigation.navigation_meta_check")
+    nav_separator_check = import_module(f"navigation.nav_separator_check")
     nav_tree: NavItem = None
 
     @classmethod
@@ -76,6 +77,7 @@ class PyDocNavigation(IModule):
     @classmethod
     def register_checks(cls):
         ModuleFacade.register_final_dir_check(cls.navigation_meta_check.NavigationMetaCheck())
+        ModuleFacade.register_final_dir_check(cls.nav_separator_check.NavSeparatorCheck())
 
     @classmethod
     def register_files(cls):
@@ -152,9 +154,9 @@ class PyDocNavigation(IModule):
                     nav_item.children.append(new_item)
                     cls.collect_refs(node, new_item)
 
-            if os.path.isfile(str(node.path)) and node.has_attribute("escaped") and node.metadata.get("nav-separator"):
+            if os.path.isdir(str(node.path)) and node.has_attribute("escaped") and node.metadata.get("nav-separator"):
                 # If file and is escaped - Separator item
-                title = node.metadata.get("title") if node.metadata.get("title") else node.path.name
+                title = node.metadata.get("nav-separator") if node.metadata.get("nav-separator") else node.path.name
                 link = ""
                 new_item = NavItem(parent=node, nav_type="separator", link=link, title=title)
                 nav_item.children.append(new_item)

@@ -26,6 +26,14 @@ class PyDocNavigation {
         }
     }
     //
+    static Separator = class Separator extends PyDocNavigation.NavItem {
+        constructor(link, parent, title) {
+            super(link, parent, title);
+            this.htmlNavItemTitle.classList.add("nav-item--title--separator");
+            this.htmlNavItemContainer.classList.add("nav-item--separator");
+        }
+    }
+    //
     static Leaf = class Leaf extends PyDocNavigation.NavItem {
         constructor(link, parent, title, instances) {
             super(link, parent, title);
