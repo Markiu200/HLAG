@@ -5,20 +5,15 @@
 
 class PyDocNavigation {
     static NavItem = class NavItem {
-        constructor(link, parent, title, childrenMapEntries, instances, level) {
+        constructor(link, parent, title) {
             this.link = link
             this.parent = parent;  // NavItem parent
             this.title = title;
             this.childrenNavItems = [];
-            this.childrenMapEntries = childrenMapEntries;
-            this.instances = instances;
-            this.level = level;
             //
             this.htmlNavItemTitle = document.createElement("div");
-            this.htmlNavItemTitle.classList.add("nav-item--title");
             this.htmlNavItemTitle.innerHTML = `<a>${this.title}</a>`;
             this.htmlNavItemArrow = document.createElement("div");
-            this.htmlNavItemArrow.classList.add("nav-item--arrow");
             //
             this.htmlNavItem = document.createElement("div");
             this.htmlNavItem.classList.add("nav-item");
@@ -32,9 +27,12 @@ class PyDocNavigation {
     }
     //
     static Leaf = class Leaf extends PyDocNavigation.NavItem {
-        constructor(link, parent, title, childrenMapEntries, instances, level) {
-            super(link, parent, title, childrenMapEntries, instances, level);
+        constructor(link, parent, title, instances) {
+            super(link, parent, title);
+            this.instances = instances;
             this.isActive = false;
+            this.htmlNavItemTitle.classList.add("nav-item--title");
+            this.htmlNavItemArrow.classList.add("nav-item--arrow");
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x25AA);
             this.htmlNavItemTitle.addEventListener("click", this.clickEvent.bind(this));
         }
@@ -63,7 +61,10 @@ class PyDocNavigation {
     //
     static Branch = class Branch extends PyDocNavigation.Leaf {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
-            super(link, parent, title, childrenMapEntries, instances, level);
+            super(link, parent, title, instances);
+            this.childrenMapEntries = childrenMapEntries;
+            this.level = level;
+            //
             this.htmlNavItemChildrenContainer = document.createElement("div");
             this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
             this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
@@ -118,8 +119,8 @@ class PyDocNavigation {
     //
     //
     static Root = class Root extends PyDocNavigation.Leaf {
-        constructor(link, parent, title, childrenMapEntries, instances, level) {
-            super(link, parent, title, childrenMapEntries, instances, level);
+        constructor(link, parent, title, instances) {
+            super(link, parent, title, instances);
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x2B9E);
             this.isCollapsed = false;
             this.htmlNavItemArrow.addEventListener("click", this.collapseAllClickEvent.bind(this));
@@ -260,7 +261,7 @@ class PyDocNavigation {
                 let navItem = null;
                 // Decide between Root, Branch, Leaf, Header and Separator
                 if (link == "_") {  // Root
-                    navItem = new PyDocNavigation.Root(link, parentNavItem, data["title"], data["children"], data["instances"], level);
+                    navItem = new PyDocNavigation.Root(link, parentNavItem, data["title"], data["instances"]);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                     Navigation.root = navItem;
@@ -272,7 +273,7 @@ class PyDocNavigation {
                     data["instance"] = navItem;
                     Navigation.intOfBranches += 1;
                 } else {  // Leaf
-                    navItem = new PyDocNavigation.Leaf(link, parentNavItem, data["title"], data["children"], data["instances"], level);
+                    navItem = new PyDocNavigation.Leaf(link, parentNavItem, data["title"], data["instances"]);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                 }
