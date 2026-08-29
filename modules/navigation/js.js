@@ -59,17 +59,77 @@ class PyDocNavigation {
             this.htmlNavItemArrow.addEventListener("click", this.collapseClickEvent.bind(this));
         }
         collapse() {
-            this.isCollapsed = true;
-            this.htmlNavItemChildrenContainer.style.display = "none";
-            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F782);;
+            if (!this.isCollapsed) {
+                this.isCollapsed = true;
+                this.htmlNavItemChildrenContainer.style.display = "none";
+                this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F782);;
+                PyDocNavigation.Navigation.intOfCollapsedBranches += 1;
+                if (PyDocNavigation.Navigation.root) {
+                    PyDocNavigation.Navigation.root.updateArrow();
+                }
+            }
         }
         expand() {
-            this.isCollapsed = false;
-            this.htmlNavItemChildrenContainer.style.display = "flex";
-            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);
+            if (this.isCollapsed) {
+                this.isCollapsed = false;
+                this.htmlNavItemChildrenContainer.style.display = "flex";
+                this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);
+                PyDocNavigation.Navigation.intOfCollapsedBranches -= 1;
+                if (PyDocNavigation.Navigation.root) {
+                    PyDocNavigation.Navigation.root.updateArrow();
+                }
+            }
         }
         collapseClickEvent(e) {
             if (this.isCollapsed) {this.expand();} else {this.collapse();}
+        }
+    }
+    //
+    //
+    static Root = class Root extends PyDocNavigation.NavItem {
+        constructor(link, parent, title, childrenMapEntries, instances, level) {
+            super(link, parent, title, childrenMapEntries, instances, level);
+            this.htmlNavItemArrow.innerText = String.fromCodePoint(0x2B9E);
+            this.isCollapsed = false;
+            this.htmlNavItemArrow.addEventListener("click", this.collapseAllClickEvent.bind(this));
+        }
+        updateArrow() {
+            if (PyDocNavigation.Navigation.intOfCollapsedBranches == PyDocNavigation.Navigation.intOfBranches) {
+                // All branches collapsed
+                this.htmlNavItemArrow.innerText = String.fromCodePoint(0x2B9E);
+                this.isCollapsed = true;
+            } else {
+                // Some branches expanded
+                this.htmlNavItemArrow.innerText = String.fromCodePoint(0x2B9F);
+                this.isCollapsed = false;
+            }
+        }
+        collapseAllClickEvent(e) {
+            if (this.isCollapsed) {this.expand();} else {this.collapse();}
+        }
+        collapse() {
+            if (!this.isCollapsed) {
+                // Expand every branch;
+                for (const [link, data] of PyDocNavigation.Navigation.refMap) {
+                    if (data["instance"] && data["instance"] instanceof PyDocNavigation.Branch) {
+                        data["instance"].collapse();
+                    }
+                };
+                this.isCollapsed = true;
+                this.updateArrow();
+            }
+        }
+        expand() {
+            if (this.isCollapsed) {
+                // Collapse every branch;
+                for (const [link, data] of PyDocNavigation.Navigation.refMap) {
+                    if (data["instance"] && data["instance"] instanceof PyDocNavigation.Branch) {
+                        data["instance"].expand();
+                    }
+                };
+                this.isCollapsed = false;
+                this.updateArrow();
+            }
         }
     }
     //
@@ -98,6 +158,9 @@ class PyDocNavigation {
         static refMap = new Map();  // Each item is a representation of directory and it's direct module instances
         //
         static startpage = null;
+        static intOfBranches = 0;
+        static intOfCollapsedBranches = 0;
+        static root = null;
         //
         // ContentManager requests
         /**
@@ -164,13 +227,20 @@ class PyDocNavigation {
         static generateNavigationRecursive(containingHTMLElement, map, parentNavItem, level) {
             for (const [link, data] of map) {
                 let navItem = null;
-                // Decide between Branch, Leaf, Header and Separator
-                if (data.children.length > 0) {
+                // Decide between Root, Branch, Leaf, Header and Separator
+                if (link == "_") {  // Root
+                    navItem = new PyDocNavigation.Root(link, parentNavItem, data["title"], data["children"], data["instances"], level);
+                    containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
+                    data["instance"] = navItem;
+                    Navigation.root = navItem;
+                }
+                else if (data.children.length > 0) {  // Branch
                     navItem = new PyDocNavigation.Branch(link, parentNavItem, data["title"], data["children"], data["instances"], level);
                     Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.childrenMapEntries, navItem, level+1);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
-                } else {
+                    Navigation.intOfBranches += 1;
+                } else {  // Leaf
                     navItem = new PyDocNavigation.NavItem(link, parentNavItem, data["title"], data["children"], data["instances"], level);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
@@ -186,6 +256,10 @@ class PyDocNavigation {
                 });
                 // Expand refMap link to link pair (redundant, but helps the algorithm)
                 Navigation.refMap.set(link, {"link": link, "instance": navItem});
+            }
+            // After iterating over entire map, update root status
+            if (level == 0 && PyDocNavigation.Navigation.root) {
+                PyDocNavigation.Navigation.root.updateArrow();
             }
         }
         //
