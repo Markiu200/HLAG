@@ -7,7 +7,7 @@ class PyDocNavigation {
     static NavItem = class NavItem {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
             this.link = link
-            this.parent = parent;
+            this.parent = parent;  // NavItem parent
             this.title = title;
             this.childrenNavItems = [];
             this.childrenMapEntries = childrenMapEntries;
@@ -44,6 +44,12 @@ class PyDocNavigation {
         open() {
             this.isActive = true;
             this.htmlNavItem.classList.add("active");
+            this.expandBranch();
+        }
+        expandBranch() {
+            if (this.parent && this.parent instanceof PyDocNavigation.Branch) {
+                this.parent.expand();
+            }
         }
         clickEvent(e) {
             if (e.shiftKey) {
@@ -81,6 +87,9 @@ class PyDocNavigation {
                 if (PyDocNavigation.Navigation.root) {
                     PyDocNavigation.Navigation.root.updateArrow();
                 }
+            }
+            if (this.parent && this.parent instanceof PyDocNavigation.Branch) {
+                this.parent.expand();
             }
         }
         clickEvent(e) {
