@@ -97,29 +97,30 @@ class Raw(IModule):
         ## read metadata
         ignore_lines = card.meta.get("ignore-lines")
         enable_references = False if card.meta.get("references") == "disabled" else True
-        #
-        pattern = rf'({re.escape(Ref.start_tag)}.*?{re.escape(Ref.end_tag)})'
+
+        ## parse
         data_list = []
-        current_data = ""
-        splitted = content.splitlines(keepends=True)
-        #
-        for line in splitted:
-            if ignore_lines:
-                line = cls.ignore_lines_filter(pattern=ignore_lines, line=line)
-            if enable_references:
-                parts = re.split(pattern, line)
-                even = True
-                for part in parts:
-                    if even:
-                        current_data = "".join([current_data, part])
-                        data_list.append(Text(current_data))
-                        current_data = ""
-                        even = not even
-                    else:
-                        data_list.append(Order(line))
-                        even = not even
-            else:
-                data_list.append(Text(line))
+
+        if ignore_lines:
+            splitted = content.splitlines(keepends=True)
+            after_ignoring = []
+            for line in splitted:
+                after_ignoring.append(cls.ignore_lines_filter(pattern=ignore_lines, line=line))
+            content = "".join(after_ignoring)
+
+        if enable_references:
+            pattern = rf'({re.escape(Ref.start_tag)}.*?{re.escape(Ref.end_tag)})'
+            parts = re.split(pattern, content)
+            even = True
+            for part in parts:
+                if even:
+                    data_list.append(Text(part))
+                    even = not even
+                else:
+                    data_list.append(Order(part))
+                    even = not even
+        else:
+            data_list.append(Text(content))
 
         # Step 5 - Return InstanceDBEntry
         merged_data_list = ", ".join([item.js_prepared() for item in data_list])
