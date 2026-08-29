@@ -27,11 +27,7 @@ class PyDocNavigation {
             //
             this.htmlNavItemContainer = document.createElement("div");
             this.htmlNavItemContainer.classList.add("nav-item-container");
-            this.htmlNavItemChildrenContainer = document.createElement("div");
-            this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
-            this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
             this.htmlNavItemContainer.appendChild(this.htmlNavItem);
-            this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
         }
     }
     //
@@ -68,6 +64,11 @@ class PyDocNavigation {
     static Branch = class Branch extends PyDocNavigation.Leaf {
         constructor(link, parent, title, childrenMapEntries, instances, level) {
             super(link, parent, title, childrenMapEntries, instances, level);
+            this.htmlNavItemChildrenContainer = document.createElement("div");
+            this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
+            this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
+            this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
+            //
             this.htmlNavItemArrow.innerText = String.fromCodePoint(0x1F783);;
             this.isCollapsed = false;
             this.htmlNavItemArrow.addEventListener("click", this.collapseClickEvent.bind(this));
