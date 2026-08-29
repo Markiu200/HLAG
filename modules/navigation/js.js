@@ -29,6 +29,7 @@ class PyDocNavigation {
             this.htmlNavItemContainer.classList.add("nav-item-container");
             this.htmlNavItemChildrenContainer = document.createElement("div");
             this.htmlNavItemChildrenContainer.classList.add("nav-item-children-container");
+            this.htmlNavItemChildrenContainer.style.paddingLeft = ((level+1)*10).toString() + "px";
             this.htmlNavItemContainer.appendChild(this.htmlNavItem);
             this.htmlNavItemContainer.appendChild(this.htmlNavItemChildrenContainer);
             //
@@ -157,19 +158,19 @@ class PyDocNavigation {
         //
         // Menu generation code
         static generateNavigation() {
-            Navigation.generateNavigationRecursive(PyDocNavigation.Navigation.navigationDiv, Navigation.menuMap.entries(), null);
+            Navigation.generateNavigationRecursive(PyDocNavigation.Navigation.navigationDiv, Navigation.menuMap.entries(), null, 0);
         }
-        static generateNavigationRecursive(containingHTMLElement, map, parentNavItem) {
+        static generateNavigationRecursive(containingHTMLElement, map, parentNavItem, level) {
             for (const [link, data] of map) {
                 let navItem = null;
                 // Decide between Branch, Leaf, Header and Separator
                 if (data.children.length > 0) {
-                    navItem = new PyDocNavigation.Branch(link, parentNavItem, data["title"], data["children"], data["instances"], 0);
-                    Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.childrenMapEntries, navItem);
+                    navItem = new PyDocNavigation.Branch(link, parentNavItem, data["title"], data["children"], data["instances"], level);
+                    Navigation.generateNavigationRecursive(navItem.htmlNavItemChildrenContainer, navItem.childrenMapEntries, navItem, level+1);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                 } else {
-                    navItem = new PyDocNavigation.NavItem(link, parentNavItem, data["title"], data["children"], data["instances"], 0);
+                    navItem = new PyDocNavigation.NavItem(link, parentNavItem, data["title"], data["children"], data["instances"], level);
                     containingHTMLElement.appendChild(navItem.htmlNavItemContainer);
                     data["instance"] = navItem;
                 }
