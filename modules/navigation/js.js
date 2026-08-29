@@ -13,6 +13,7 @@ class PyDocNavigation {
             this.childrenMapEntries = childrenMapEntries;
             this.instances = instances;
             this.level = level;
+            this.isActive = false;
             //
             this.htmlNavItemTitle = document.createElement("div");
             this.htmlNavItemTitle.classList.add("nav-item--title");
@@ -37,9 +38,11 @@ class PyDocNavigation {
             this.htmlNavItemTitle.addEventListener("click", this.clickEvent.bind(this));
         }
         close() {
+            this.isActive = false;
             this.htmlNavItem.classList.remove("active");
         }
         open() {
+            this.isActive = true;
             this.htmlNavItem.classList.add("active");
         }
         clickEvent(e) {
@@ -77,6 +80,19 @@ class PyDocNavigation {
                 PyDocNavigation.Navigation.intOfCollapsedBranches -= 1;
                 if (PyDocNavigation.Navigation.root) {
                     PyDocNavigation.Navigation.root.updateArrow();
+                }
+            }
+        }
+        clickEvent(e) {
+            if (e.shiftKey) {
+                PyDocNavigation.Navigation.toggleWindow(this);
+            } else {
+                if (this.isActive && !this.isCollapsed) {
+                    this.collapse();
+                } else if (this.isActive && this.isCollapsed) {
+                    this.expand();
+                } else {
+                    PyDocNavigation.Navigation.switchToWindow(this);
                 }
             }
         }
