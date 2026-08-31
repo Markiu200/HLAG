@@ -22,13 +22,12 @@
 body {
   display: flex;
   margin: 0;
-  min-block-size: 100vh;
-  max-block-size: 100vh;
   background-color: hsl(0, 0%, 95%);
   font-family: var(--font);
 }
 #main {
   padding: var(--frame-space);
+  padding-bottom: 50vh;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
