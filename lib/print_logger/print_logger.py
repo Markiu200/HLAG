@@ -2,22 +2,35 @@ import logging
 import sys
 
 
-class PrintLogger(logging.Logger):
-    def __init__(self, *args):
-        super().__init__(*args)
+class PrintLogger:
+    def __init__(self):
+        self.stream_stdout_handler = logging.StreamHandler(sys.stdout)
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s %(message)s',
+            handlers=[
+                logging.FileHandler("logs.log"),
+                self.stream_stdout_handler,
+            ]
+        )
+        self.logger = logging.getLogger(__name__)
 
-    def critical(self, msg: str, *args):
-        super().critical(msg, *args)
-        sys.stderr.write(msg)
+    def critical(self, *args):
+        self.logger.critical(*args)
 
-    def error(self, msg: str, *args):
-        super().error(msg, *args)
-        sys.stderr.write(msg)
+    def error(self, *args):
+        self.logger.error(*args)
 
-    def warning(self, msg: str, *args):
-        super().warning(msg, *args)
-        sys.stdout.write(msg)
+    def warning(self, *args):
+        self.logger.warning(*args)
 
-    def info(self, msg: str, *args):
-        super().info(msg, *args)
-        sys.stdout.write(msg)
+    def info(self, *args):
+        self.logger.info(*args)
+
+
+if __name__ == '__main__':
+    logger = PrintLogger()
+    logger.info("Info")
+    logger.critical("Critical")
+    logger.warning("Warning")
+    logger.error("Error")
