@@ -8,6 +8,7 @@ webpage*/
 /tests*.*
 /json_stuff/old_newfluence_copy_with_checklist_prototype.html
 /f_assets
+/outputs/*
 
 # macOS settings file 
 .DS_Store
