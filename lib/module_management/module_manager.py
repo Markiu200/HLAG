@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class Module:
-    def __init__(self, name: str, module_file, module_class: IModule, module_info: dict):
+    def __init__(self, name: str, module_import, module_main_class: IModule, module_info: dict):
         self.name = name
-        self.module_file = module_file
-        self.module_class = module_class
+        self.module_import = module_import
+        self.module_main_class = module_main_class
         self.module_info = module_info
 
 
@@ -40,13 +40,13 @@ class ModuleManager:
 
         try:
             for a_module in modules_directory_list:
-                module_file = importlib.import_module(f"{a_module}.main")
-                module = module_file.get_module_main_class()
-                module_info = module.get_info()
+                module_import = importlib.import_module(f"{a_module}.main")
+                module_main_class = module_import.get_module_main_class()
+                module_info = module_main_class.get_info()
                 cls.found_modules.append(Module(
                     name=module_info.get("name", a_module),
-                    module_file=module_file,
-                    module_class=module,
+                    module_import=module_import,
+                    module_main_class=module_main_class,
                     module_info=module_info
                 ))
         except Exception as e:
@@ -57,10 +57,10 @@ class ModuleManager:
     def initiate_modules(cls):
         cls.found_modules.sort(key=lambda a_module: a_module.module_info.get("priority", 0))
         for registered_module_item in cls.found_modules:
-            registered_module_item.module_class.register_checks()
+            registered_module_item.module_main_class.register_checks()
 
     @classmethod
     def get_module(cls, module_name: str) -> IModule:
         for registered_module_item in cls.found_modules:
             if registered_module_item.name == module_name:
-                return registered_module_item.module_class
+                return registered_module_item.module_main_class
