@@ -13,6 +13,7 @@ from content_manager import ContentManager
 from linker import Linker
 #
 from gui import gui
+
 from printer.printer import Printer
 
 
@@ -35,16 +36,13 @@ def start_gui():
 
 def main(config, module_manager):
     # TEMPORARY CONFIG SETUP
-    # config.base_config = PurePath(
-    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links\structure')
-    # config.output_path = PurePath(
-    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
-    # config.assets_path = PurePath(
-    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
+    # config.target_path = PurePath(r'D:\hlag_t')
+    # config.output_path = PurePath(r'D:\hlag_t_doc')
+    # config.assets_path = PurePath(r'D:\hlag_t_doc')
     # config.assets_dir_name = "assets"
     # config.modules_path = PurePath(r'D:\hlag\modules')
-    # config.output_name = "used_links.html"
-    # config.document_title = "Links used for HLAG project"
+    # config.output_name = "hlag_t.html"
+    # config.document_title = "General testing target"
     # config.embed_images = True
     # config.base_path_length = len(config.target_path.parts)
 
@@ -66,7 +64,7 @@ def main(config, module_manager):
 
     # todo GUI for selecting target directory and other stuff
     # Start GUI
-    # start_gui(config)
+    start_gui()
 
     # Initialize assets manager
     assets_manager = AssetsManager(config)
@@ -137,7 +135,7 @@ def main(config, module_manager):
     printer.register(yield_snippet("ending"))
 
     # Print
-    printer.print()
+    # printer.print()
     print("Done")
 
 
