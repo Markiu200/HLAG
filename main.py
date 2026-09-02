@@ -1,10 +1,10 @@
-import sys
-import logging
-from pathlib import Path, PurePath
+from pathlib import PurePath
 # Own imports
-from config import config
+# from config import config
+from print_logger import PrintLogger
+from n_config import Config
 from module_management import ModuleManager
-from assets_manager import AssetsManager
+from lib.assets_manager.assets_manager import AssetsManager
 from snippet_provider import yield_snippet, yield_snippet_with_args
 from js_manager import JSManager
 from css_manager import CSSManager
@@ -12,21 +12,8 @@ from structure_scanner import StructureScanner
 from content_manager import ContentManager
 from linker import Linker
 #
-import gui
-
+from gui import gui
 from printer.printer import Printer
-
-
-def initialize_logger():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
-        handlers=[
-            logging.FileHandler("logs.log"),
-            logging.StreamHandler(sys.stdout)
-        ]
-    )
-    config.logger = logging.getLogger(__name__)
 
 
 def start_gui():
@@ -36,32 +23,30 @@ def start_gui():
     gui.start()
 
     # assuming it is not checked at input level, do the extra directory scan
-    if not Path(config.target_path).exists():
-        config.logger.error(f"Root directory of {config.target_path} does not exist!")
-        raise FileExistsError("File or directory of targeted path not found")
-    if Path(config.target_path) == Path.cwd():
-        config.logger.error(f"Root directory of {config.target_path} not allowed! Choose another.")
-        raise IsADirectoryError(f"Root directory of {config.target_path} not allowed!")
+    # if not Path(config.target_path).exists():
+    #     config.logger.error(f"Root directory of {config.target_path} does not exist!")
+    #     raise FileExistsError("File or directory of targeted path not found")
+    # if Path(config.target_path) == Path.cwd():
+    #     config.logger.error(f"Root directory of {config.target_path} not allowed! Choose another.")
+    #     raise IsADirectoryError(f"Root directory of {config.target_path} not allowed!")
 
-    config.logger.info(f"Root directory set to {config.target_path}.")
+    # config.logger.info(f"Root directory set to {config.target_path}.")
 
 
-if __name__ == "__main__":
-    initialize_logger()
-
+def main(config, module_manager):
     # TEMPORARY CONFIG SETUP
-    config.target_path = PurePath(
-        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links\structure')
-    config.output_path = PurePath(
-        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
-    config.assets_path = PurePath(
-        r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
-    config.assets_dir_name = "assets"
-    config.modules_path = PurePath(r'D:\hlag\modules')
-    config.output_name = "used_links.html"
-    config.document_title = "Links used for HLAG project"
-    config.embed_images = True
-    config.base_path_length = len(config.target_path.parts)
+    # config.base_config = PurePath(
+    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links\structure')
+    # config.output_path = PurePath(
+    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
+    # config.assets_path = PurePath(
+    #     r'C:\Users\ksmforest\OneDrive\Dokumenty\_OD_przestrzenRobocza\wspolne\_html_docs\hlag_links')
+    # config.assets_dir_name = "assets"
+    # config.modules_path = PurePath(r'D:\hlag\modules')
+    # config.output_name = "used_links.html"
+    # config.document_title = "Links used for HLAG project"
+    # config.embed_images = True
+    # config.base_path_length = len(config.target_path.parts)
 
     # todo asset manager doesn't create assets folder if not needed
     # todo output directory created if doesn't exist
@@ -81,17 +66,21 @@ if __name__ == "__main__":
 
     # todo GUI for selecting target directory and other stuff
     # Start GUI
-    # start_gui()
+    # start_gui(config)
 
-    # Initialize assets folder
-    AssetsManager.initialize()
+    # Initialize assets manager
+    assets_manager = AssetsManager(config)
+    assets_manager.initialize()
 
     # Printer is instantiated
     printer = Printer()
-    printer.set_output_file_path(PurePath(config.output_path, config.output_name))
+    printer.set_output_file_path(PurePath(
+        config.get_base_config().get("output_path"),
+        config.get_base_config().get("output_name"))
+    )
 
     # Configure StructureScanner
-    StructureScanner.set_root_directory(config.target_path)
+    StructureScanner.set_root_directory(config.get_base_config().get("target_path"))
 
     # Scan the structure
     StructureScanner.scan()
@@ -110,7 +99,7 @@ if __name__ == "__main__":
     #
 
     # Register document beginnig for printing
-    printer.register(yield_snippet_with_args("beginning", title=config.document_title))
+    printer.register(yield_snippet_with_args("beginning", title=config.get_base_config().get("output_title")))
 
     this_file_dir = PurePath(__file__).parent
 
@@ -150,3 +139,20 @@ if __name__ == "__main__":
     # Print
     printer.print()
     print("Done")
+
+
+if __name__ == "__main__":
+    logger = PrintLogger()
+
+    config_ = Config()
+    base_config = config_.base_config
+    base_config.add_config_item("target_path", PurePath(PurePath(__file__).parent, "inputs"))
+    base_config.add_config_item("output_path", PurePath(PurePath(__file__).parent, "outputs"))
+    base_config.add_config_item("assets_path", PurePath(PurePath(__file__).parent, "outputs"))
+    base_config.add_config_item("modules_path", PurePath(PurePath(__file__).parent, "modules"))
+    base_config.add_config_item("assets_dir_name", "assets")
+    base_config.add_config_item("output_name", "output.html")
+    base_config.add_config_item("output_title", "DocuMaker")
+    base_config.add_config_item("logger", logger)
+
+    main(config_)
