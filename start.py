@@ -1,8 +1,8 @@
 from pathlib import PurePath
 
-import gui
-from n_config import Config
-from main import main
+from lib.n_config import Config
+from lib.print_logger import PrintLogger
+from lib.module_management import ModuleManager
 from print_logger import PrintLogger
 
 

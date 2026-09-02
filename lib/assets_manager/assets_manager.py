@@ -2,8 +2,8 @@ from pathlib import PurePath
 import os
 import shutil
 # Own imports
-from base_assets_manager import BaseAssetsManager
-from n_config import Config
+from lib.assets_manager.base_assets_manager import BaseAssetsManager
+from lib.n_config import Config
 
 
 class AssetsManager(BaseAssetsManager):
