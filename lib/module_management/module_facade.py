@@ -5,7 +5,6 @@ from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from content_manager import ContentManager
 from module_management import ModuleManager
-from assets_manager import AssetsManager
 
 
 class ModuleFacade:
