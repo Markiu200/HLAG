@@ -11,6 +11,7 @@ from lib.toolbox import Toolbox
 class Module:
     def __init__(self, module_instance: IModule, codename: str, module_info: dict):
         self.module_instance = module_instance
+        self.module_class = None
         self.codename = codename
         self.module_info = module_info
 
@@ -90,6 +91,8 @@ class ModuleManager:
             if self.logger:
                 self.logger.warning(f"Module codename {codename} priority not set - assuming 0")
             new_module.module_info["priority"] = 0
+        new_module.module_class = type(new_module.module_instance)
+        #
         self.registered_modules[codename] = new_module
 
     def get_check_list(self):
@@ -112,3 +115,6 @@ class ModuleManager:
 
     def get_module_object(self, codename: str) -> IModule:
         return self.registered_modules.get(codename).module_instance
+
+    def get_registered_module(self, codename: str) -> Module:
+        return self.registered_modules.get(codename)
