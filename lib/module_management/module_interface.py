@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 from models import Card, InstanceDBEntry
 from structure_scanner import BaseCheck
+from registerables import Registerable
 
 
 class IModule(ABC):
     def __init__(self):
         self.info = dict()
         self.checks: list[BaseCheck] = []
-        self.css = []
-        self.js = []
+        self.css: list[Registerable] = []
+        self.js: list[Registerable] = []
         self.gui_widget = None
 
     @classmethod
@@ -33,33 +34,6 @@ class IModule(ABC):
         result = result.replace("$", "\\$")
         result = result.replace("`", "\\`")
         return fr"`{result}`"
-
-    @classmethod
-    @abstractmethod
-    def get_info(cls) -> dict:
-        """
-        :return: Dictionary of module info, including data such as priority or
-        dependencies.
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
-    def register_checks(cls):
-        """This is what should be done before StructureScanner starts it's scan.
-        Not every module should implement this (just have 'pass' in body). Only
-        these that actually introduce some new extension to the game.
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
-    def register_files(cls):
-        """This is where we register our JS and CSS for final product. This method
-        will be invoked only if ContentManager finds that the module was indeed used.
-        Every module should probably register at least a .js file.
-        """
-        pass
 
     @classmethod
     @abstractmethod
