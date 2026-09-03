@@ -1,8 +1,16 @@
 from abc import ABC, abstractmethod
 from models import Card, InstanceDBEntry
+from structure_scanner import BaseCheck
 
 
 class IModule(ABC):
+    def __init__(self):
+        self.info = dict()
+        self.checks: list[BaseCheck] = []
+        self.css = []
+        self.js = []
+        self.gui_widget = None
+
     @classmethod
     def get_metadata(cls, card: Card) -> dict:
         if card.file:
