@@ -1,17 +1,17 @@
-from pathlib import PurePath
-
-
 class ConfigItem:
-    def __init__(self, key: str, default=None, widget=None):
+    def __init__(self, key: str, default=None):
         self.key = key
         self.value = default
         self.default = default
-        self.widget = widget
 
 
 class BaseConfigNamespace:
-    def __init__(self):
+    def __init__(self, widget=None):
         self.config_items: dict[str, ConfigItem] = dict()
+        self.widget = widget
+
+    def set_widget(self, widget):
+        self.widget = widget
 
     def add_config_item(self, key, default=None):
         if not self.config_items.get(key):
