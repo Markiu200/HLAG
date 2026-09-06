@@ -2,33 +2,37 @@ from pathlib import PurePath
 from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry
-from module_management import IModule
+from module_management import IModule, ModuleManager
+from lib.n_config import Config
+from lib.registerables import FileRegisterable
 
 
-def get_module_main_class():
-    return RawImage
+def register(module_manager: ModuleManager):
+    return RawImage(module_manager)
 
 
 class RawImage(IModule):
-    module_path = PurePath(__file__).parent
-    img_check = import_module(f"raw_image.img_check")
-
-    @classmethod
-    def get_info(cls) -> dict:
-        return {
-            "name": "raw_image",
+    def __init__(self, module_manager: ModuleManager):
+        super().__init__()
+        self.module_path = PurePath(__file__).parent
+        self.info = {
+            "codename": "raw_image",
             "priority": 1,
-            "dependencies": [],
-            "controller": "RawImageModuleController"
+            "controller": "RawModuleController"
         }
-
-    @classmethod
-    def register_checks(cls):
-        ModuleFacade.register_check(cls.img_check.ImgCheck())
-
-    @classmethod
-    def register_files(cls):
-        ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
+        self.module_manager = module_manager
+        self.config: Config = module_manager.config
+        # Checks
+        # ModuleFacade.register_check(cls.img_check.ImgCheck())
+        self.img_check = import_module(f"raw_image.img_check")
+        self.checks = [self.img_check]
+        # JS
+        self.js = [FileRegisterable(PurePath(self.module_path, "js.js"))]
+        # Register config items
+        self.config_ns = module_manager.config.register_namespace(self.info.get("codename"))
+        self.config_ns.add_config_item("base64", False)
+        # GUI
+        self.config_ns.set_widget(import_module(f"raw_image.gui_widget").ConfigWidget)
 
     @classmethod
     def get_metadata_from_file(cls, card: Card) -> dict:
