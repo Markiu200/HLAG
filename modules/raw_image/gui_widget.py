@@ -19,7 +19,8 @@ class ConfigWidget(ttk.Labelframe):
         self.radio_var = tk.StringVar()
         self.base64_radio = ttk.Radiobutton(self.frame, text='base64', value="True", variable=self.radio_var, command=self.set_base)
         self.assets_radio = ttk.Radiobutton(self.frame, text='assets', value="False", variable=self.radio_var, command=self.set_base)
-        self.base64_radio.pack(side=tk.LEFT)
+        self.assets_radio.invoke()
+        self.base64_radio.pack(side=tk.LEFT, padx=(0, 20))
         self.assets_radio.pack(side=tk.LEFT)
 
     def set_base(self):
