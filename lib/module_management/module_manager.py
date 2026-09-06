@@ -48,7 +48,7 @@ class ModuleManager:
                 module_path = PurePath(self.modules_dir_path, module_dir_name)
                 if not os.path.isfile(str(PurePath(module_path, "main.py"))):
                     if self.logger:
-                        self.logger.warning(f"Directory {module_dir_name} in module directory has no main.py file - skipping")
+                        self.logger.error(f"Directory {module_dir_name} in module directory has no main.py file - skipping")
                     continue
                 # Step 2 - Try to register
                 try:
@@ -61,7 +61,7 @@ class ModuleManager:
                     raise e
                 except AttributeError as e:
                     if self.logger:
-                        self.logger.warning(f"Module {module_dir_name} has no register() method in main.py - skipping")
+                        self.logger.error(f"Module {module_dir_name} has no register() method in main.py - skipping")
                     continue
         except Exception as e:
             if self.logger:
@@ -106,7 +106,7 @@ class ModuleManager:
             sorted_check_list.append(check_pair[1])
         return sorted_check_list
 
-    def get_gui_widget(self):
+    def get_gui_widgets(self):
         widget_list = []
         for registered_module in self.registered_modules.values():
             if registered_module.module_instance.gui_widget:
