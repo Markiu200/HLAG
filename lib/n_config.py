@@ -26,6 +26,12 @@ class BaseConfigNamespace:
         else:
             return None
 
+    def get_default(self, key):
+        if self.config_items.get(key):
+            return self.config_items.get(key).default
+        else:
+            return None
+
     def set(self, key, value):
         if key in self.config_items:
             self.config_items.get(key).value = value
@@ -37,12 +43,6 @@ class ConfigNamespace(BaseConfigNamespace):
     def __init__(self, namespace: str):
         super().__init__()
         self.namespace = namespace
-
-    def get(self, key):
-        if self.config_items.get(key):
-            return self.config_items.get(key).value
-        else:
-            raise RuntimeError(f"{key} is not a config item in {self.namespace} config")
 
 
 class Config:
