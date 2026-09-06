@@ -1,37 +1,17 @@
 from pathlib import PurePath
 # Own imports
-# from config import config
-from print_logger import PrintLogger
-from n_config import Config
-from module_management import ModuleManager
+from lib.print_logger import PrintLogger
+from lib.n_config import Config
+from lib.module_management import ModuleManager
 from lib.assets_manager.assets_manager import AssetsManager
+from lib.toolbox import Toolbox
 from snippet_provider import yield_snippet, yield_snippet_with_args
 from js_manager import JSManager
 from css_manager import CSSManager
 from structure_scanner import StructureScanner
 from content_manager import ContentManager
 from linker import Linker
-#
-from gui import gui
-
 from printer.printer import Printer
-
-
-def start_gui():
-    # Read config from user input
-    # todo Launch part - make it launchable w/o GUI
-    # import argparse
-    gui.start()
-
-    # assuming it is not checked at input level, do the extra directory scan
-    # if not Path(config.target_path).exists():
-    #     config.logger.error(f"Root directory of {config.target_path} does not exist!")
-    #     raise FileExistsError("File or directory of targeted path not found")
-    # if Path(config.target_path) == Path.cwd():
-    #     config.logger.error(f"Root directory of {config.target_path} not allowed! Choose another.")
-    #     raise IsADirectoryError(f"Root directory of {config.target_path} not allowed!")
-
-    # config.logger.info(f"Root directory set to {config.target_path}.")
 
 
 def main(config, module_manager):
@@ -142,15 +122,27 @@ def main(config, module_manager):
 if __name__ == "__main__":
     logger = PrintLogger()
 
+    # Start Config
     config_ = Config()
     base_config = config_.base_config
-    base_config.add_config_item("target_path", PurePath(PurePath(__file__).parent, "inputs"))
-    base_config.add_config_item("output_path", PurePath(PurePath(__file__).parent, "outputs"))
-    base_config.add_config_item("assets_path", PurePath(PurePath(__file__).parent, "outputs"))
-    base_config.add_config_item("modules_path", PurePath(PurePath(__file__).parent, "modules"))
+    base_path = PurePath(__file__).parent
+    base_config.add_config_item("base_path", base_path)
+    base_config.add_config_item("target_path", PurePath(base_path, "inputs"))
+    base_config.add_config_item("output_path", PurePath(base_path, "outputs"))
+    base_config.add_config_item("assets_path", PurePath(base_path, "outputs"))
+    base_config.add_config_item("modules_path", PurePath(base_path, "modules"))
     base_config.add_config_item("assets_dir_name", "assets")
     base_config.add_config_item("output_name", "output.html")
-    base_config.add_config_item("output_title", "DocuMaker")
+    base_config.add_config_item("output_title", "Pagemaker")
     base_config.add_config_item("logger", logger)
+    base_config.add_config_item("logger_level", 20)
 
-    main(config_)
+    # Initialize Toolbox
+    toolbox = Toolbox()
+
+    # Start ModuleManager and check for modules
+    module_manager_ = ModuleManager(config_, toolbox)
+    module_manager_.initialize()
+    print(module_manager_)
+
+    # main(config_, module_manager_)
