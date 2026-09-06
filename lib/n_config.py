@@ -13,6 +13,9 @@ class BaseConfigNamespace:
     def set_widget(self, widget):
         self.widget = widget
 
+    def get_widget(self):
+        return self.widget
+
     def add_config_item(self, key, default=None):
         if not self.config_items.get(key):
             self.config_items[key] = ConfigItem(key, default)
