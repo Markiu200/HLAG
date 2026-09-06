@@ -15,6 +15,9 @@ class PrintLogger:
         )
         self.logger = logging.getLogger(__name__)
 
+    def set_level(self, level: int):
+        self.logger.setLevel(level)
+
     def critical(self, *args):
         self.logger.critical(*args)
 
