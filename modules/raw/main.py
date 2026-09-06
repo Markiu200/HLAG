@@ -3,43 +3,41 @@ from pathlib import PurePath
 from importlib import import_module
 # Own imports
 from module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
-from module_management import IModule
+from module_management import IModule, ModuleManager
+from n_config import Config
 from tag_matcher import TagPair, TagMatcher, RightPart, Middle, Part
+from registerables import FileRegisterable
 
 
-def get_module_main_class():
-    return Raw
+def register(module_manager: ModuleManager):
+    return Raw(module_manager)
 
 
 class Raw(IModule):
-    module_path = PurePath(__file__).parent
-    txt_check = import_module(f"raw.txt_check")
-    #
-    meta_tags = ("[-[", "]-]")
-    meta_tags_tagpair = TagPair({meta_tags[0]}, {meta_tags[1]})
-    order_tags = ("[%>mod:", "<%]")
-    order_tags_tagpair = TagPair({order_tags[0]}, {order_tags[1]})
-
-    @classmethod
-    def get_info(cls) -> dict:
-        return {
-            "name": "raw",
+    def __init__(self, module_manager: ModuleManager):
+        super().__init__()
+        self.module_path = PurePath(__file__).parent
+        self.info = {
+            "codename": "raw",
             "priority": 1,
-            "dependencies": [],
             "controller": "RawModuleController"
         }
+        self.module_manager = module_manager
+        self.config: Config = module_manager.config
+        # Checks
+        self.txt_check = import_module("raw.txt_check")
+        self.checks = [self.txt_check]
+        # JS
+        self.js = [FileRegisterable(PurePath(self.module_path, "js.js"))]
+        # CSS
+        self.css = [FileRegisterable(PurePath(self.module_path, "raw.js"))]
+        # Module work related
+        self.meta_tags = ("[-[", "]-]")
+        self.meta_tags_tagpair = TagPair({self.meta_tags[0]}, {self.meta_tags[1]})
+        self.order_tags = ("[%>mod:", "<%]")
+        self.order_tags_tagpair = TagPair({self.order_tags[0]}, {self.order_tags[1]})
 
-    @classmethod
-    def register_checks(cls):
-        ModuleFacade.register_check(cls.txt_check.TXTCheck())
-
-    @classmethod
-    def register_files(cls):
-        ModuleFacade.register_js(PurePath(cls.module_path, "js.js"))
-        ModuleFacade.register_css(PurePath(cls.module_path, "raw.css"))
-
-    @classmethod
-    def get_metadata_from_file(cls, card: Card) -> dict:
+    def get_metadata_from_file(self, card: Card) -> dict:
         tag_lines = []
         metadata = dict()
         #
@@ -48,12 +46,12 @@ class Raw(IModule):
                 line = f.readline()
                 if not line:
                     break
-                if cls.meta_tags[0] in line:
+                if self.meta_tags[0] in line:
                     tag_lines.append(line)
                 else:
                     break
         #
-        items = TagMatcher.match("".join(tag_lines), [cls.meta_tags_tagpair]).get_tree()
+        items = TagMatcher.match("".join(tag_lines), [self.meta_tags_tagpair]).get_tree()
         for item in items:
             if item.is_tag():
                 parts = item.get_inner().split("=", 1)
@@ -64,23 +62,20 @@ class Raw(IModule):
                     break
         return metadata
 
-    @classmethod
-    def get_metadata_from_data(cls, card: Card) -> dict:
+    def get_metadata_from_data(self, card: Card) -> dict:
         return dict()  # turns out this method is never used in practice, unless other modules would like to use it
 
-    @classmethod
-    def parse_file(cls, card: Card) -> InstanceDBEntry:
-        return cls.parse_data(card)
+    def parse_file(self, card: Card) -> InstanceDBEntry:
+        return self.parse_data(card)
 
-    @classmethod
-    def parse_data(cls, card: Card) -> InstanceDBEntry:
+    def parse_data(self, card: Card) -> InstanceDBEntry:
         # Step 1 - If parsing file, get content from file
         if card.file:
             with open(card.node.path) as f:
                 card.content = f.read()
 
         # Step 2 - Read metadata, remove them from text, and adjust newlines
-        items = TagMatcher.match(card.content, [cls.meta_tags_tagpair, cls.order_tags_tagpair]).get_tree()
+        items = TagMatcher.match(card.content, [self.meta_tags_tagpair, self.order_tags_tagpair]).get_tree()
         ## reading metadata
         for item in items:
             if item.is_tag() and item.get_left().tag == "[-[":
@@ -88,10 +83,10 @@ class Raw(IModule):
                 if len(parts) == 2:
                     card.meta[parts[0]] = parts[1]
         ## removing metadata and adjusting newlines
-        cls.craft(items, card)
+        self.craft(items, card)
 
         # Step 3 - Replace orders
-        content = cls.replace_orders(card)
+        content = self.replace_orders(card)
 
         # Step 4 - Do the parsing
         ## read metadata
@@ -105,7 +100,7 @@ class Raw(IModule):
             splitted = content.splitlines(keepends=True)
             after_ignoring = []
             for line in splitted:
-                after_ignoring.append(cls.ignore_lines_filter(pattern=ignore_lines, line=line))
+                after_ignoring.append(Raw.ignore_lines_filter(pattern=ignore_lines, line=line))
             content = "".join(after_ignoring)
 
         if enable_references:
@@ -127,14 +122,13 @@ class Raw(IModule):
         result_data = "".join(['{"nodes": [', merged_data_list, "]}"])
         #
         result_entry = InstanceDBEntry(
-            module=cls.get_info()["name"],
+            module=self.get_info()["name"],
             data=result_data,
             meta=card.meta
         )
         return result_entry
 
-    @classmethod
-    def replace_orders(cls, card: Card) -> str:
+    def replace_orders(self, card: Card) -> str:
         """
         :param card: Card with "content" set to string in question.
         :return: content from Data structure, but with orders replaced with jsrefs
@@ -142,7 +136,7 @@ class Raw(IModule):
         nested_item_count = 0
         new_content = ""
         #
-        items = TagMatcher.match(card.content, [cls.order_tags_tagpair]).get_tree()
+        items = TagMatcher.match(card.content, [self.order_tags_tagpair]).get_tree()
         for item in items:
             if item.is_tag():
                 order = item.get_inner()
