@@ -161,7 +161,7 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Widgets Directory:',
             combobox_width=self.combo_width,
-            initial_combo=self.base_config.get("modules_path")
+            initial_combo=self.base_config.get_default("modules_path")
         )
 
         # Assets directory name
@@ -171,7 +171,7 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Assets Directory Name:',
             input_width=self.entry_width,
-            initial_input="assets"
+            initial_input=self.base_config.get_default("assets_dir_name")
         )
 
         # Output file name
@@ -181,7 +181,7 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Output File Name:',
             input_width=self.entry_width,
-            initial_input="output.html"
+            initial_input=self.base_config.get_default("output_name")
         )
 
         # Output title
@@ -191,7 +191,7 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Output Title:',
             input_width=self.entry_width,
-            initial_input="Start"
+            initial_input=self.base_config.get_default("output_title")
         )
 
         # Logger level
