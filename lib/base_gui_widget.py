@@ -39,6 +39,7 @@ class LevelDropbox(MyWidget):
         self.combobox_var = tk.StringVar()
         if initial_combo:
             self.combobox_var.set(initial_combo)
+        self.combobox_var.trace_add("write", self.set_config)
         # Combobox
         self.combobox = ttk.Combobox(
             self.frame,
