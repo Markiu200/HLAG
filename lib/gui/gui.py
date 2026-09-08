@@ -13,6 +13,13 @@ class UserGUI:
         self.settings_path = PurePath(self.module_path.parent.parent, "settings.dat")
         #
         self.config_widgets = []
+        self.config.subscribe(self.update_last_state)
+
+    def update_last_state(self, config_ns: str, key: str, value):
+        if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
+            print(config_ns, key, value)
+        else:
+            print(f"{key} not eligible for last state")
 
     def add_config_widget(self, widget):
         self.config_widgets.append(widget)
