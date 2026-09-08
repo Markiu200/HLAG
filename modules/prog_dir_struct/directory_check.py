@@ -1,5 +1,5 @@
 # Own imports
-from module_facade import BaseCheck, DocumentNode
+from lib.module_facade import BaseCheck, DocumentNode
 
 
 class DirectoryCheck(BaseCheck):

@@ -1,8 +1,8 @@
 from pathlib import PurePath
 from importlib import import_module
 # Own imports
-from module_facade import ModuleFacade, Card, InstanceDBEntry
-from module_management import IModule, ModuleManager
+from lib.module_facade import ModuleFacade, Card, InstanceDBEntry
+from lib.module_management import IModule, ModuleManager
 from lib.n_config import Config
 from lib.registerables import FileRegisterable
 

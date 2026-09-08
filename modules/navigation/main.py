@@ -2,8 +2,8 @@ from pathlib import PurePath
 from importlib import import_module
 import os
 # Own imports
-from module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
-from module_management import IModule
+from lib.module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
+from lib.module_management import IModule
 
 
 def get_module_main_class():

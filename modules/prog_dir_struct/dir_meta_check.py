@@ -1,6 +1,6 @@
 import os
 # Own imports
-from module_facade import BaseCheck, DocumentNode, ModuleFacade, Card
+from lib.module_facade import BaseCheck, DocumentNode, ModuleFacade, Card
 
 
 class DirMetaCheck(BaseCheck):

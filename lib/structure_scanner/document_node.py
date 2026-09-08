@@ -1,7 +1,8 @@
 from pathlib import PurePath
-from models import Ref
-from config import config
 from os.path import sep
+# Own imports
+from lib.models.dn_ref import Ref
+# from config import config
 
 
 class DocumentNode:

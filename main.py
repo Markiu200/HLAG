@@ -5,13 +5,13 @@ from lib.n_config import Config
 from lib.module_management import ModuleManager
 from lib.assets_manager.assets_manager import AssetsManager
 from lib.toolbox import Toolbox
-from snippet_provider import yield_snippet, yield_snippet_with_args
-from js_manager import JSManager
-from css_manager import CSSManager
-from structure_scanner import StructureScanner
-from content_manager import ContentManager
-from linker import Linker
-from printer.printer import Printer
+from lib.snippet_provider import yield_snippet, yield_snippet_with_args
+from lib.js_manager import JSManager
+from lib.css_manager import CSSManager
+from lib.structure_scanner import StructureScanner
+from lib.content_manager import ContentManager
+from lib.linker import Linker
+from lib.printer.printer import Printer
 
 
 def main(config, module_manager):

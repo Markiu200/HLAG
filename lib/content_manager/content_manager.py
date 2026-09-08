@@ -1,7 +1,8 @@
 from pathlib import PurePath
-from structure_scanner import StructureScanner, DocumentNode
-from module_management import ModuleManager
-from models import Card, InstanceDBEntry, Ref
+# Own imports
+from lib.structure_scanner import StructureScanner, DocumentNode
+from lib.module_management import ModuleManager
+from lib.models import Card, InstanceDBEntry, Ref
 from .module_tracker import ModuleTracker
 
 

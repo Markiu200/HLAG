@@ -1,6 +1,6 @@
-import assets_manager
-import module_management
-import module_facade
-import print_logger
-import gui
-from n_config import Config
+import lib.assets_manager
+import lib.module_management
+import lib.module_facade
+import lib.print_logger
+import lib.gui
+from lib.n_config import Config

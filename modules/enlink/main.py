@@ -1,8 +1,8 @@
 import json
 from pathlib import PurePath
 # Own imports
-from module_facade import ModuleFacade, Card, InstanceDBEntry
-from module_management import IModule
+from lib.module_facade import ModuleFacade, Card, InstanceDBEntry
+from lib.module_management import IModule
 
 
 def get_module_main_class():

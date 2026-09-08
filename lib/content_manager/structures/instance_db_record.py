@@ -1,5 +1,6 @@
 import json
-from models import InstanceDBEntry, Ref
+# Own imports
+from lib.models import InstanceDBEntry, Ref
 
 
 class InstanceDBRecord:

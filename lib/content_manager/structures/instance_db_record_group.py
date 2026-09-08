@@ -1,4 +1,4 @@
-from content_manager.structures import InstanceDBRecord
+from lib.content_manager.structures import InstanceDBRecord
 
 
 class InstanceDBRecordGroup:
