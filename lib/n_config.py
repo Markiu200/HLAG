@@ -5,9 +5,11 @@ class ConfigItem:
         self.default = default
 
 
-class BaseConfigNamespace:
-    def __init__(self, widget=None):
+class ConfigNamespace:
+    def __init__(self, namespace: str, subscribers, widget=None):
+        self.namespace = namespace
         self.config_items: dict[str, ConfigItem] = dict()
+        self.subscribers = subscribers
         self.widget = widget
 
     def set_widget(self, widget):
@@ -35,24 +37,22 @@ class BaseConfigNamespace:
     def set(self, key, value):
         if key in self.config_items:
             self.config_items.get(key).value = value
+            for callback in self.subscribers:
+                callback(self.namespace, key, value)
         else:
             raise RuntimeError(f"{key} is not a config item in base config")
-
-
-class ConfigNamespace(BaseConfigNamespace):
-    def __init__(self, namespace: str):
-        super().__init__()
-        self.namespace = namespace
 
 
 class Config:
     def __init__(self):
         self.namespaces: dict[str, ConfigNamespace] = dict()
-        self.base_config = BaseConfigNamespace()
+        self.subscribers: callable = []
+        self.base_config_ns = "base_config"
+        self.base_config = ConfigNamespace(self.base_config_ns, self.subscribers)
 
     def register_namespace(self, namespace: str) -> ConfigNamespace | None:
-        if not self.namespaces.get(namespace):
-            self.namespaces[namespace] = ConfigNamespace(namespace)
+        if not self.namespaces.get(namespace) and namespace != self.base_config_ns:
+            self.namespaces[namespace] = ConfigNamespace(namespace, self.subscribers)
             return self.namespaces.get(namespace)
         else:
             return None
@@ -65,6 +65,9 @@ class Config:
             return self.namespaces.get(namespace)
         else:
             return None
+
+    def subscribe(self, callback):
+        self.subscribers.append(callback)
 
 
 if __name__ == '__main__':
