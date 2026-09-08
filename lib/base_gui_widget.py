@@ -55,7 +55,7 @@ class LevelDropbox(MyWidget):
     def set_config(self, var, index, mode):
         logger = self.config_ns.get("logger")
         if logger:
-            self.config_ns.set(self.config_item, self.combobox_var.get())
+            self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
             logger.set_level_by_name(self.combobox_var.get())
 
 
@@ -73,7 +73,7 @@ class NamingEntry(MyWidget):
         self.entry.pack(side=tk.LEFT)
 
     def set_config(self, var, index, mode):
-        self.config_ns.set(self.config_item, self.entry_var.get())
+        self.config_ns.set(self.config_item, self.entry_var.get(), propagate=False)
 
 
 class DirectoryCombobox(MyWidget):
@@ -111,7 +111,7 @@ class DirectoryCombobox(MyWidget):
                 self.combobox_var.set(selected)
 
     def set_config(self, var, index, mode):
-        self.config_ns.set(self.config_item, self.combobox_var.get())
+        self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
 
 
 class BaseConfigWidget(ttk.Labelframe):
@@ -123,6 +123,7 @@ class BaseConfigWidget(ttk.Labelframe):
         self["text"] = "Base Config"
         self.combo_width = 80
         self.entry_width = 40
+        self.config.subscribe(self.load)
 
         # Target path
         self.target_config_widget = DirectoryCombobox(
@@ -183,7 +184,7 @@ class BaseConfigWidget(ttk.Labelframe):
         )
 
         # Logger level
-        self.widgets_config_widget = LevelDropbox(
+        self.logger_level_config_widget = LevelDropbox(
             config_item="logger_level",
             config_ns=self.base_config,
             parent=self,
@@ -191,3 +192,20 @@ class BaseConfigWidget(ttk.Labelframe):
             combobox_width=9,
             initial_combo="Info"
         )
+
+    def load(self, config_ns: str, key: str, value):
+        if config_ns == "base_config":
+            if key == "target_path":
+                self.target_config_widget.combobox.set(value)
+            elif key == "output_path":
+                self.output_config_widget.combobox.set(value)
+            elif key == "modules_path":
+                self.widgets_config_widget.combobox.set(value)
+            elif key == "assets_dir_name":
+                self.assets_config_widget.entry_var.set(value)
+            elif key == "output_name":
+                self.output_name_config_widget.entry_var.set(value)
+            elif key == "output_title":
+                self.output_title_config_widget.entry_var.set(value)
+            elif key == "logger_level":
+                self.logger_level_config_widget.combobox.set(value)
