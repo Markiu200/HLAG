@@ -34,11 +34,12 @@ class ConfigNamespace:
         else:
             return None
 
-    def set(self, key, value):
+    def set(self, key, value, propagate: bool = True):
         if key in self.config_items:
             self.config_items.get(key).value = value
-            for callback in self.subscribers:
-                callback(self.namespace, key, value)
+            if propagate:
+                for callback in self.subscribers:
+                    callback(self.namespace, key, value)
         else:
             raise RuntimeError(f"{key} is not a config item in base config")
 
