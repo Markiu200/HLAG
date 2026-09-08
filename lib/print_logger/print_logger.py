@@ -18,6 +18,18 @@ class PrintLogger:
     def set_level(self, level: int):
         self.logger.setLevel(level)
 
+    def set_level_by_name(self, level: str):
+        if level.lower() == "debug":
+            self.set_level(10)
+        elif level.lower() == "info":
+            self.set_level(20)
+        elif level.lower() == "warning":
+            self.set_level(30)
+        elif level.lower() == "error":
+            self.set_level(40)
+        elif level.lower() == "critical":
+            self.set_level(50)
+
     def critical(self, *args):
         self.logger.critical(*args)
 

@@ -54,21 +54,8 @@ class LevelDropbox(MyWidget):
     def set_config(self, var, index, mode):
         logger = self.config_ns.get("logger")
         if logger:
-            if self.combobox_var.get() == "Debug":
-                self.config_ns.set(self.config_item, 10)
-                self.config_ns.get("logger").set_level(10)
-            if self.combobox_var.get() == "Info":
-                self.config_ns.set(self.config_item, 20)
-                self.config_ns.get("logger").set_level(20)
-            if self.combobox_var.get() == "Warning":
-                self.config_ns.set(self.config_item, 30)
-                self.config_ns.get("logger").set_level(30)
-            if self.combobox_var.get() == "Error":
-                self.config_ns.set(self.config_item, 40)
-                self.config_ns.get("logger").set_level(40)
-            if self.combobox_var.get() == "Critical":
-                self.config_ns.set(self.config_item, 50)
-                self.config_ns.get("logger").set_level(50)
+            self.config_ns.set(self.config_item, self.combobox_var.get())
+            logger.set_level_by_name(self.combobox_var.get())
 
 
 class NamingEntry(MyWidget):
