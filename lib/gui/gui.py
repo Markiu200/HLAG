@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import ttk
 from pathlib import PurePath
+import json
 # Own imports
 from lib.n_config import Config
 from lib.print_logger import PrintLogger
@@ -8,18 +10,16 @@ from lib.print_logger import PrintLogger
 class UserGUI:
     def __init__(self, config: Config):
         self.config = config
+        self.logger = self.config.get_base_config().get("logger")
         self.module_path = PurePath(__file__).parent
         self.default_saved_projects_path = PurePath(self.module_path.parent.parent, 'saved_projects')
-        self.settings_path = PurePath(self.module_path.parent.parent, "settings.dat")
+        if self.config.get_base_config().get("base_path"):
+            self.last_state_path = PurePath(self.config.get_base_config().get("base_path"), "last_state.dat")
+        else:
+            self.last_state_path = PurePath(self.module_path, "last_state.dat")
         #
         self.config_widgets = []
-        self.config.subscribe(self.update_last_state)
-
-    def update_last_state(self, config_ns: str, key: str, value):
-        if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
-            print(config_ns, key, value)
-        else:
-            print(f"{key} not eligible for last state")
+        self.last_state = dict()
 
     def add_config_widget(self, widget):
         self.config_widgets.append(widget)
@@ -48,7 +48,7 @@ class UserGUI:
         # Buttons
         run_button = ttk.Button(button_frame, text="Run", width=10)
         run_button.pack(side=tk.TOP)
-        temp_save = ttk.Button(button_frame, text="TMP save", width=10, command=save_last)
+        temp_save = ttk.Button(button_frame, text="TMP save", width=10, command=self.save_last)
         temp_save.pack(side=tk.TOP)
 
         # Pack all config widgets
@@ -63,12 +63,37 @@ class UserGUI:
         finally:
             root.mainloop()
 
+    def save_last(self):
+        # Collect all ConfigNamespaces
+        all_namespaces = [self.config.get_base_config()]
+        for config_ns_ in self.config.namespaces.values():
+            all_namespaces.append(config_ns_)
+        # Iterate over them and save eligible values
+        for config_ns in all_namespaces:
+            ns_name = config_ns.namespace
+            self.last_state[ns_name] = []
+            for config_item in config_ns.config_items.values():
+                key = config_item.key
+                value = config_item.value
+                if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
+                    print("saved: ", ns_name, key, value)
+                    self.last_state[ns_name].append((key, value))
+                elif isinstance(value, PurePath):
+                    print("saved: ", ns_name, key, str(value))
+                    self.last_state[ns_name].append((key, str(value)))
+                else:
+                    print(f"{key} not eligible for last state")
+        # Save to file
+        try:
+            with open(self.last_state_path, "wb") as f:
+                f.write(json.dumps(self.last_state).encode('utf-8'))
+        except Exception as e:
+            if self.logger:
+                self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
+        print("saved")
+
 
 def load_last():
-    pass
-
-
-def save_last():
     pass
 
 
