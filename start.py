@@ -15,11 +15,11 @@ if __name__ == '__main__':
     config_ = Config()
     base_config = config_.base_config
     base_path = PurePath(__file__).parent
-    base_config.add_config_item("base_path", base_path)
-    base_config.add_config_item("target_path", PurePath(base_path, "inputs"))
-    base_config.add_config_item("output_path", PurePath(base_path, "outputs"))
-    base_config.add_config_item("assets_path", PurePath(base_path, "outputs"))
-    base_config.add_config_item("modules_path", PurePath(base_path, "modules"))
+    base_config.add_path_config_item("base_path", base_path)
+    base_config.add_path_config_item("target_path", PurePath(base_path, "inputs"))
+    base_config.add_path_config_item("output_path", PurePath(base_path, "outputs"))
+    base_config.add_path_config_item("assets_path", PurePath(base_path, "outputs"))
+    base_config.add_path_config_item("modules_path", PurePath(base_path, "modules"))
     base_config.add_config_item("assets_dir_name", "assets")
     base_config.add_config_item("output_name", "output.html")
     base_config.add_config_item("output_title", "Pagemaker")

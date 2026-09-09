@@ -1,3 +1,6 @@
+from pathlib import PurePath
+
+
 class ConfigItem:
     def __init__(self, key: str, default=None):
         self.key = key
@@ -8,6 +11,20 @@ class ConfigItem:
         self.value = value
 
     def get(self):
+        return self.value
+
+
+class PathConfigItem(ConfigItem):
+    def __init__(self, key: str, default=None):
+        super().__init__(key, default)
+
+    def set(self, value):
+        if isinstance(value, str):
+            self.value = PurePath(value)
+        else:
+            self.value = value
+
+    def get(self) -> PurePath:
         return self.value
 
 
@@ -27,6 +44,10 @@ class ConfigNamespace:
     def add_config_item(self, key, default=None):
         if not self.config_items.get(key):
             self.config_items[key] = ConfigItem(key, default)
+
+    def add_path_config_item(self, key, default=None):
+        if not self.config_items.get(key):
+            self.config_items[key] = PathConfigItem(key, default)
 
     def get(self, key):
         if self.config_items.get(key):
