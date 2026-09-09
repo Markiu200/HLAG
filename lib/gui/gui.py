@@ -9,6 +9,7 @@ from lib.print_logger import PrintLogger
 
 class UserGUI:
     def __init__(self, config: Config):
+        # Setup properties
         self.config = config
         self.logger = self.config.get_base_config().get("logger")
         self.module_path = PurePath(__file__).parent
@@ -23,29 +24,32 @@ class UserGUI:
         for config_ns_ in self.config.namespaces.values():
             self.config_namespaces_names.append(config_ns_.namespace)
         self.last_state = dict()
+        # Setup tk widgets
+        self.root = tk.Tk()
+        self.root.title('Pagemaker')
+        self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
 
     def add_config_widget(self, widget):
         self.config_widgets.append(widget)
 
     def start(self):
-        root = tk.Tk()
-        root.title('Pagemaker')
+
 
         # Menubar
-        menubar = tk.Menu(root)
+        menubar = tk.Menu(self.root)
         file_menu = tk.Menu(menubar, tearoff=False)
         file_menu.add_command(label='Save Project', command=save_project)
         file_menu.add_command(label='Load Project', command=load_project)
         file_menu.add_separator()
-        file_menu.add_command(label='Exit', command=root.destroy)
+        file_menu.add_command(label='Exit', command=self.on_exit)
         menubar.add_cascade(label='File', menu=file_menu, underline=0)
         #
-        root.config(menu=menubar)
+        self.root.config(menu=menubar)
 
         # Containers
-        button_frame = ttk.Frame(root)
+        button_frame = ttk.Frame(self.root)
         button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
-        options_frame = ttk.Frame(root)
+        options_frame = ttk.Frame(self.root)
         options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
 
         # Buttons
@@ -62,13 +66,14 @@ class UserGUI:
             config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
 
         # Load last state
+        self.load_last()
 
         # Running
         try:
             from ctypes import windll
             windll.shcore.SetProcessDpiAwareness(1)
         finally:
-            root.mainloop()
+            self.root.mainloop()
 
     def save_last(self):
         # Collect all ConfigNamespaces
@@ -108,15 +113,20 @@ class UserGUI:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to load last state - last state not loaded")
         # Set configs
-        for loaded_state_ns_name, data in loaded_state.items():
-            if loaded_state_ns_name in self.config_namespaces_names:
-                config_ns = self.config.get_config(loaded_state_ns_name)
-                for config_item in data:
-                    try:
-                        config_ns.set(config_item[0], config_item[1])
-                    except Exception as e:
-                        if self.logger:
-                            self.logger.info(f"Last state for {loaded_state_ns_name} has key {data[0]} saved, but current config has no such key registered - skipping.")
+        if loaded_state:
+            for loaded_state_ns_name, data in loaded_state.items():
+                if loaded_state_ns_name in self.config_namespaces_names:
+                    config_ns = self.config.get_config(loaded_state_ns_name)
+                    for config_item in data:
+                        try:
+                            config_ns.set(config_item[0], config_item[1])
+                        except Exception as e:
+                            if self.logger:
+                                self.logger.info(f"Last state for {loaded_state_ns_name} has key {data[0]} saved, but current config has no such key registered - skipping.")
+
+    def on_exit(self):
+        self.save_last()
+        self.root.destroy()
 
 
 def save_project():
