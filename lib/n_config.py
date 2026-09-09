@@ -70,6 +70,8 @@ class Config:
     def get_config(self, namespace: str) -> ConfigNamespace | None:
         if self.namespaces.get(namespace):
             return self.namespaces.get(namespace)
+        elif namespace == self.base_config_ns:
+            return self.base_config
         else:
             return None
 
