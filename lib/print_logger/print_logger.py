@@ -42,6 +42,9 @@ class PrintLogger:
     def info(self, *args):
         self.logger.info(*args)
 
+    def debug(self, *args):
+        self.logger.debug(*args)
+
 
 if __name__ == '__main__':
     logger = PrintLogger()
