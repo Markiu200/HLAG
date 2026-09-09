@@ -131,7 +131,8 @@ class BaseConfigWidget(ttk.Labelframe):
             config_ns=self.base_config,
             parent=self,
             label='Target Directory:',
-            combobox_width=self.combo_width
+            combobox_width=self.combo_width,
+            initial_combo=self.base_config.get_default("target_path")
         )
 
         # Output path
@@ -140,7 +141,8 @@ class BaseConfigWidget(ttk.Labelframe):
             config_ns=self.base_config,
             parent=self,
             label='Output Directory:',
-            combobox_width=self.combo_width
+            combobox_width=self.combo_width,
+            initial_combo=self.base_config.get_default("output_path")
         )
 
         # Widgets path
