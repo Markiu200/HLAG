@@ -39,9 +39,21 @@ class UserGUI:
         #
         root.config(menu=menubar)
 
+        # Containers
+        button_frame = ttk.Frame(root)
+        button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
+        options_frame = ttk.Frame(root)
+        options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
+
+        # Buttons
+        run_button = ttk.Button(button_frame, text="Run", width=10)
+        run_button.pack(side=tk.TOP)
+        temp_save = ttk.Button(button_frame, text="TMP save", width=10, command=save_last)
+        temp_save.pack(side=tk.TOP)
+
         # Pack all config widgets
         for widget in self.config_widgets:
-            config_widget = widget(root, self.config)
+            config_widget = widget(options_frame, self.config)
             config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
 
         # Running
