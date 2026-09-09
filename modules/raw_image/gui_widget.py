@@ -22,9 +22,19 @@ class ConfigWidget(ttk.Labelframe):
         self.assets_radio.invoke()
         self.base64_radio.pack(side=tk.LEFT, padx=(0, 20))
         self.assets_radio.pack(side=tk.LEFT)
+        #
+        self.config.subscribe(self.load)
 
     def set_base(self):
         if self.radio_var.get() == "True":
             self.config_ns.set("base64", True, propagate=False)
         if self.radio_var.get() == "False":
             self.config_ns.set("base64", False, propagate=False)
+
+    def load(self, config_ns: str, key: str, value):
+        if config_ns == "raw_image":
+            if key == "base64":
+                if value is True:
+                    self.base64_radio.invoke()
+                else:
+                    self.assets_radio.invoke()
