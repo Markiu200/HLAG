@@ -25,6 +25,6 @@ class ConfigWidget(ttk.Labelframe):
 
     def set_base(self):
         if self.radio_var.get() == "True":
-            self.config_ns.set("base64", True)
+            self.config_ns.set("base64", True, propagate=False)
         if self.radio_var.get() == "False":
-            self.config_ns.set("base64", False)
+            self.config_ns.set("base64", False, propagate=False)
