@@ -4,6 +4,12 @@ class ConfigItem:
         self.value = default
         self.default = default
 
+    def set(self, value):
+        self.value = value
+
+    def get(self):
+        return self.value
+
 
 class ConfigNamespace:
     def __init__(self, namespace: str, subscribers, widget=None):
@@ -24,7 +30,7 @@ class ConfigNamespace:
 
     def get(self, key):
         if self.config_items.get(key):
-            return self.config_items.get(key).value
+            return self.config_items.get(key).get()
         else:
             return None
 
@@ -36,7 +42,7 @@ class ConfigNamespace:
 
     def set(self, key, value, propagate: bool = True):
         if key in self.config_items:
-            self.config_items.get(key).value = value
+            self.config_items.get(key).set(value)
             if propagate:
                 for callback in self.subscribers:
                     callback(self.namespace, key, value)
