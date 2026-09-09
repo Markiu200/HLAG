@@ -19,6 +19,9 @@ class UserGUI:
             self.last_state_path = PurePath(self.module_path, "last_state.dat")
         #
         self.config_widgets = []
+        self.config_namespaces_names = [self.config.get_base_config().namespace]
+        for config_ns_ in self.config.namespaces.values():
+            self.config_namespaces_names.append(config_ns_.namespace)
         self.last_state = dict()
 
     def add_config_widget(self, widget):
@@ -50,11 +53,15 @@ class UserGUI:
         run_button.pack(side=tk.TOP)
         temp_save = ttk.Button(button_frame, text="TMP save", width=10, command=self.save_last)
         temp_save.pack(side=tk.TOP)
+        temp_load = ttk.Button(button_frame, text="TMP load", width=10, command=self.load_last)
+        temp_load.pack(side=tk.TOP)
 
         # Pack all config widgets
         for widget in self.config_widgets:
             config_widget = widget(options_frame, self.config)
             config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
+
+        # Load last state
 
         # Running
         try:
@@ -65,9 +72,9 @@ class UserGUI:
 
     def save_last(self):
         # Collect all ConfigNamespaces
-        all_namespaces = [self.config.get_base_config()]
-        for config_ns_ in self.config.namespaces.values():
-            all_namespaces.append(config_ns_)
+        all_namespaces = []
+        for config_ns in self.config_namespaces_names:
+            all_namespaces.append(self.config.get_config(config_ns))
         # Iterate over them and save eligible values
         for config_ns in all_namespaces:
             ns_name = config_ns.namespace
@@ -76,13 +83,12 @@ class UserGUI:
                 key = config_item.key
                 value = config_item.value
                 if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
-                    print("saved: ", ns_name, key, value)
                     self.last_state[ns_name].append((key, value))
                 elif isinstance(value, PurePath):
-                    print("saved: ", ns_name, key, str(value))
                     self.last_state[ns_name].append((key, str(value)))
                 else:
-                    print(f"{key} not eligible for last state")
+                    if self.logger:
+                        self.logger.debug(f"{key} not eligible for last state")
         # Save to file
         try:
             with open(self.last_state_path, "wb") as f:
@@ -90,11 +96,27 @@ class UserGUI:
         except Exception as e:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
-        print("saved")
 
-
-def load_last():
-    pass
+    def load_last(self):
+        loaded_state = None
+        # Load from file
+        try:
+            with open(self.last_state_path, "rb") as f:
+                file_contents = f.read()
+                loaded_state = json.loads(file_contents)
+        except Exception as e:
+            if self.logger:
+                self.logger.error(f"An error {e} occurred while attempting to load last state - last state not loaded")
+        # Set configs
+        for loaded_state_ns_name, data in loaded_state.items():
+            if loaded_state_ns_name in self.config_namespaces_names:
+                config_ns = self.config.get_config(loaded_state_ns_name)
+                for config_item in data:
+                    try:
+                        config_ns.set(config_item[0], config_item[1])
+                    except Exception as e:
+                        if self.logger:
+                            self.logger.info(f"Last state for {loaded_state_ns_name} has key {data[0]} saved, but current config has no such key registered - skipping.")
 
 
 def save_project():
