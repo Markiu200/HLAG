@@ -89,12 +89,14 @@ class DirectoryCombobox(MyWidget):
         self.combobox = ttk.Combobox(self.frame, textvariable=self.combobox_var, width=self.combobox_width)
         if initial_combo:
             self.combobox.set(initial_combo)
+        self.combobox.bind("<FocusOut>", self.on_leave)
         # Browse button
         self.browse_button = ttk.Button(
             self.frame,
             text='browse',
             width=8,
-            command=self.open_directory_dialog
+            command=self.open_directory_dialog,
+            takefocus=0
         )
         # Packing
         self.combobox.pack(side=tk.LEFT)
@@ -105,13 +107,24 @@ class DirectoryCombobox(MyWidget):
             selected = filedialog.askdirectory(initialdir=self.combobox_var.get())
             if selected:
                 self.combobox_var.set(selected)
+                self.check_correct()
         else:
             selected = filedialog.askdirectory()
             if selected:
                 self.combobox_var.set(selected)
+                self.check_correct()
 
     def set_config(self, var, index, mode):
         self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
+
+    def on_leave(self, event):
+        self.check_correct()
+
+    def check_correct(self):
+        if not os.path.isdir(self.combobox_var.get()):
+            self.error_label_var.set("Given path is not a valid directory")
+        else:
+            self.error_label_var.set("")
 
 
 class BaseConfigWidget(ttk.Labelframe):
@@ -199,10 +212,13 @@ class BaseConfigWidget(ttk.Labelframe):
         if config_ns == "base_config":
             if key == "target_path":
                 self.target_config_widget.combobox.set(value)
+                self.target_config_widget.check_correct()
             elif key == "output_path":
                 self.output_config_widget.combobox.set(value)
+                self.output_config_widget.check_correct()
             elif key == "modules_path":
                 self.widgets_config_widget.combobox.set(value)
+                self.widgets_config_widget.check_correct()
             elif key == "assets_dir_name":
                 self.assets_config_widget.entry_var.set(value)
             elif key == "output_name":

@@ -33,8 +33,6 @@ class UserGUI:
         self.config_widgets.append(widget)
 
     def start(self):
-
-
         # Menubar
         menubar = tk.Menu(self.root)
         file_menu = tk.Menu(menubar, tearoff=False)
