@@ -10,6 +10,8 @@ webpage*/
 /f_assets
 /outputs/*
 last_state.dat
+/saved_projects
+/saved_projects/**
 
 # macOS settings file 
 .DS_Store
