@@ -2,6 +2,7 @@ import tkinter as tk
 import os
 from tkinter import ttk, filedialog
 from lib.n_config import Config, ConfigNamespace
+from lib.gui import UserGUI
 
 
 def open_directory_dialog(site_directory_text, initial_dir: str = None):
@@ -128,11 +129,13 @@ class DirectoryCombobox(MyWidget):
 
 
 class BaseConfigWidget(ttk.Labelframe):
-    def __init__(self, parent, config: Config):
-        super().__init__(parent)
-        self.parent = parent
-        self.config = config
+    def __init__(self, gui: UserGUI):
+        self.gui = gui
+        self.config_frame = gui.get_config_frame()
+        self.config = gui.config
         self.base_config = self.config.get_base_config()
+        super().__init__(self.config_frame)
+        #
         self["text"] = "Base Config"
         self.combo_width = 80
         self.entry_width = 40

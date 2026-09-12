@@ -1,14 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
 from lib.n_config import Config
+from lib.gui import UserGUI
 
 
 class ConfigWidget(ttk.Labelframe):
-    def __init__(self, parent, config: Config):
-        super().__init__(parent)
-        self.parent = parent
-        self.config = config
+    def __init__(self, gui: UserGUI):
+        self.gui = gui
+        self.config_frame = gui.get_config_frame()
+        self.config = gui.config
         self.config_ns = self.config.get_config("raw_image")
+        super().__init__(self.config_frame)
+        #
         self["text"] = "Raw Image"
         # Label
         self.frame = ttk.Frame(self)

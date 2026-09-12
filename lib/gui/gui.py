@@ -49,22 +49,20 @@ class UserGUI:
         self.root.config(menu=menubar)
 
         # Containers
-        button_frame = ttk.Frame(self.root)
-        button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
-        options_frame = ttk.Frame(self.root)
-        options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
+        self.button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
+        self.options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
 
         # Buttons
-        run_button = ttk.Button(button_frame, text="Run", width=10)
+        run_button = ttk.Button(self.button_frame, text="Run", width=10)
         run_button.pack(side=tk.TOP)
-        temp_save = ttk.Button(button_frame, text="TMP save", width=10, command=self.save_last)
+        temp_save = ttk.Button(self.button_frame, text="TMP save", width=10, command=self.save_last)
         temp_save.pack(side=tk.TOP)
-        temp_load = ttk.Button(button_frame, text="TMP load", width=10, command=self.load_last)
+        temp_load = ttk.Button(self.button_frame, text="TMP load", width=10, command=self.load_last)
         temp_load.pack(side=tk.TOP)
 
         # Pack all config widgets
         for widget in self.config_widgets:
-            config_widget = widget(options_frame, self.config)
+            config_widget = widget(self)
             config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
 
         # Load last state
@@ -76,6 +74,9 @@ class UserGUI:
             windll.shcore.SetProcessDpiAwareness(1)
         finally:
             self.root.mainloop()
+
+    def get_config_frame(self):
+        return self.options_frame
 
     def save_state(self):
         # Collect all ConfigNamespaces
