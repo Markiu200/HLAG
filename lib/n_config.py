@@ -1,6 +1,12 @@
 from pathlib import PurePath
 
 
+class SerializeResponse:
+    def __init__(self, state, exceptions):
+        self.state = state
+        self.exceptions = exceptions
+
+
 class ConfigItem:
     def __init__(self, key: str, default=None):
         self.key = key
@@ -98,6 +104,36 @@ class Config:
 
     def subscribe(self, callback):
         self.subscribers.append(callback)
+
+    def serialize(self):
+        exception_list = []
+        state = dict()
+        for config_ns in (*self.namespaces.values(), self.base_config):
+            ns_name = config_ns.namespace
+            state[ns_name] = []
+            for config_item in config_ns.config_items.values():
+                key = config_item.key
+                value = config_item.value
+                if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
+                    state[ns_name].append((key, value))
+                elif isinstance(value, PurePath):
+                    state[ns_name].append((key, str(value)))
+                else:
+                    exception_list.append(key)
+        return SerializeResponse(state, exception_list)
+
+    def deserialize_update(self, state):
+        exception_list = []
+        if state:
+            for loaded_state_ns_name, data in state.items():
+                if loaded_state_ns_name in (*self.namespaces.keys(), self.base_config_ns):
+                    config_ns = self.get_config(loaded_state_ns_name)
+                    for config_item in data:
+                        try:
+                            config_ns.set(config_item[0], config_item[1])
+                        except Exception as e:
+                            exception_list.append((config_item[0], config_item[1]))
+        return exception_list
 
 
 if __name__ == '__main__':
