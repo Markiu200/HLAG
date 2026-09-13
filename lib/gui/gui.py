@@ -29,14 +29,35 @@ class UserGUI:
             self.config_namespaces_names.append(config_ns_.namespace)
         self.last_state = dict()
         self.last_focus: Widget | None = None
+        #
         # Setup tk widgets
+        #
+        # Root
         self.root = tk.Tk()
         self.root.title('Pagemaker')
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.root.bind("<Button>", self.on_button)
+        # Root - Menubar
+        menubar = tk.Menu(self.root)
+        file_menu = tk.Menu(menubar, tearoff=False)
+        file_menu.add_command(label='Save Project', command=self.save_project)
+        file_menu.add_command(label='Load Project', command=self.load_project)
+        file_menu.add_separator()
+        file_menu.add_command(label='Exit', command=self.on_exit)
+        menubar.add_cascade(label='File', menu=file_menu, underline=0)
+        self.root.config(menu=menubar)
         # Frames
         self.button_frame = ttk.Frame(self.root)
         self.options_frame = ttk.Frame(self.root)
+        self.button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
+        self.options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
+        # Buttons
+        self.run_button = ttk.Button(self.button_frame, text="Run", width=10)
+        self.run_button.pack(side=tk.TOP)
+        self.temp_save = ttk.Button(self.button_frame, text="TMP save", width=10, command=self.save_last)
+        self.temp_save.pack(side=tk.TOP)
+        self.temp_load = ttk.Button(self.button_frame, text="TMP load", width=10, command=self.load_last)
+        self.temp_load.pack(side=tk.TOP)
 
     def focus_track(self, widget):
         self.last_focus = widget
@@ -70,29 +91,6 @@ class UserGUI:
         self.config_widgets.append(widget)
 
     def start(self):
-        # Menubar
-        menubar = tk.Menu(self.root)
-        file_menu = tk.Menu(menubar, tearoff=False)
-        file_menu.add_command(label='Save Project', command=self.save_project)
-        file_menu.add_command(label='Load Project', command=self.load_project)
-        file_menu.add_separator()
-        file_menu.add_command(label='Exit', command=self.on_exit)
-        menubar.add_cascade(label='File', menu=file_menu, underline=0)
-        #
-        self.root.config(menu=menubar)
-
-        # Containers
-        self.button_frame.pack(side=tk.LEFT, pady=10, ipadx=10, expand=True, fill=tk.Y)
-        self.options_frame.pack(side=tk.LEFT, pady=5, expand=True, fill=tk.X)
-
-        # Buttons
-        run_button = ttk.Button(self.button_frame, text="Run", width=10)
-        run_button.pack(side=tk.TOP)
-        temp_save = ttk.Button(self.button_frame, text="TMP save", width=10, command=self.save_last)
-        temp_save.pack(side=tk.TOP)
-        temp_load = ttk.Button(self.button_frame, text="TMP load", width=10, command=self.load_last)
-        temp_load.pack(side=tk.TOP)
-
         # Pack all config widgets
         for widget in self.config_widgets:
             config_widget = widget(self)
