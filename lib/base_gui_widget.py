@@ -90,7 +90,13 @@ class NamingEntry(MyWidget):
         self.entry = ttk.Entry(self.frame, textvariable=self.entry_var, width=self.entry_width)
         if initial_input:
             self.entry_var.set(initial_input)
+        self.entry.bind("<FocusIn>", self.on_enter)
+        # Packing
         self.entry.pack(side=tk.LEFT)
+
+    def on_enter(self, event):
+        if self.focus_callback:
+            self.focus_callback(self.entry)
 
     def set_config(self, var, index, mode):
         self.config_ns.set(self.config_item, self.entry_var.get(), propagate=False)
@@ -247,8 +253,7 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Logger Level:',
             combobox_width=9,
-            initial_combo="Info",
-            focus_callback=self.gui.focus_track
+            initial_combo="Info"
         )
 
     def load(self, config_ns: str, key: str, value):
