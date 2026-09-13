@@ -10,25 +10,20 @@ from lib.print_logger import PrintLogger
 
 class UserGUI:
     def __init__(self, config: Config):
-        # Setup properties
         self.config = config
         self.logger = self.config.get_base_config().get("logger")
-        self.module_path = PurePath(__file__).parent
+        # Default paths
         if self.config.get_base_config().get("base_path"):
             self.default_saved_projects_path = PurePath(self.config.get_base_config().get("base_path"), "saved_projects")
-        else:
-            self.default_saved_projects_path = PurePath(self.module_path, "saved_projects")
-        if self.config.get_base_config().get("base_path"):
             self.last_state_path = PurePath(self.config.get_base_config().get("base_path"), "last_state.dat")
         else:
-            self.last_state_path = PurePath(self.module_path, "last_state.dat")
+            module_path = PurePath(__file__).parent
+            self.default_saved_projects_path = PurePath(module_path, "saved_projects")
+            self.last_state_path = PurePath(module_path, "last_state.dat")
         #
-        self.config_widgets = []
-        self.config_namespaces_names = [self.config.get_base_config().namespace]
-        for config_ns_ in self.config.namespaces.values():
-            self.config_namespaces_names.append(config_ns_.namespace)
-        self.last_state = dict()
-        self.last_focus: Widget | None = None
+        self.config_widgets = []  # This will store GUI widgets from outside
+        self.persistent_config = Config()  # This can be used by outside widgets to store persistent data not necesarily connected to the "state"
+        self.last_focus: Widget | None = None  # This stores lastly focused Widget, if such will register for it
         #
         # Setup tk widgets
         #
@@ -79,7 +74,22 @@ class UserGUI:
         finally:
             self.root.mainloop()
 
+    def add_config_widget(self, widget_class):
+        """
+        Registers class of a widget (preferably inheriting from ttk.Labelframe) to be put in UserGUI.
+        These classes will be instantiated once on UserGUI run so UserGUI can pass itself to it to
+        provide access to listeners, configs and the container frame.
+        :param widget_class: class of a widget (preferably inheriting from ttk.Labelframe),
+        must accept UserGUI as parameter.
+        """
+        self.config_widgets.append(widget_class)
+
     def focus_track(self, widget):
+        """
+        Intended to be invoked on <FocusIn> event by a widget that takes focus. This widget will be
+        unfocused after Button event outside widget is received.
+        :param widget: widget that received focus.
+        """
         self.last_focus = widget
 
     def on_button(self, event):
@@ -107,15 +117,15 @@ class UserGUI:
             self.last_focus = None
             self.root.focus_set()
 
-    def add_config_widget(self, widget):
-        self.config_widgets.append(widget)
-
-    def get_config_frame(self):
+    def get_config_frame(self) -> ttk.Frame:
+        """
+        :return: ttk.Frame to be used as master Widget by outside widgets
+        """
         return self.options_frame
 
     def save_last(self):
         state_response = self.config.serialize()
-        self.last_state = state_response.state
+        state = state_response.state
         state_exceptions = state_response.exceptions
         if self.logger:
             for exception in state_exceptions:
@@ -123,7 +133,7 @@ class UserGUI:
         # Save to file
         try:
             with open(self.last_state_path, "wb") as f:
-                f.write(json.dumps(self.last_state).encode('utf-8'))
+                f.write(json.dumps(state).encode('utf-8'))
         except Exception as e:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
@@ -135,7 +145,7 @@ class UserGUI:
             initialdir=str(self.default_saved_projects_path)
         )
         state_response = self.config.serialize()
-        self.last_state = state_response.state
+        state = state_response.state
         state_exceptions = state_response.exceptions
         if self.logger:
             for exception in state_exceptions:
@@ -143,7 +153,7 @@ class UserGUI:
         # Save to file
         try:
             with open(project_path, "wb") as f:
-                f.write(json.dumps(self.last_state).encode('utf-8'))
+                f.write(json.dumps(state).encode('utf-8'))
         except Exception as e:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
