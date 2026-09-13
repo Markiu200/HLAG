@@ -14,11 +14,12 @@ def open_directory_dialog(site_directory_text, initial_dir: str = None):
 
 
 class MyWidget:
-    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str):
+    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str, focus_callback=None):
         self.config_item = config_item
         self.config_ns = config_ns
         self.parent = parent
         self.label = label
+        self.focus_callback = focus_callback
         # Label
         self.frame = ttk.Frame(parent)
         self.label = ttk.Label(self.frame, text=self.label, width=22)
@@ -32,8 +33,17 @@ class MyWidget:
 
 
 class LevelDropbox(MyWidget):
-    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str, combobox_width: int, initial_combo: str = None):
-        super().__init__(config_item, config_ns, parent, label)
+    def __init__(
+            self,
+            config_item: str,
+            config_ns: ConfigNamespace,
+            parent: ttk.Widget,
+            label: str,
+            combobox_width: int,
+            initial_combo: str = None,
+            focus_callback=None
+    ):
+        super().__init__(config_item, config_ns, parent, label, focus_callback)
         self.combobox_width = combobox_width
         self.combobox_values = ("Debug", "Info", "Warning", "Error", "Critical")
         # Combobox var
@@ -61,8 +71,17 @@ class LevelDropbox(MyWidget):
 
 
 class NamingEntry(MyWidget):
-    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str, input_width: int, initial_input: str = None):
-        super().__init__(config_item, config_ns, parent, label)
+    def __init__(
+            self,
+            config_item: str,
+            config_ns: ConfigNamespace,
+            parent: ttk.Widget,
+            label: str,
+            input_width: int,
+            initial_input: str = None,
+            focus_callback=None
+    ):
+        super().__init__(config_item, config_ns, parent, label, focus_callback)
         self.entry_width = input_width
         # Entry var
         self.entry_var = tk.StringVar()
@@ -78,8 +97,17 @@ class NamingEntry(MyWidget):
 
 
 class DirectoryCombobox(MyWidget):
-    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str, combobox_width: int, initial_combo: str = None):
-        super().__init__(config_item, config_ns, parent, label)
+    def __init__(
+            self,
+            config_item: str,
+            config_ns: ConfigNamespace,
+            parent: ttk.Widget,
+            label: str,
+            combobox_width: int,
+            initial_combo: str = None,
+            focus_callback=None
+    ):
+        super().__init__(config_item, config_ns, parent, label, focus_callback)
         self.combobox_width = combobox_width
         # Combobox var
         self.combobox_var = tk.StringVar()
@@ -91,6 +119,7 @@ class DirectoryCombobox(MyWidget):
         if initial_combo:
             self.combobox.set(initial_combo)
         self.combobox.bind("<FocusOut>", self.on_leave)
+        self.combobox.bind("<FocusIn>", self.on_enter)
         # Browse button
         self.browse_button = ttk.Button(
             self.frame,
@@ -121,6 +150,10 @@ class DirectoryCombobox(MyWidget):
     def on_leave(self, event):
         self.check_correct()
 
+    def on_enter(self, event):
+        if self.focus_callback:
+            self.focus_callback(self.combobox)
+
     def check_correct(self):
         if not os.path.isdir(self.combobox_var.get()):
             self.error_label_var.set("Given path is not a valid directory")
@@ -148,7 +181,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Target Directory:',
             combobox_width=self.combo_width,
-            initial_combo=self.base_config.get_default("target_path")
+            initial_combo=self.base_config.get_default("target_path"),
+            focus_callback=self.gui.focus_track
         )
 
         # Output path
@@ -158,7 +192,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Output Directory:',
             combobox_width=self.combo_width,
-            initial_combo=self.base_config.get_default("output_path")
+            initial_combo=self.base_config.get_default("output_path"),
+            focus_callback=self.gui.focus_track
         )
 
         # Widgets path
@@ -168,7 +203,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Widgets Directory:',
             combobox_width=self.combo_width,
-            initial_combo=self.base_config.get_default("modules_path")
+            initial_combo=self.base_config.get_default("modules_path"),
+            focus_callback=self.gui.focus_track
         )
 
         # Assets directory name
@@ -178,7 +214,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Assets Directory Name:',
             input_width=self.entry_width,
-            initial_input=self.base_config.get_default("assets_dir_name")
+            initial_input=self.base_config.get_default("assets_dir_name"),
+            focus_callback=self.gui.focus_track
         )
 
         # Output file name
@@ -188,7 +225,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Output File Name:',
             input_width=self.entry_width,
-            initial_input=self.base_config.get_default("output_name")
+            initial_input=self.base_config.get_default("output_name"),
+            focus_callback=self.gui.focus_track
         )
 
         # Output title
@@ -198,7 +236,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Output Title:',
             input_width=self.entry_width,
-            initial_input=self.base_config.get_default("output_title")
+            initial_input=self.base_config.get_default("output_title"),
+            focus_callback=self.gui.focus_track
         )
 
         # Logger level
@@ -208,7 +247,8 @@ class BaseConfigWidget(ttk.Labelframe):
             parent=self,
             label='Logger Level:',
             combobox_width=9,
-            initial_combo="Info"
+            initial_combo="Info",
+            focus_callback=self.gui.focus_track
         )
 
     def load(self, config_ns: str, key: str, value):

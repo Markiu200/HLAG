@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk,filedialog
+from tkinter import ttk,filedialog, Widget
 from pathlib import PurePath
 import json
 import os
@@ -28,10 +28,43 @@ class UserGUI:
         for config_ns_ in self.config.namespaces.values():
             self.config_namespaces_names.append(config_ns_.namespace)
         self.last_state = dict()
+        self.last_focus: Widget | None = None
         # Setup tk widgets
         self.root = tk.Tk()
         self.root.title('Pagemaker')
         self.root.protocol("WM_DELETE_WINDOW", self.on_exit)
+        self.root.bind("<Button>", self.on_button)
+        # Frames
+        self.button_frame = ttk.Frame(self.root)
+        self.options_frame = ttk.Frame(self.root)
+
+    def focus_track(self, widget):
+        self.last_focus = widget
+
+    def on_button(self, event):
+        # last_focus contains Widget that registered here for this "service" and is intrested in being
+        # "unfocused" if the user presses LMB anywhere else.
+        # self.root.focus.get() returns what does have focus right now.
+        # event.widget is a widget that has been pressed.
+        #
+        # Logic goes like this - if currently in focus is whatever registered (first condition)
+        # and whatever was pressed is not whatever registered (second condition), then it means
+        # that something unfocusable was pressed and the focus is "dropped" by switching it to root element.
+        #
+        # In first condition checks whether something that can take focus was pressed.
+        # focus_get() returns widget that has been just pressed (and not the allegedly previously focused last_focus).
+        # It seems that focus change happens before <Button> event is handled here.
+        # If something that doesn't "accept" focus from mouse press was clicked, focus stays with old Widget - which is
+        # assumed to be last_focus (or None). In other words, condition will return True if background is clicked (or other
+        # "unfocusable" element).
+        # This way we can detect and suppress "hijacking" of focus by root element if anything that
+        # actually wants the focus was pressed, thus eliminating the need of double-clicking focusable elements.
+        #
+        # Second condition checks the widget pressed was NOT the same as last_focus.
+        # This way we suppress "hijacking" of focus from already focuses (but clicked again) widget.
+        if self.last_focus is self.root.focus_get() and event.widget is not self.last_focus:
+            self.last_focus = None
+            self.root.focus_set()
 
     def add_config_widget(self, widget):
         self.config_widgets.append(widget)
