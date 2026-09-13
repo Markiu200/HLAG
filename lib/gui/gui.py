@@ -59,6 +59,26 @@ class UserGUI:
         self.temp_load = ttk.Button(self.button_frame, text="TMP load", width=10, command=self.load_last)
         self.temp_load.pack(side=tk.TOP)
 
+    def start(self):
+        # Pack all config widgets
+        for widget in self.config_widgets:
+            config_widget = widget(self)
+            config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
+
+        # Load last state
+        if os.path.isfile(self.last_state_path):
+            self.load_last()
+        else:
+            if self.logger:
+                self.logger.info("Last state file not found - state not loaded")
+
+        # Running
+        try:
+            from ctypes import windll
+            windll.shcore.SetProcessDpiAwareness(1)
+        finally:
+            self.root.mainloop()
+
     def focus_track(self, widget):
         self.last_focus = widget
 
@@ -90,50 +110,39 @@ class UserGUI:
     def add_config_widget(self, widget):
         self.config_widgets.append(widget)
 
-    def start(self):
-        # Pack all config widgets
-        for widget in self.config_widgets:
-            config_widget = widget(self)
-            config_widget.pack(side=tk.TOP, expand=True, fill=tk.X, padx=10, pady=10, ipadx=10, ipady=5)
-
-        # Load last state
-        self.load_last()
-
-        # Running
-        try:
-            from ctypes import windll
-            windll.shcore.SetProcessDpiAwareness(1)
-        finally:
-            self.root.mainloop()
-
     def get_config_frame(self):
         return self.options_frame
 
-    def save_state(self):
-        # Collect all ConfigNamespaces
-        all_namespaces = []
-        for config_ns in self.config_namespaces_names:
-            all_namespaces.append(self.config.get_config(config_ns))
-        # Iterate over them and save eligible values
-        for config_ns in all_namespaces:
-            ns_name = config_ns.namespace
-            self.last_state[ns_name] = []
-            for config_item in config_ns.config_items.values():
-                key = config_item.key
-                value = config_item.value
-                if isinstance(value, str) or isinstance(value, bool) or isinstance(value, int) or isinstance(value, float):
-                    self.last_state[ns_name].append((key, value))
-                elif isinstance(value, PurePath):
-                    self.last_state[ns_name].append((key, str(value)))
-                else:
-                    if self.logger:
-                        self.logger.debug(f"{key} not eligible for last state")
-
     def save_last(self):
-        self.save_state()
+        state_response = self.config.serialize()
+        self.last_state = state_response.state
+        state_exceptions = state_response.exceptions
+        if self.logger:
+            for exception in state_exceptions:
+                self.logger.debug(f"{exception} not eligible for last state")
         # Save to file
         try:
             with open(self.last_state_path, "wb") as f:
+                f.write(json.dumps(self.last_state).encode('utf-8'))
+        except Exception as e:
+            if self.logger:
+                self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
+
+    def save_project(self):
+        project_path = filedialog.asksaveasfilename(
+            defaultextension='.dmproj',
+            filetypes=[("Documaker project", '*.dmproj')],
+            initialdir=str(self.default_saved_projects_path)
+        )
+        state_response = self.config.serialize()
+        self.last_state = state_response.state
+        state_exceptions = state_response.exceptions
+        if self.logger:
+            for exception in state_exceptions:
+                self.logger.debug(f"{exception} not eligible for last state")
+        # Save to file
+        try:
+            with open(project_path, "wb") as f:
                 f.write(json.dumps(self.last_state).encode('utf-8'))
         except Exception as e:
             if self.logger:
@@ -151,44 +160,15 @@ class UserGUI:
                 self.logger.error(f"An error {e} occurred while attempting to load last state - last state not loaded")
         return loaded_state
 
-    def load_configs(self, state):
-        if state:
-            for loaded_state_ns_name, data in state.items():
-                if loaded_state_ns_name in self.config_namespaces_names:
-                    config_ns = self.config.get_config(loaded_state_ns_name)
-                    for config_item in data:
-                        try:
-                            config_ns.set(config_item[0], config_item[1])
-                        except Exception as e:
-                            if self.logger:
-                                self.logger.info(
-                                    f"Loaded state for {loaded_state_ns_name} has key {data[0]} saved, but current config has no such key registered - skipping.")
-
     def load_last(self):
         loaded_state = self.load_state(self.last_state_path)
-        # Set configs
-        self.load_configs(loaded_state)
-
-    def save_project(self):
-        project_path = filedialog.asksaveasfilename(
-            defaultextension='.dmproj',
-            filetypes=[("Documaker project", '*.dmproj')],
-            initialdir=str(self.default_saved_projects_path)
-        )
-        self.save_state()
-        # Save to file
-        try:
-            with open(project_path, "wb") as f:
-                f.write(json.dumps(self.last_state).encode('utf-8'))
-        except Exception as e:
-            if self.logger:
-                self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
+        self.config.deserialize_update(loaded_state)
 
     def load_project(self):
         load_path = open_file_dialog(self.default_saved_projects_path)
         if load_path:
             state = self.load_state(PurePath(load_path))
-            self.load_configs(state)
+            self.config.deserialize_update(state)
 
     def on_exit(self):
         self.save_last()
