@@ -50,6 +50,7 @@ class DirectoryCombobox(MyWidget):
         )
         if initial_combo:
             self.combobox.set(initial_combo)
+            self.add_dropdown_value(initial_combo)
         self.combobox.bind("<FocusOut>", self.on_leave)
         self.combobox.bind("<FocusIn>", self.on_enter)
 
