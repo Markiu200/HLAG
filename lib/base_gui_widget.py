@@ -99,8 +99,8 @@ class BaseConfigWidget(ttk.Labelframe):
             config_ns=self.base_config,
             parent=self,
             label='Logger Level:',
-            combobox_width=9,
-            initial_combo="Debug"
+            combobox_width=10,
+            initial_combo="DEBUG"
         )
 
     def load(self, config: ConfigNamespace):
@@ -119,8 +119,8 @@ class BaseConfigWidget(ttk.Labelframe):
             self.output_name_config_widget.entry_var.set(config.get("output_name"))
         if config.get("output_title"):
             self.output_title_config_widget.entry_var.set(config.get("output_title"))
-        # if config.get("logger_level"):
-        #     self.logger_level_config_widget.combobox.set(config.get("logger_level"))
+        if config.get("logger_level"):
+            self.logger_level_config_widget.set_level(config.get("logger_level"))
 
     def persistent_load(self, config: ConfigNamespace):
         if config.get("target_dropdown"):

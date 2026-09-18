@@ -1,6 +1,7 @@
 from lib.n_config import ConfigNamespace
 import tkinter as tk
 from tkinter import ttk
+import logging
 # Own imports
 from lib.base_gui_widget_pkg import MyWidget
 
@@ -17,8 +18,12 @@ class LevelDropbox(MyWidget):
             focus_callback=None
     ):
         super().__init__(config_item, config_ns, parent, label, focus_callback)
+        self.logger = None
+        if self.config_ns.get("logger_name"):
+            self.logger = logging.getLogger(self.config_ns.get("logger_name"))
+        #
         self.combobox_width = combobox_width
-        self.combobox_values = ("Debug", "Info", "Warning", "Error", "Critical")
+        self.combobox_values = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
         # Combobox var
         self.combobox_var = tk.StringVar()
         if initial_combo:
@@ -37,8 +42,11 @@ class LevelDropbox(MyWidget):
         self.combobox.pack(side=tk.LEFT)
 
     def set_config(self, var, index, mode):
-        logger = self.config_ns.get("logger")
-        if logger:
-            # self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
-            self.config_ns.set(self.config_item, self.combobox_var.get())
-            # logger.set_level_by_name(self.combobox_var.get())
+        level = logging.getLevelName(self.combobox_var.get())
+        self.config_ns.set(self.config_item, level)
+        if self.logger:
+            self.logger.setLevel(level)
+
+    def set_level(self, level: int):
+        level_text = logging.getLevelName(level)
+        self.combobox_var.set(level_text)
