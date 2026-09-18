@@ -3,7 +3,6 @@ import logging
 from sys import stdout
 # Own imports
 from lib.n_config import Config
-# from lib.print_logger import PrintLogger
 from lib.module_management import ModuleManager
 from lib.gui.gui import UserGUI
 from lib.base_gui_widget import BaseConfigWidget
@@ -11,7 +10,6 @@ from lib.toolbox import Toolbox
 
 
 if __name__ == '__main__':
-    # logger = PrintLogger()
     # Configure logger
     logging.basicConfig(
         level=logging.DEBUG,
@@ -37,16 +35,6 @@ if __name__ == '__main__':
     base_config.set("output_title", "Pagemaker")
     base_config.set("logger_name", __name__)
     base_config.set("logger_level", logging.DEBUG)
-    # base_config.add_path_config_item("base_path", base_path)
-    # base_config.add_path_config_item("target_path", PurePath(base_path, "inputs"))
-    # base_config.add_path_config_item("output_path", PurePath(base_path, "outputs"))
-    # base_config.add_path_config_item("assets_path", PurePath(base_path, "outputs"))
-    # base_config.add_path_config_item("modules_path", PurePath(base_path, "modules"))
-    # base_config.add_config_item("assets_dir_name", "assets")
-    # base_config.add_config_item("output_name", "output.html")
-    # base_config.add_config_item("output_title", "Pagemaker")
-    # base_config.add_config_item("logger", logger)
-    # base_config.add_config_item("logger_level", 10)
 
     # Initialize Toolbox
     toolbox = Toolbox()

@@ -6,14 +6,12 @@ import os
 import logging
 # Own imports
 from lib.n_config import Config
-# from lib.print_logger import PrintLogger
 
 
 class UserGUI:
     def __init__(self, config: Config):
         # Config
         self.config = config
-        # self.logger = self.config.get_base_config().get("logger")
 
         # Logger
         self.logger = None
@@ -148,32 +146,18 @@ class UserGUI:
         return self.persistent_config
 
     def save_last(self):
-        # state_response = self.config.serialize()
-        # state = state_response.state
-        # state_exceptions = state_response.exceptions
-        # if self.logger:
-        #     for exception in state_exceptions:
-        #         self.logger.debug(f"{exception} not eligible for last state")
         # Save to file
         try:
             with open(self.last_state_path, "wt") as f:
-                # f.write(json.dumps(state).encode('utf-8'))
                 json.dump(self.config.as_serializable(), f)
         except Exception as e:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to save state - state not saved")
 
     def save_persistent(self):
-        # state_response = self.persistent_config.serialize()
-        # state = state_response.state
-        # state_exceptions = state_response.exceptions
-        # if self.logger:
-        #     for exception in state_exceptions:
-        #         self.logger.debug(f"{exception} not eligible for persistent state")
         # Save to file
         try:
             with open(self.persistent_state_path, "wt") as f:
-                # f.write(json.dumps(state).encode('utf-8'))
                 json.dump(self.persistent_config.as_serializable(), f)
         except Exception as e:
             if self.logger:
@@ -186,16 +170,9 @@ class UserGUI:
             filetypes=[("Documaker project", '*.dmproj')],
             initialdir=str(self.default_saved_projects_path)
         )
-        # state_response = self.config.serialize()
-        # state = state_response.state
-        # state_exceptions = state_response.exceptions
-        # if self.logger:
-        #     for exception in state_exceptions:
-        #         self.logger.debug(f"{exception} not eligible for last state")
         # Save to file
         try:
             with open(project_path, "wt") as f:
-                # f.write(json.dumps(state).encode('utf-8'))
                 json.dump(self.config.as_serializable(), f)
         except Exception as e:
             if self.logger:
@@ -207,9 +184,7 @@ class UserGUI:
         # Load from file
         try:
             with open(path, "rb") as f:
-                # file_contents = f.read()
                 loaded_state = json.load(f)
-                # loaded_state = json.loads(file_contents)
         except Exception as e:
             if self.logger:
                 self.logger.error(f"An error {e} occurred while attempting to load last state - last state not loaded")
@@ -217,13 +192,11 @@ class UserGUI:
 
     def load_last(self):
         loaded_state = self.load_state(self.last_state_path)
-        # self.config.deserialize_update(loaded_state)
         if loaded_state:
             self.config.update(loaded_state)
 
     def load_persistent(self):
         loaded_state = self.load_state(self.persistent_state_path)
-        # self.persistent_config.deserialize_update(loaded_state)
         if loaded_state:
             self.persistent_config.update(loaded_state)
 
@@ -231,7 +204,6 @@ class UserGUI:
         load_path = open_file_dialog(self.default_saved_projects_path)
         if load_path:
             state = self.load_state(load_path)
-            # self.config.deserialize_update(state)
             if state:
                 self.config.load(state)
 
@@ -275,22 +247,6 @@ if __name__ == "__main__":
     base_config.set("output_title", "Pagemaker")
     base_config.set("logger_name", __name__)
     base_config.set("logger_level", logging.DEBUG)
-
-    # logger = PrintLogger()
-    #
-    # config_ = Config()
-    # base_config = config_.base_config
-    # base_path = PurePath(__file__).parent.parent.parent
-    # base_config.add_path_config_item("base_path", base_path)
-    # base_config.add_path_config_item("target_path", PurePath(base_path, "inputs"))
-    # base_config.add_path_config_item("output_path", PurePath(base_path, "outputs"))
-    # base_config.add_path_config_item("assets_path", PurePath(base_path, "outputs"))
-    # base_config.add_path_config_item("modules_path", PurePath(base_path, "modules"))
-    # base_config.add_config_item("assets_dir_name", "assets")
-    # base_config.add_config_item("output_name", "output.html")
-    # base_config.add_config_item("output_title", "GUI")
-    # base_config.add_config_item("logger", logger)
-    # base_config.add_config_item("logger_level", 20)
 
     gui_ = UserGUI(config_)
     gui_.start()

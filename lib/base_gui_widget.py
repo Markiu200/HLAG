@@ -19,6 +19,7 @@ class BaseConfigWidget(ttk.Labelframe):
         self.combo_width = 80
         self.entry_width = 40
         self.config.get_base_config().subscribe_load(self.load)
+
         # Initialize persistent config
         self.persistent_config_ns = self.persistent_config.get_base_config()
         self.persistent_config.get_base_config().subscribe_load(self.persistent_load)
@@ -53,7 +54,6 @@ class BaseConfigWidget(ttk.Labelframe):
         self.widgets_config_widget = DirectoryCombobox(
             config_item="modules_path",
             config_ns=self.base_config,
-            # persistent_config_ns=self.persistent_config_ns,
             parent=self,
             label='Widgets Directory:',
             combobox_width=self.combo_width,
@@ -103,26 +103,6 @@ class BaseConfigWidget(ttk.Labelframe):
             initial_combo="Debug"
         )
 
-    # def load(self, config_ns: str, key: str, value):
-    #     if config_ns == "base_config":
-    #         if key == "target_path":
-    #             self.target_config_widget.combobox.set(value)
-    #             self.target_config_widget.check_correct()
-    #         elif key == "output_path":
-    #             self.output_config_widget.combobox.set(value)
-    #             self.output_config_widget.check_correct()
-    #         elif key == "modules_path":
-    #             self.widgets_config_widget.combobox.set(value)
-    #             self.widgets_config_widget.check_correct()
-    #         elif key == "assets_dir_name":
-    #             self.assets_config_widget.entry_var.set(value)
-    #         elif key == "output_name":
-    #             self.output_name_config_widget.entry_var.set(value)
-    #         elif key == "output_title":
-    #             self.output_title_config_widget.entry_var.set(value)
-    #         elif key == "logger_level":
-    #             self.logger_level_config_widget.combobox.set(value)
-
     def load(self, config: ConfigNamespace):
         if config.get("target_path"):
             self.target_config_widget.combobox.set(config.get("target_path"))
@@ -141,15 +121,6 @@ class BaseConfigWidget(ttk.Labelframe):
             self.output_title_config_widget.entry_var.set(config.get("output_title"))
         # if config.get("logger_level"):
         #     self.logger_level_config_widget.combobox.set(config.get("logger_level"))
-
-    # def persistent_load(self, config_ns: str, key: str,  value):
-    #     if config_ns == "base_config":
-    #         if key == "target_dropdown":
-    #             self.target_config_widget.combobox.set(value)
-    #             self.target_config_widget.check_correct()
-    #         elif key == "output_dropdown":
-    #             self.output_config_widget.combobox.set(value)
-    #             self.output_config_widget.check_correct()
 
     def persistent_load(self, config: ConfigNamespace):
         if config.get("target_dropdown"):

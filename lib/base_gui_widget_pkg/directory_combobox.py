@@ -84,13 +84,11 @@ class DirectoryCombobox(MyWidget):
                     self.add_dropdown_value(self.combobox_var.get())
 
     def set_config(self, var, index, mode):
-        # self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
         self.config_ns.set(self.config_item, self.combobox_var.get())
 
     def on_leave(self, event):
         if self.check_correct():
             self.add_dropdown_value(self.combobox_var.get())
-        # self.combobox.config(values=tuple(self.dropdown_values))
 
     def on_enter(self, event):
         if self.focus_callback:
@@ -108,8 +106,6 @@ class DirectoryCombobox(MyWidget):
         if self.persistent_config_ns.get(self.persistent_item):
             self.dropdown_values = self.persistent_config_ns.get(self.persistent_item)
             self.combobox.config(values=self.dropdown_values)
-        # else:
-        #     self.persistent_config_ns.set(self.persistent_item, [])
 
     def add_dropdown_value(self, value):
         if value not in self.dropdown_values:
@@ -119,16 +115,3 @@ class DirectoryCombobox(MyWidget):
             if self.persistent_item:  # If persistent_item wasn't set, it is assumed it is not meant to be saved persistently
                 self.persistent_config_ns.set(self.persistent_item, self.dropdown_values)
             self.combobox.config(values=self.dropdown_values)
-
-    # def load_persistent(self):
-    #     if self.persistent_config_ns and self.persistent_item:
-    #         if self.persistent_config_ns.get(self.persistent_item) is not None:
-    #             self.dropdown_values = self.persistent_config_ns.get(self.persistent_item)
-    #         else:
-    #             self.persistent_config_ns.add_list_config_item("target_dropdown", [])
-    #             self.dropdown_values = []
-    #
-    # def add_persistent(self, path: str):
-    #     if path not in self.dropdown_values:
-    #         self.dropdown_values.append(path)
-    #         self.persistent_config_ns.set(self.persistent_item, self.dropdown_values, propagate=False)

@@ -34,5 +34,4 @@ class NamingEntry(MyWidget):
             self.focus_callback(self.entry)
 
     def set_config(self, var, index, mode):
-        # self.config_ns.set(self.config_item, self.entry_var.get(), propagate=False)
         self.config_ns.set(self.config_item, self.entry_var.get())
