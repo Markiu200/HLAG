@@ -23,14 +23,24 @@ class DirectoryCombobox(MyWidget):
         self.persistent_config_ns = persistent_config_ns
         self.persistent_item = persistent_item
         self.combobox_width = combobox_width
+
         # Combobox dropdown
         self.dropdown_values = []
-        # self.load_persistent()
+        if self.persistent_item:
+            if self.persistent_config_ns.get(self.config_item):
+                self.dropdown_values = self.config_ns.get(self.persistent_item)
+            else:
+                self.dropdown_values = []
+                self.persistent_config_ns.set(self.persistent_item, [])
+        else:  # If persistent_item wasn't set, it is assumed it is not meant to be saved persistently
+            self.dropdown_values = []
+
         # Combobox var
         self.combobox_var = tk.StringVar()
         if initial_combo:
             self.combobox_var.set(initial_combo)
         self.combobox_var.trace_add("write", self.set_config)
+
         # Combobox
         self.combobox = ttk.Combobox(
             self.frame,
@@ -42,6 +52,7 @@ class DirectoryCombobox(MyWidget):
             self.combobox.set(initial_combo)
         self.combobox.bind("<FocusOut>", self.on_leave)
         self.combobox.bind("<FocusIn>", self.on_enter)
+
         # Browse button
         self.browse_button = ttk.Button(
             self.frame,
@@ -50,6 +61,7 @@ class DirectoryCombobox(MyWidget):
             command=self.open_directory_dialog,
             takefocus=0
         )
+
         # Packing
         self.combobox.pack(side=tk.LEFT)
         self.browse_button.pack(side=tk.LEFT)
@@ -71,19 +83,37 @@ class DirectoryCombobox(MyWidget):
         self.config_ns.set(self.config_item, self.combobox_var.get())
 
     def on_leave(self, event):
-        self.check_correct()
-        # self.add_persistent(self.combobox_var.get())
+        if self.check_correct():
+            self.add_dropdown_value(self.combobox_var.get())
         # self.combobox.config(values=tuple(self.dropdown_values))
 
     def on_enter(self, event):
         if self.focus_callback:
             self.focus_callback(self.combobox)
 
-    def check_correct(self):
+    def check_correct(self) -> bool:
         if not os.path.isdir(self.combobox_var.get()):
             self.error_label_var.set("Given path is not a valid directory")
+            return False
         else:
             self.error_label_var.set("")
+            return True
+
+    def load_persistent(self):
+        if self.persistent_config_ns.get(self.persistent_item):
+            self.dropdown_values = self.persistent_config_ns.get(self.persistent_item)
+            self.combobox.config(values=self.dropdown_values)
+        # else:
+        #     self.persistent_config_ns.set(self.persistent_item, [])
+
+    def add_dropdown_value(self, value):
+        if value not in self.dropdown_values:
+            self.dropdown_values.insert(0, value)
+            if len(self.dropdown_values) > 6:
+                self.dropdown_values = self.dropdown_values[:6]
+            if self.persistent_item:  # If persistent_item wasn't set, it is assumed it is not meant to be saved persistently
+                self.persistent_config_ns.set(self.persistent_item, self.dropdown_values)
+            self.combobox.config(values=self.dropdown_values)
 
     # def load_persistent(self):
     #     if self.persistent_config_ns and self.persistent_item:

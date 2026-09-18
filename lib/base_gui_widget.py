@@ -53,7 +53,7 @@ class BaseConfigWidget(ttk.Labelframe):
         self.widgets_config_widget = DirectoryCombobox(
             config_item="modules_path",
             config_ns=self.base_config,
-            persistent_config_ns=self.persistent_config_ns,
+            # persistent_config_ns=self.persistent_config_ns,
             parent=self,
             label='Widgets Directory:',
             combobox_width=self.combo_width,
@@ -152,7 +152,10 @@ class BaseConfigWidget(ttk.Labelframe):
     #             self.output_config_widget.check_correct()
 
     def persistent_load(self, config: ConfigNamespace):
-        pass
+        if config.get("target_dropdown"):
+            self.target_config_widget.load_persistent()
+        if config.get("output_dropdown"):
+            self.output_config_widget.load_persistent()
 
 
 def open_directory_dialog(site_directory_text, initial_dir: str = None):
