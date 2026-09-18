@@ -69,14 +69,18 @@ class DirectoryCombobox(MyWidget):
     def open_directory_dialog(self):
         if self.combobox_var.get() and os.path.isdir(self.combobox_var.get()):
             selected = filedialog.askdirectory(initialdir=self.combobox_var.get())
+            selected = selected.replace("/", os.sep)
             if selected:
                 self.combobox_var.set(selected)
-                self.check_correct()
+                if self.check_correct():
+                    self.add_dropdown_value(self.combobox_var.get())
         else:
             selected = filedialog.askdirectory()
+            selected = selected.replace("/", os.sep)
             if selected:
                 self.combobox_var.set(selected)
-                self.check_correct()
+                if self.check_correct():
+                    self.add_dropdown_value(self.combobox_var.get())
 
     def set_config(self, var, index, mode):
         # self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
