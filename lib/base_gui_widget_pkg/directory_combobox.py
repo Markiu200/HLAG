@@ -14,18 +14,30 @@ class DirectoryCombobox(MyWidget):
             parent: ttk.Widget,
             label: str,
             combobox_width: int,
+            persistent_config_ns: ConfigNamespace = None,
+            persistent_item: str = None,
             initial_combo: str = None,
             focus_callback=None
     ):
         super().__init__(config_item, config_ns, parent, label, focus_callback)
+        self.persistent_config_ns = persistent_config_ns
+        self.persistent_item = persistent_item
         self.combobox_width = combobox_width
+        # Combobox dropdown
+        self.dropdown_values = []
+        # self.load_persistent()
         # Combobox var
         self.combobox_var = tk.StringVar()
         if initial_combo:
             self.combobox_var.set(initial_combo)
         self.combobox_var.trace_add("write", self.set_config)
         # Combobox
-        self.combobox = ttk.Combobox(self.frame, textvariable=self.combobox_var, width=self.combobox_width)
+        self.combobox = ttk.Combobox(
+            self.frame,
+            textvariable=self.combobox_var,
+            width=self.combobox_width,
+            values=tuple(self.dropdown_values)
+        )
         if initial_combo:
             self.combobox.set(initial_combo)
         self.combobox.bind("<FocusOut>", self.on_leave)
@@ -55,10 +67,13 @@ class DirectoryCombobox(MyWidget):
                 self.check_correct()
 
     def set_config(self, var, index, mode):
-        self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
+        # self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
+        self.config_ns.set(self.config_item, self.combobox_var.get())
 
     def on_leave(self, event):
         self.check_correct()
+        # self.add_persistent(self.combobox_var.get())
+        # self.combobox.config(values=tuple(self.dropdown_values))
 
     def on_enter(self, event):
         if self.focus_callback:
@@ -69,3 +84,16 @@ class DirectoryCombobox(MyWidget):
             self.error_label_var.set("Given path is not a valid directory")
         else:
             self.error_label_var.set("")
+
+    # def load_persistent(self):
+    #     if self.persistent_config_ns and self.persistent_item:
+    #         if self.persistent_config_ns.get(self.persistent_item) is not None:
+    #             self.dropdown_values = self.persistent_config_ns.get(self.persistent_item)
+    #         else:
+    #             self.persistent_config_ns.add_list_config_item("target_dropdown", [])
+    #             self.dropdown_values = []
+    #
+    # def add_persistent(self, path: str):
+    #     if path not in self.dropdown_values:
+    #         self.dropdown_values.append(path)
+    #         self.persistent_config_ns.set(self.persistent_item, self.dropdown_values, propagate=False)

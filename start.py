@@ -1,7 +1,9 @@
 from pathlib import PurePath
+import logging
+from sys import stdout
 # Own imports
 from lib.n_config import Config
-from lib.print_logger import PrintLogger
+# from lib.print_logger import PrintLogger
 from lib.module_management import ModuleManager
 from lib.gui.gui import UserGUI
 from lib.base_gui_widget import BaseConfigWidget
@@ -9,22 +11,42 @@ from lib.toolbox import Toolbox
 
 
 if __name__ == '__main__':
-    logger = PrintLogger()
+    # logger = PrintLogger()
+    # Configure logger
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s %(message)s',
+        handlers=[
+            logging.FileHandler("logs.log"),
+            logging.StreamHandler(stdout),
+        ]
+    )
 
     # Start Config
+    Config.set_base_name("base_config")
     config_ = Config()
-    base_config = config_.base_config
+    base_config = config_.get_base_config()
     base_path = PurePath(__file__).parent
-    base_config.add_path_config_item("base_path", base_path)
-    base_config.add_path_config_item("target_path", PurePath(base_path, "inputs"))
-    base_config.add_path_config_item("output_path", PurePath(base_path, "outputs"))
-    base_config.add_path_config_item("assets_path", PurePath(base_path, "outputs"))
-    base_config.add_path_config_item("modules_path", PurePath(base_path, "modules"))
-    base_config.add_config_item("assets_dir_name", "assets")
-    base_config.add_config_item("output_name", "output.html")
-    base_config.add_config_item("output_title", "Pagemaker")
-    base_config.add_config_item("logger", logger)
-    base_config.add_config_item("logger_level", 20)
+    base_config.set("base_path", str(base_path))
+    base_config.set("target_path", str(PurePath(base_path, "inputs")))
+    base_config.set("output_path", str(PurePath(base_path, "outputs")))
+    base_config.set("assets_path", str(PurePath(base_path, "outputs")))
+    base_config.set("modules_path", str(PurePath(base_path, "modules")))
+    base_config.set("assets_dir_name", "assets")
+    base_config.set("output_name", "output.html")
+    base_config.set("output_title", "Pagemaker")
+    base_config.set("logger_name", __name__)
+    base_config.set("logger_level", logging.DEBUG)
+    # base_config.add_path_config_item("base_path", base_path)
+    # base_config.add_path_config_item("target_path", PurePath(base_path, "inputs"))
+    # base_config.add_path_config_item("output_path", PurePath(base_path, "outputs"))
+    # base_config.add_path_config_item("assets_path", PurePath(base_path, "outputs"))
+    # base_config.add_path_config_item("modules_path", PurePath(base_path, "modules"))
+    # base_config.add_config_item("assets_dir_name", "assets")
+    # base_config.add_config_item("output_name", "output.html")
+    # base_config.add_config_item("output_title", "Pagemaker")
+    # base_config.add_config_item("logger", logger)
+    # base_config.add_config_item("logger_level", 10)
 
     # Initialize Toolbox
     toolbox = Toolbox()

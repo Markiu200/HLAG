@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from lib.n_config import Config
+from lib.n_config import Config, ConfigNamespace
 from lib.gui import UserGUI
 
 
@@ -8,8 +8,8 @@ class ConfigWidget(ttk.Labelframe):
     def __init__(self, gui: UserGUI):
         self.gui = gui
         self.config_frame = gui.get_config_frame()
-        self.config = gui.config
-        self.config_ns = self.config.get_config("raw_image")
+        self.config: Config = gui.config
+        self.config_ns: ConfigNamespace = self.config.get_config("raw_image")
         super().__init__(self.config_frame)
         #
         self["text"] = "Raw Image"
@@ -26,18 +26,27 @@ class ConfigWidget(ttk.Labelframe):
         self.base64_radio.pack(side=tk.LEFT, padx=(0, 20))
         self.assets_radio.pack(side=tk.LEFT)
         #
-        self.config.subscribe(self.load)
+        self.config_ns.subscribe_load(self.load)
 
     def set_base(self):
         if self.radio_var.get() == "True":
-            self.config_ns.set("base64", True, propagate=False)
+            # self.config_ns.set("base64", True, propagate=False)
+            self.config_ns.set("base64", True)
         if self.radio_var.get() == "False":
-            self.config_ns.set("base64", False, propagate=False)
+            # self.config_ns.set("base64", False, propagate=False)
+            self.config_ns.set("base64", False)
 
-    def load(self, config_ns: str, key: str, value):
-        if config_ns == "raw_image":
-            if key == "base64":
-                if value is True:
-                    self.base64_radio.invoke()
-                else:
-                    self.assets_radio.invoke()
+    # def load(self, config_ns: str, key: str, value):
+    #     if config_ns == "raw_image":
+    #         if key == "base64":
+    #             if value is True:
+    #                 self.base64_radio.invoke()
+    #             else:
+    #                 self.assets_radio.invoke()
+
+    def load(self, config: ConfigNamespace):
+        if config.get("base64"):
+            if config.get("base64") is True:
+                self.base64_radio.invoke()
+            else:
+                self.assets_radio.invoke()

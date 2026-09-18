@@ -39,5 +39,6 @@ class LevelDropbox(MyWidget):
     def set_config(self, var, index, mode):
         logger = self.config_ns.get("logger")
         if logger:
-            self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
-            logger.set_level_by_name(self.combobox_var.get())
+            # self.config_ns.set(self.config_item, self.combobox_var.get(), propagate=False)
+            self.config_ns.set(self.config_item, self.combobox_var.get())
+            # logger.set_level_by_name(self.combobox_var.get())
