@@ -30,7 +30,7 @@ class RawImage(IModule):
         self.js = [FileRegisterable(PurePath(self.module_path, "js.js"))]
         # Register config items
         self.config_ns = module_manager.config.register_namespace(self.info.get("codename"))
-        self.config_ns.add_config_item("base64", False)
+        self.config_ns.set("base64", False)
         # GUI
         self.config_ns.set_widget(import_module(f"raw_image.gui_widget").ConfigWidget)
 

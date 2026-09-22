@@ -21,7 +21,7 @@ class ConfigNamespace:
         return self.name
 
     def set(self, key, value):
-        if type(value) in (str, list, tuple, int, float):
+        if type(value) in (str, list, tuple, int, float, bool):
             self.config_items[key] = value
         else:
             raise TypeError(f"Config item value {type(value)} not in allowed types list")
