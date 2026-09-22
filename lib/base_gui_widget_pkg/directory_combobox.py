@@ -23,6 +23,7 @@ class DirectoryCombobox(MyWidget):
         self.persistent_config_ns = persistent_config_ns
         self.persistent_item = persistent_item
         self.combobox_width = combobox_width
+        self.invalid = False
 
         # Combobox dropdown
         self.dropdown_values = []
@@ -97,9 +98,13 @@ class DirectoryCombobox(MyWidget):
     def check_correct(self) -> bool:
         if not os.path.isdir(self.combobox_var.get()):
             self.error_label_var.set("Given path is not a valid directory")
+            self.invalid = True
+            self.parent.block(self)
             return False
         else:
             self.error_label_var.set("")
+            self.invalid = True
+            self.parent.unblock(self)
             return True
 
     def load_persistent(self):

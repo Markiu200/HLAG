@@ -14,6 +14,7 @@ class BaseConfigWidget(ttk.Labelframe):
         self.persistent_config: Config = gui.get_persistent_config()
         self.base_config: ConfigNamespace = self.config.get_base_config()
         super().__init__(self.config_frame)
+        self.blockers = set()
         #
         self["text"] = "Base Config"
         self.combo_width = 80
@@ -31,7 +32,7 @@ class BaseConfigWidget(ttk.Labelframe):
             persistent_config_ns=self.persistent_config_ns,
             persistent_item="target_dropdown",
             parent=self,
-            label='Target Directory:',
+            label='Input Directory:',
             combobox_width=self.combo_width,
             initial_combo=self.base_config.get("target_path"),
             focus_callback=self.gui.focus_track
@@ -127,6 +128,21 @@ class BaseConfigWidget(ttk.Labelframe):
             self.target_config_widget.load_persistent()
         if config.get("output_dropdown"):
             self.output_config_widget.load_persistent()
+
+    def block(self, blocker):
+        self.blockers.add(blocker)
+        if len(self.blockers) > 0:
+            self.gui.block(self)
+        else:
+            self.gui.unblock(self)
+
+    def unblock(self, blocker):
+        if blocker in self.blockers:
+            self.blockers.remove(blocker)
+            if len(self.blockers) > 0:
+                self.gui.block(self)
+            else:
+                self.gui.unblock(self)
 
 
 def open_directory_dialog(site_directory_text, initial_dir: str = None):

@@ -33,6 +33,7 @@ class UserGUI:
         self.config_widgets = []  # This will store GUI widgets from outside
         self.persistent_config = Config()  # This can be used by outside widgets to store persistent data not necesarily connected to the "state"
         self.last_focus: Widget | None = None  # This stores lastly focused Widget, if such will register for it
+        self.blockers = set()  # This stores objects that are blocking Run button (blockers must add themselves here via other methods)
 
         #
         # Setup tk widgets
@@ -82,6 +83,8 @@ class UserGUI:
         else:
             if self.logger:
                 self.logger.info("Persistent state file not found - state not loaded")
+        # Activate / deactivate run button
+        self.run_button_refresh()
 
         # Running
         try:
@@ -144,6 +147,27 @@ class UserGUI:
 
     def get_persistent_config(self) -> Config:
         return self.persistent_config
+
+    def block(self, blocker):
+        self.blockers.add(blocker)
+        self.run_button_refresh()
+
+    def unblock(self, blocker):
+        if blocker in self.blockers:
+            self.blockers.remove(blocker)
+            self.run_button_refresh()
+
+    def activate_run_button(self):
+        self.run_button.state(['!disabled'])
+
+    def deactivate_run_button(self):
+        self.run_button.state(['disabled'])
+
+    def run_button_refresh(self):
+        if len(self.blockers) > 0:
+            self.deactivate_run_button()
+        else:
+            self.activate_run_button()
 
     def save_last(self):
         # Save to file

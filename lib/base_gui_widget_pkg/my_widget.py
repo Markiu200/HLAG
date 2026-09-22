@@ -4,7 +4,7 @@ from tkinter import ttk
 
 
 class MyWidget:
-    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent: ttk.Widget, label: str, focus_callback=None):
+    def __init__(self, config_item: str, config_ns: ConfigNamespace, parent, label: str, focus_callback=None):
         self.config_item = config_item
         self.config_ns = config_ns
         self.parent = parent
