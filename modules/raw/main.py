@@ -3,7 +3,8 @@ from pathlib import PurePath
 from importlib import import_module
 # Own imports
 from lib.module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
-from lib.module_management import IModule, ModuleManager
+from lib.module_management.module_interface import IModule
+from lib.module_management.module_manager import ModuleManager
 from lib.n_config import Config
 from lib.tag_matcher import TagPair, TagMatcher, RightPart, Middle, Part
 from lib.registerables import FileRegisterable

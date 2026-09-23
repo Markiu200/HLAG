@@ -3,7 +3,7 @@ from importlib import import_module
 import os
 # Own imports
 from lib.module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
-from lib.module_management import IModule
+from lib.module_management.module_interface import IModule
 
 
 def get_module_main_class():

@@ -2,7 +2,7 @@ from pathlib import PurePath
 # Own imports
 from lib.print_logger import PrintLogger
 from lib.n_config import Config
-from lib.module_management import ModuleManager
+from lib.module_management.module_manager import ModuleManager
 from lib.assets_manager.assets_manager import AssetsManager
 from lib.toolbox import Toolbox
 from lib.snippet_provider import yield_snippet, yield_snippet_with_args

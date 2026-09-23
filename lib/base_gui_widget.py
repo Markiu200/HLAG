@@ -1,9 +1,9 @@
 import os
 from tkinter import ttk, filedialog
 # Own imports
-from lib.base_gui_widget_pkg import LevelDropbox, NamingEntry, DirectoryCombobox
+from base_gui_widget_pkg import LevelDropbox, NamingEntry, DirectoryCombobox
 from gui import UserGUI
-from lib.n_config import Config, ConfigNamespace
+from n_config import Config, ConfigNamespace
 
 
 class BaseConfigWidget(ttk.Labelframe):
