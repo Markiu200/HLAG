@@ -3,9 +3,9 @@ import os
 import sys
 from pathlib import PurePath
 # Own imports
-from lib.module_management import IModule
-from lib.n_config import Config
-from lib.toolbox import Toolbox
+from module_management.module_interface import IModule
+from n_config import Config
+from toolbox import Toolbox
 
 
 class Module:

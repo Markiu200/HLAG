@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 # Own imports
-from lib.models import Card, InstanceDBEntry
-from lib.structure_scanner.base_check import BaseCheck
-from lib.registerables import Registerable
+from models import Card, InstanceDBEntry
+from structure_scanner.base_check import BaseCheck
+from registerables import Registerable
 
 
 class IModule(ABC):
