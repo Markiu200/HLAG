@@ -1,40 +1,18 @@
-from pathlib import PurePath
-import logging
-from sys import stdout
 # Own imports
-from lib.n_config import Config
-from lib.module_management import ModuleManager
+from lib.module_management.module_manager import ModuleManager
 from lib.base_gui_widget import BaseConfigWidget
 from lib.toolbox import Toolbox
 from gui import UserGUI
+from main import main
+from init_config import init_config, init_logger
 
 
 if __name__ == '__main__':
     # Configure logger
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s %(levelname)s %(message)s',
-        handlers=[
-            logging.FileHandler("logs.log"),
-            logging.StreamHandler(stdout),
-        ]
-    )
+    init_logger()
 
     # Start Config
-    Config.set_base_name("base_config")
-    config_ = Config()
-    base_config = config_.get_base_config()
-    base_path = PurePath(__file__).parent
-    base_config.set("base_path", str(base_path))
-    base_config.set("target_path", str(PurePath(base_path, "inputs")))
-    base_config.set("output_path", str(PurePath(base_path, "outputs")))
-    base_config.set("assets_path", str(PurePath(base_path, "outputs")))
-    base_config.set("modules_path", str(PurePath(base_path, "modules")))
-    base_config.set("assets_dir_name", "assets")
-    base_config.set("output_name", "output.html")
-    base_config.set("output_title", "Pagemaker")
-    base_config.set("logger_name", __name__)
-    base_config.set("logger_level", logging.DEBUG)
+    config_ = init_config()
 
     # Initialize Toolbox
     toolbox = Toolbox()
@@ -50,5 +28,4 @@ if __name__ == '__main__':
         gui.add_config_widget(widget)
     gui.start()
 
-    print(config_)
-    # main(config, module_manager)
+    main(config_, module_manager)
