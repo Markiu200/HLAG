@@ -1,6 +1,7 @@
 import importlib
 import os
 import sys
+import logging
 from pathlib import PurePath
 # Own imports
 from module_management.module_interface import IModule
@@ -19,7 +20,10 @@ class Module:
 class ModuleManager:
     def __init__(self, config: Config, toolbox: Toolbox):
         self.config = config
-        self.logger = self.config.get_base_config().get("logger")
+        # Logger
+        self.logger = None
+        if self.config.get_base_config().get("logger_name"):
+            self.logger = logging.getLogger(self.config.get_base_config().get("logger_name"))
         self.toolbox = toolbox
         #
         self.modules_dir_path = None
