@@ -4,9 +4,9 @@ from sys import stdout
 # Own imports
 from lib.n_config import Config
 from lib.module_management import ModuleManager
-from lib.gui.gui import UserGUI
 from lib.base_gui_widget import BaseConfigWidget
 from lib.toolbox import Toolbox
+from gui import UserGUI
 
 
 if __name__ == '__main__':

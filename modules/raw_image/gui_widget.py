@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from lib.n_config import Config, ConfigNamespace
-from lib.gui import UserGUI
+from gui import UserGUI
 
 
 class ConfigWidget(ttk.Labelframe):

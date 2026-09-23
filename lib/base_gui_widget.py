@@ -2,7 +2,7 @@ import os
 from tkinter import ttk, filedialog
 # Own imports
 from lib.base_gui_widget_pkg import LevelDropbox, NamingEntry, DirectoryCombobox
-from lib.gui import UserGUI
+from gui import UserGUI
 from lib.n_config import Config, ConfigNamespace
 
 
