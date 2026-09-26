@@ -1,9 +1,10 @@
 # Own imports
-from lib.module_facade import BaseCheck, DocumentNode
+from lib.structure_scanner.base_check import BaseCheck
 
 
 class TXTCheck(BaseCheck):
-    def check(self, node: DocumentNode):
+    # def check(self, node: DocumentNode):
+    def check(self, node):
         meta = dict()
         if node.path.suffix == ".txt":
             meta = {"module": "raw"}
