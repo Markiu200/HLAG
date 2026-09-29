@@ -16,20 +16,51 @@ from lib.document_node import DocumentNode
 # from lib.printer.printer import Printer
 from init_config import init_config, init_logger
 
-    # TEMPORARY CONFIG SETUP
-    # config.target_path = PurePath(r'D:\hlag_t')
-    # config.output_path = PurePath(r'D:\hlag_t_doc')
-    # config.assets_path = PurePath(r'D:\hlag_t_doc')
-    # config.assets_dir_name = "assets"
-    # config.modules_path = PurePath(r'D:\hlag\modules')
-    # config.output_name = "hlag_t.html"
-    # config.document_title = "General testing target"
-    # config.embed_images = True
-    # config.base_path_length = len(config.target_path.parts)
 
-    # todo asset manager doesn't create assets folder if not needed
-    # todo output directory created if doesn't exist
-    # todo documentation on usage of modules
+# todo asset manager doesn't create assets folder if not needed
+# todo output directory created if doesn't exist
+# todo documentation on usage of modules
+# todo add config for "Home" in outline
+
+def main(config: Config, module_manager: ModuleManager):
+    config_ns = config.get_base_config()
+
+    # Set up logger
+    logger = None
+    if config_ns.get("logger_name"):
+        logger = logging.getLogger(config.get_base_config().get("logger_name"))
+
+    # Set up root node
+    root_node = None
+    try:
+        if not os_path.isdir(str(config_ns.get("target_path"))):
+            raise NotADirectoryError()
+        DocumentNode.set_root_path(config_ns.get("target_path"))
+        root_node = DocumentNode(config_ns.get("target_path"), True)
+        root_node.set_metadata("title", "Home")
+        # root_node.set_metadata("relPath", "_")
+        # root_node.set_metadata("hostPath", "_")
+        # root_node.set_metadata("relLink", "_")
+        #
+    except NotADirectoryError as e:
+        if logger:
+            logger.critical(f"Source path {config.get_base_config().get('target_path')} is not an directory")
+            raise e
+
+    # Structure scanner part
+    try:
+        if root_node:
+            structure_scanner = StructureScanner(root_node)
+            structure_scanner.scan()
+    except NotADirectoryError as e:
+        if logger:
+            logger.critical(f"Source path {config.get_base_config().get('target_path')} is not an directory")
+            raise e
+
+    return 0
+
+
+
 
     # Module manager is instantiated
     # Initialize module manager before GUI since GUI might need to know what modules exist
@@ -121,22 +152,11 @@ from init_config import init_config, init_logger
 
 
 if __name__ == "__main__":
-    logger = PrintLogger()
+    # Configure logger
+    init_logger()
 
     # Start Config
-    config_ = Config()
-    base_config = config_.base_config
-    base_path = PurePath(__file__).parent
-    base_config.add_config_item("base_path", base_path)
-    base_config.add_config_item("target_path", PurePath(base_path, "inputs"))
-    base_config.add_config_item("output_path", PurePath(base_path, "outputs"))
-    base_config.add_config_item("assets_path", PurePath(base_path, "outputs"))
-    base_config.add_config_item("modules_path", PurePath(base_path, "modules"))
-    base_config.add_config_item("assets_dir_name", "assets")
-    base_config.add_config_item("output_name", "output.html")
-    base_config.add_config_item("output_title", "Pagemaker")
-    base_config.add_config_item("logger", logger)
-    base_config.add_config_item("logger_level", 20)
+    config_ = init_config()
 
     # Initialize Toolbox
     toolbox = Toolbox()
@@ -144,6 +164,5 @@ if __name__ == "__main__":
     # Start ModuleManager and check for modules
     module_manager_ = ModuleManager(config_, toolbox)
     module_manager_.initialize()
-    print(module_manager_)
 
-    # main(config_, module_manager_)
+    main(config_, module_manager_)
