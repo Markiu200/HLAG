@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
 # Own imports
+if __name__ == '__main__':
+    from sys import path as sys_path
+    from pathlib import PurePath
+    sys_path.append(str(PurePath(__file__).parent.parent))
 from lib.models import Card, InstanceDBEntry
 from lib.base_check import BaseCheck
 from lib.registerables import Registerable

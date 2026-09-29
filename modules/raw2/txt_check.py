@@ -1,5 +1,5 @@
 # Own imports
-from lib.structure_scanner.base_check import BaseCheck
+from lib.base_check import BaseCheck
 
 
 class TXTCheck(BaseCheck):

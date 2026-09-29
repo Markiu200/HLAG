@@ -1,12 +1,14 @@
 import importlib
 import os
-import sys
 import logging
+from sys import path as sys_path
 from pathlib import PurePath
 # Own imports
-from module_management.module_interface import IModule
-from n_config import Config
-from toolbox import Toolbox
+if __name__ == '__main__':
+    sys_path.append(str(PurePath(__file__).parent.parent))
+from lib.imodule import IModule
+from lib.n_config import Config
+from lib.toolbox import Toolbox
 
 
 class Module:

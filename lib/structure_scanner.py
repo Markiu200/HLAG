@@ -1,9 +1,11 @@
 import os
 from pathlib import PurePath
 # Own imports
-from .document_tree import DocumentTree
-from .document_node import DocumentNode
-from .base_check import BaseCheck
+if __name__ == '__main__':
+    from sys import path as sys_path
+    sys_path.append(str(PurePath(__file__).parent.parent))
+from lib.document_node import DocumentNode
+from lib.base_check import BaseCheck
 
 
 class StructureScanner:

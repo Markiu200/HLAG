@@ -2,6 +2,9 @@ import logging
 from pathlib import PurePath
 from sys import stdout
 # Own imports
+if __name__ == '__main__':
+    from sys import path as sys_path
+    sys_path.append(str(PurePath(__file__).parent.parent))
 from lib.n_config import Config
 
 

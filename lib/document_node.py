@@ -1,8 +1,13 @@
 from pathlib import PurePath
 from os.path import sep
+from typing import Union
+from os import path as os_path
 # Own imports
+if __name__ == '__main__':
+    from sys import path as sys_path
+    sys_path.append(str(PurePath(__file__).parent.parent))
 from lib.models.dn_ref import Ref
-# from config import config
+from lib.models.dn_data import Data
 
 
 class DocumentNode:

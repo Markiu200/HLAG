@@ -1,20 +1,21 @@
 from pathlib import PurePath
+from os import path as os_path
+import logging
 # Own imports
-from lib.print_logger import PrintLogger
 from lib.n_config import Config
-from lib.module_management.module_manager import ModuleManager
-from lib.assets_manager.assets_manager import AssetsManager
+from lib.module_manager import ModuleManager
+# from lib.assets_manager.assets_manager import AssetsManager
 from lib.toolbox import Toolbox
-from lib.snippet_provider import yield_snippet, yield_snippet_with_args
-from lib.js_manager import JSManager
-from lib.css_manager import CSSManager
+# from lib.snippet_provider import yield_snippet, yield_snippet_with_args
+# from lib.js_manager import JSManager
+# from lib.css_manager import CSSManager
 from lib.structure_scanner import StructureScanner
-from lib.content_manager import ContentManager
-from lib.linker import Linker
-from lib.printer.printer import Printer
+from lib.document_node import DocumentNode
+# from lib.content_manager import ContentManager
+# from lib.linker import Linker
+# from lib.printer.printer import Printer
+from init_config import init_config, init_logger
 
-
-def main(config, module_manager):
     # TEMPORARY CONFIG SETUP
     # config.target_path = PurePath(r'D:\hlag_t')
     # config.output_path = PurePath(r'D:\hlag_t_doc')

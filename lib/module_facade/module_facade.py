@@ -2,9 +2,9 @@ from pathlib import PurePath
 # Own imports
 from lib.js_manager import JSManager
 from lib.css_manager import CSSManager
-from lib.structure_scanner import StructureScanner
+from structure_scanner import StructureScanner
 from lib.content_manager import ContentManager
-from lib.module_management.module_manager import ModuleManager
+from module_manager import ModuleManager
 
 
 class ModuleFacade:

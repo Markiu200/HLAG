@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from lib.structure_scanner.document_node import DocumentNode
+# Own imports
+from lib.document_node import DocumentNode
 
 
 class BaseCheck(ABC):

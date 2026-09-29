@@ -1,5 +1,5 @@
 # Own imports
-from lib.module_management.module_manager import ModuleManager
+from lib.module_manager import ModuleManager
 from lib.base_gui_widget import BaseConfigWidget
 from lib.toolbox import Toolbox
 from gui import UserGUI

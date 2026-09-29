@@ -1,6 +1,6 @@
 from lib.content_manager.structures import InstanceDBRecord, InstanceDBRecordGroup, ControllerMapRecord
 from lib.models import InstanceDBEntry, Ref
-from lib.module_management.module_manager import ModuleManager
+from module_manager import ModuleManager
 
 
 class TrackedModule:
