@@ -29,8 +29,9 @@ class StructureScanner:
     def add_node_check(self, check: BaseCheck):
         self.node_checks.append(check)
 
-    def scan(self):
+    def scan(self) -> DocumentNode:
         self._scan(self.root_node)
+        return self.root_node
 
     def _scan(self, parent_node: DocumentNode):
         self._apply_checks(parent_node, self.pre_dir_checks)
