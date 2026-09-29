@@ -127,3 +127,6 @@ class ModuleManager:
 
     def get_registered_module(self, codename: str) -> Module:
         return self.registered_modules.get(codename)
+
+
+__all__ = [ModuleManager, Module]

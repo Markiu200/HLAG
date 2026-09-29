@@ -114,3 +114,6 @@ class DocumentNode:
         if key in self.metadata:
             return self.metadata[key]
         return None
+
+
+__all__ = [DocumentNode]
