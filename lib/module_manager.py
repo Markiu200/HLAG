@@ -37,7 +37,7 @@ class ModuleManager:
             if self.logger:
                 self.logger.info(f"Module directory found at {modules_path}.")
             self.modules_dir_path = modules_path
-            sys.path.append(modules_path)
+            sys_path.append(modules_path)
             self._fetch_modules()
         else:
             if self.logger:
@@ -65,7 +65,7 @@ class ModuleManager:
                     if self.logger:
                         self.logger.critical(f"Error occurred during user modules import - module {module_dir_name}")
                     raise e
-                except AttributeError as e:
+                except AttributeError:
                     if self.logger:
                         self.logger.error(f"Module {module_dir_name} has no register() method in main.py - skipping")
                     continue
