@@ -2,11 +2,11 @@ from pathlib import PurePath
 import os
 import shutil
 # Own imports
-from lib.assets_manager.base_assets_manager import BaseAssetsManager
+from lib.i_assets_manager import IAssetsManager
 from lib.n_config import Config
 
 
-class AssetsManager(BaseAssetsManager):
+class AssetsManager(IAssetsManager):
     def __init__(self, config: Config):
         self.config = config
         self.assets_dir_path = PurePath(
@@ -36,7 +36,7 @@ class AssetsManager(BaseAssetsManager):
 
     def register_asset(self, path: PurePath) -> str | None:
         """Copies file from path to assets directory and returns it's relative path as str.
-        :param path: Path of file in directory strtucture
+        :param path: Path of file in directory structure
         :return Relative path of asset in new location, or None if file already exists"""
         new_name = self.new_asset_name(path)
         if os.path.exists(str(PurePath(self.assets_dir_path, new_name))):

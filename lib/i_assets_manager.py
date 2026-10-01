@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import PurePath
 
 
-class BaseAssetsManager(ABC):
+class IAssetsManager(ABC):
     @abstractmethod
     def register_asset(self, path: PurePath):
         pass
@@ -10,3 +10,6 @@ class BaseAssetsManager(ABC):
     @abstractmethod
     def copy_assets(self):
         pass
+
+
+__all__ = [IAssetsManager]
