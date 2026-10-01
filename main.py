@@ -1,6 +1,7 @@
 from pathlib import PurePath
 from os import path as os_path
 import logging
+import re
 # Own imports
 from init_config import init_config, init_logger
 from lib.n_config import Config
@@ -60,30 +61,26 @@ def main(config: Config, module_manager: ModuleManager):
             logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
         raise e
 
+    # Assets manager part
+    try:
+        if not os_path.isdir(config_ns.get('output_path')):
+            raise NotADirectoryError(f"Output path {config_ns.get('output_path')} is not an directory")
+        pattern = re.compile('[^a-zA-Z0-9 ]')
+        if pattern.search(config_ns.get('assets_dir_name')):
+            raise ValueError(f"Assets directory name contains illegal characters, it should contain only alphanumeric characters.")
+        assets_manager = AssetsManager(
+            assets_dir_name=config_ns.get('assets_dir_name'),
+            input_dir_path=config_ns.get('target_path'),
+            output_dir_path=config_ns.get('output_path')
+        )
+        # todo add to toolbox
+    except Exception as e:
+        if logger:
+            logger.critical(e)
+        raise e
+
     return 0
 
-
-
-
-    # Module manager is instantiated
-    # Initialize module manager before GUI since GUI might need to know what modules exist
-    modules_directory = PurePath(PurePath(__file__).parent, "modules")
-    ModuleManager.set_module_dir_patch(modules_directory)
-    ModuleManager.fetch_modules()
-
-    # Register Checks from modules before structure scan goes
-    ModuleManager.initiate_modules()
-
-    # todo css_manager is instantiated
-    # In case GUI gives any option to change default CSS, it is instantiated before GUI
-
-    # todo GUI for selecting target directory and other stuff
-    # Start GUI
-    start_gui()
-
-    # Initialize assets manager
-    assets_manager = AssetsManager(config)
-    assets_manager.initialize()
 
     # Printer is instantiated
     printer = Printer()
@@ -91,14 +88,6 @@ def main(config: Config, module_manager: ModuleManager):
         config.get_base_config().get("output_path"),
         config.get_base_config().get("output_name"))
     )
-
-    # Configure StructureScanner
-    StructureScanner.set_root_directory(config.get_base_config().get("target_path"))
-
-    # Scan the structure
-    StructureScanner.scan()
-
-    # todo db_manager gets all dictionaries from structure_scanner
 
     # Content manager gets the files it can use from structure scanner
     ContentManager.fetch_content_from_scanner()
