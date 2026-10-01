@@ -1,3 +1,4 @@
+from pathlib import PurePath
 # Own imports
 from lib.module_manager import ModuleManager
 from lib.base_gui_widget import BaseConfigWidget
@@ -12,7 +13,7 @@ if __name__ == '__main__':
     init_logger()
 
     # Start Config
-    config_ = init_config()
+    config_ = init_config(PurePath(__file__).parent)
 
     # Initialize Toolbox
     toolbox = Toolbox()
