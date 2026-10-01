@@ -28,6 +28,7 @@ from lib.assets_manager import AssetsManager
 
 def main(config: Config, module_manager: ModuleManager):
     config_ns = config.get_base_config()
+    toolbox = module_manager.toolbox
 
     # Set up logger
     logger = None
@@ -73,7 +74,7 @@ def main(config: Config, module_manager: ModuleManager):
             input_dir_path=config_ns.get('target_path'),
             output_dir_path=config_ns.get('output_path')
         )
-        # todo add to toolbox
+        toolbox.assets_manager = assets_manager
     except Exception as e:
         if logger:
             logger.critical(e)
@@ -151,10 +152,10 @@ if __name__ == "__main__":
     config_ = init_config(PurePath(__file__).parent)
 
     # Initialize Toolbox
-    toolbox = Toolbox()
+    toolbox_ = Toolbox()
 
     # Start ModuleManager and check for modules
-    module_manager_ = ModuleManager(config_, toolbox)
+    module_manager_ = ModuleManager(config_, toolbox_)
     module_manager_.initialize()
 
     main(config_, module_manager_)
