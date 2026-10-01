@@ -5,23 +5,25 @@ import logging
 from init_config import init_config, init_logger
 from lib.n_config import Config
 from lib.module_manager import ModuleManager
-# from lib.assets_manager.assets_manager import AssetsManager
 from lib.toolbox import Toolbox
+from lib.document_node import DocumentNode
+from lib.structure_scanner import StructureScanner
+from lib.assets_manager import AssetsManager
 # from lib.snippet_provider import yield_snippet, yield_snippet_with_args
 # from lib.js_manager import JSManager
 # from lib.css_manager import CSSManager
-from lib.structure_scanner import StructureScanner
-from lib.document_node import DocumentNode
 # from lib.content_manager import ContentManager
 # from lib.linker import Linker
 # from lib.printer.printer import Printer
-from init_config import init_config, init_logger
 
 
 # todo asset manager doesn't create assets folder if not needed
 # todo output directory created if doesn't exist
 # todo documentation on usage of modules
 # todo add config for "Home" in outline
+# todo css_manager instantiated early to be able to choose styles
+# todo db_manager gets all dictionaries from structure_scanner
+# todo check if output folder exists
 
 def main(config: Config, module_manager: ModuleManager):
     config_ns = config.get_base_config()
@@ -45,8 +47,8 @@ def main(config: Config, module_manager: ModuleManager):
         #
     except NotADirectoryError as e:
         if logger:
-            logger.critical(f"Source path {config.get_base_config().get('target_path')} is not an directory")
-            raise e
+            logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
+        raise e
 
     # Structure scanner part
     try:
@@ -55,8 +57,8 @@ def main(config: Config, module_manager: ModuleManager):
             structure_scanner.scan()
     except NotADirectoryError as e:
         if logger:
-            logger.critical(f"Source path {config.get_base_config().get('target_path')} is not an directory")
-            raise e
+            logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
+        raise e
 
     return 0
 
