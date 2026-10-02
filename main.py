@@ -10,9 +10,8 @@ from lib.toolbox import Toolbox
 from lib.document_node import DocumentNode
 from lib.structure_scanner import StructureScanner
 from lib.assets_manager import AssetsManager
+from lib.code_block import CodeBlock
 # from lib.snippet_provider import yield_snippet, yield_snippet_with_args
-# from lib.js_manager import JSManager
-# from lib.css_manager import CSSManager
 # from lib.content_manager import ContentManager
 # from lib.linker import Linker
 # from lib.printer.printer import Printer
@@ -36,7 +35,6 @@ def main(config: Config, module_manager: ModuleManager):
         logger = logging.getLogger(config.get_base_config().get("logger_name"))
 
     # Set up root node
-    root_node = None
     try:
         if not os_path.isdir(str(config_ns.get("target_path"))):
             raise NotADirectoryError()
@@ -79,6 +77,14 @@ def main(config: Config, module_manager: ModuleManager):
         if logger:
             logger.critical(e)
         raise e
+
+    # Javascript manager part
+    js_manager = CodeBlock("<script>", "</script>")
+    toolbox.js_manager = js_manager
+
+    # CSS manager part
+    css_manager = CodeBlock("<style>", "</style>")
+    toolbox.css_manager = css_manager
 
     return 0
 
