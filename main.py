@@ -55,6 +55,7 @@ def main(config: Config, module_manager: ModuleManager):
         if root_node:
             structure_scanner = StructureScanner(root_node)
             structure_scanner.scan()
+            toolbox.structure_scanner = structure_scanner
     except NotADirectoryError as e:
         if logger:
             logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
