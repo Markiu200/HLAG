@@ -4,32 +4,22 @@ if __name__ == '__main__':
     from sys import path as sys_path
     from pathlib import PurePath
     sys_path.append(str(PurePath(__file__).parent.parent))
-from lib.models import Card, InstanceDBEntry
 from lib.base_check import BaseCheck
-from lib.registerables import Registerable
 
 
 class IModule(ABC):
     def __init__(self):
         self.info = dict()
         self.checks: list[BaseCheck] = []
-        self.css: list[Registerable] = []
-        self.js: list[Registerable] = []
         self.gui_widget = None
 
-    @classmethod
-    def get_metadata(cls, card: Card) -> dict:
-        if card.file:
-            return cls.get_metadata_from_file(card)
-        else:
-            return cls.get_metadata_from_data(card)
+    @abstractmethod
+    def get_metadata(self, value, is_file: bool) -> dict:
+        pass
 
-    @classmethod
-    def parse(cls, card: Card) -> InstanceDBEntry:
-        if card.file:
-            return cls.parse_file(card)
-        else:
-            return cls.parse_data(card)
+    @abstractmethod
+    def parse(self, value, metadata: dict, is_file: bool) -> str:
+        pass
 
     @classmethod
     def json_sanitize(cls, line: str | None):
@@ -39,39 +29,3 @@ class IModule(ABC):
         result = result.replace("$", "\\$")
         result = result.replace("`", "\\`")
         return fr"`{result}`"
-
-    @classmethod
-    @abstractmethod
-    def get_metadata_from_file(cls, card: Card) -> dict:
-        """
-        :param card: -todo-
-        :return: dict of metadata it found and some information about the read itself
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
-    def get_metadata_from_data(cls, card: Card) -> dict:
-        """
-        This will be most likely used when dealing with references.
-        :param card: -todo-
-        :return: dict of metadata it found and some information about the read itself
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
-    def parse_file(cls, card: Card) -> InstanceDBEntry:
-        """This method is what produces our final dict() of information to be used
-        by ContentManager to craft the JSREF. All the references there might have been
-        should have been replaced before.
-        'from_file' version is most likely to be used during initial node handling.
-        """
-
-    @classmethod
-    @abstractmethod
-    def parse_data(cls, card: Card) -> InstanceDBEntry:
-        """This method is what produces our final dict() of information to be used
-        by ContentManager to craft the JSREF. All the references there might have been
-        should have been replaced before.
-        'from_string' version is most likely to be used when dealing with references."""
