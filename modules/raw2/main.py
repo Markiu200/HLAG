@@ -37,6 +37,12 @@ class Raw(IModule):
         self.order_tags = ("[%>mod:", "<%]")
         self.order_tags_tagpair = TagPair({self.order_tags[0]}, {self.order_tags[1]})
 
+    def parse(self, value, metadata: dict, is_file: bool):
+        return ""
+
+    def get_metadata(self, value, is_file: bool) -> dict:
+        return dict()
+
     def get_metadata_from_file(self, card) -> dict:
         return dict()
 
@@ -170,7 +176,7 @@ class Raw(IModule):
 #                     meta=new_meta,
 #                     content=content
 #                 )
-#                 jsref = ModuleFacade.content_manager.get_ref(order_card).as_string()
+#                 jsref = ModuleFacade.snippets.get_ref(order_card).as_string()
 #                 new_content = "".join([new_content, jsref])
 #             else:
 #                 new_content = "".join([new_content, item.tag])
