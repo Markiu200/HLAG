@@ -1,6 +1,13 @@
-from lib.content_manager.structures import InstanceDBRecord, InstanceDBRecordGroup, ControllerMapRecord
+# Own imports
+if __name__ == '__main__':
+    from sys import path as sys_path
+    from pathlib import PurePath
+    sys_path.append(str(PurePath(__file__).parent.parent))
+from lib.instance_db_record import InstanceDBRecord
+from lib.instance_db_record_group import InstanceDBRecordGroup
+from lib.controller_map_record import ControllerMapRecord
 from lib.models import InstanceDBEntry, Ref
-from module_manager import ModuleManager
+from lib.module_manager import ModuleManager
 
 
 class TrackedModule:
@@ -19,6 +26,11 @@ class RecordReport:
 
 class ModuleTracker:
     tracked_modules: dict[str, TrackedModule] = dict()
+    module_manager: ModuleManager = None
+
+    def __init__(self, module_manager: ModuleManager):
+        self.module_manager = module_manager
+        ModuleTracker.module_manager = self.module_manager
 
     @classmethod
     def add_record(cls, instance_entry: InstanceDBEntry) -> RecordReport:
@@ -41,14 +53,14 @@ class ModuleTracker:
                 ref=ref
             )
         else:
-            controller = ModuleManager.get_module(module).get_info().get("controller")
+            controller = cls.module_manager.get_registered_module(module).module_info.get("controller")
             #
             cls.tracked_modules[module] = TrackedModule(
                 module=module,
                 controller=controller
             )
             returned = cls.add_record(instance_entry)
-            returned.module_file_register_method = ModuleManager.get_module(module).register_files
+            returned.module_file_register_method = cls.module_manager.get_registered_module(module).register_files
             return returned
 
     @classmethod
