@@ -50,17 +50,20 @@ class ModuleManager:
             self.logger.info(f"Found {len(modules_directory_list)} user modules - {modules_directory_list}")
         try:
             for module_dir_name in modules_directory_list:
+
                 # Step 1 - Check if main.py exists
                 module_path = PurePath(self.modules_dir_path, module_dir_name)
                 if not os.path.isfile(str(PurePath(module_path, "main.py"))):
                     if self.logger:
                         self.logger.error(f"Directory {module_dir_name} in module directory has no main.py file - skipping")
                     continue
+
                 # Step 2 - Try to register
                 try:
                     module_import = importlib.import_module(f"{module_dir_name}.main")
                     module_instance = module_import.register(self)
                     self.register_module(module_instance, fallback_name=module_dir_name)
+
                 except ModuleNotFoundError as e:
                     if self.logger:
                         self.logger.critical(f"Error occurred during user modules import - module {module_dir_name}")
@@ -83,6 +86,7 @@ class ModuleManager:
                     self.logger.critical("Module registration error - no codename nor fallback name provided")
                     raise RuntimeError("Module registration error - no codename nor fallback name provided")
             else:
+                codename = fallback_name
                 if self.logger:
                     self.logger.warning(f"Module {fallback_name} fallback name used - no codename specified")
         module_info = module.info
