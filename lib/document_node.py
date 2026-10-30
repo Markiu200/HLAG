@@ -29,7 +29,7 @@ class DocumentNode:
         self.is_file = is_file
         self.ref: None | Ref = None
         self.nested_refs: list[Ref] = []
-        self.data: Data | None = None
+        self.record: str | None = None  # JSON record that pm module controller can use to create HTML object
         #
         self.set_metadata("relPath", self.get_rel_path())
         self.set_metadata("hostPath", self.get_metadata("relPath"))
