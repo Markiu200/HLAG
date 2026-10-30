@@ -5,7 +5,7 @@ from os import path as os_path
 if __name__ == '__main__':
     from sys import path as sys_path
     sys_path.append(str(PurePath(__file__).parent.parent))
-from registerables import Registerable, FileRegisterable, DelayedFileRegisterable, CodeRegisterable, DelayedCodeRegisterable
+from lib.registerables import Registerable, FileRegisterable, DelayedFileRegisterable, CodeRegisterable, DelayedCodeRegisterable
 
 
 class CodeBlock:
