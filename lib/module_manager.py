@@ -30,6 +30,7 @@ class ModuleManager:
         #
         self.modules_dir_path = None
         self.registered_modules: dict[str, Module] = dict()
+        self.registered_prints: dict[IModule, list] = dict()
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -105,6 +106,14 @@ class ModuleManager:
         #
         self.registered_modules[codename] = new_module
 
+    def register_code(self, pmmodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
+        """Meant to be used by pmmodules in their __init__. 'pmmodule' would be 'self' from their perspective."""
+        if pmmodule not in self.registered_prints:
+            self.registered_prints[pmmodule] = []
+        self.registered_prints[pmmodule].append(
+            (value, code_type, is_file, is_delayed)
+        )
+
     def get_check_list(self):
         priority_check_list = []
         sorted_check_list = []
@@ -137,3 +146,12 @@ class ModuleManager:
 
 
 __all__ = [ModuleManager, Module]
+
+if __name__ == '__main__':
+    from init_config import init_config, init_logger
+    #
+    init_logger()
+    config_ = init_config(PurePath(__file__).parent.parent)
+    toolbox_ = Toolbox()
+    module_manager_ = ModuleManager(config_, toolbox_)
+    module_manager_.initialize()
