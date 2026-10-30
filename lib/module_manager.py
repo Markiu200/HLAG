@@ -128,5 +128,8 @@ class ModuleManager:
     def get_registered_module(self, codename: str) -> Module:
         return self.registered_modules.get(codename)
 
+    def get_all_registered_modules(self) -> dict:
+        return self.registered_modules
+
 
 __all__ = [ModuleManager, Module]
