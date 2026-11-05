@@ -1,3 +1,7 @@
+if __name__ == '__main__':
+    from sys import path as sys_path
+    from pathlib import PurePath
+    sys_path.append(str(PurePath(__file__).parent.parent))
 from assets.html_snippets import html_snippets
 
 
