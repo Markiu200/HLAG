@@ -2,6 +2,7 @@ from pathlib import PurePath
 from os import path as os_path
 import logging
 import re
+import json
 # Own imports
 from init_config import init_config, init_logger
 from lib.n_config import Config
@@ -11,8 +12,10 @@ from lib.document_node import DocumentNode
 from lib.structure_scanner import StructureScanner
 from lib.assets_manager import AssetsManager
 from lib.code_block import CodeBlock
+from lib.content_manager import ContentManager
+from assets.html_snippets import html_snippets
 # from lib.snippet_provider import yield_snippet, yield_snippet_with_args
-# from lib.content_manager import ContentManager
+# from lib.snippets import ContentManager
 # from lib.linker import Linker
 # from lib.printer.printer import Printer
 
@@ -28,6 +31,12 @@ from lib.code_block import CodeBlock
 def main(config: Config, module_manager: ModuleManager):
     config_ns = config.get_base_config()
     toolbox = module_manager.toolbox
+    assets_dir = PurePath(PurePath(__file__).parent, "assets")
+
+    # Pre-checks
+    ## Check if output directory in config:output_path exists (required in printing step)
+    if not os_path.isdir(str(config_ns.get("output_path"))):
+        raise NotADirectoryError(f"Output directory {str(config_ns.get('output_path'))} doesn't exist.")
 
     # Set up logger
     logger = None
@@ -79,13 +88,52 @@ def main(config: Config, module_manager: ModuleManager):
             logger.critical(e)
         raise e
 
+    #
     # Javascript manager part
+    #
     js_manager = CodeBlock("<script>", "</script>")
     toolbox.js_manager = js_manager
 
+    #
     # CSS manager part
-    css_manager = CodeBlock("<style>", "</style>")
+    #
+    css_manager = CodeBlock("<style>", "</style>", logger_name=config_ns.get("logger_name"))
     toolbox.css_manager = css_manager
+    ## Register default CSS
+    css_manager.register(PurePath(assets_dir, "css", "default.css"), is_file=True, delayed=False)
+
+    #
+    # ContentManager part
+    #
+    content_manager = ContentManager(module_manager.get_all_registered_modules())
+    content_manager.run(root_node)
+
+    #
+    # Other parts here
+    #
+
+    #
+    # Printing part
+    #
+    # Steps:
+    # 1. Output directory must already exist - check that maybe before all the algoriths above.
+    #    a. Assets directory may not exist, it may not be needed - AssetsManager will create one if needed
+    # 2. Open file in config:output_path with name of config:output_name.
+    # 3. Write in all the static code and code received from all other classes.
+    #    a. By this time, JSManager and CSSManager should have all the code registered in them.
+    # 4. Done.
+    #
+    file_name = str(PurePath(config_ns.get("output_path"), config_ns.get("output_name")))
+    with open(file_name, "wt") as f:
+        beginning_code = html_snippets.get("beginning")
+        beginning_code = beginning_code.replace("!PLACEHOLDER:TITLE!", config_ns.get("output_title"))
+        f.write(beginning_code)
+        f.write(css_manager.print())
+        f.write(html_snippets.get("middle"))
+        f.write(html_snippets.get("nav"))
+        f.write(html_snippets.get("main"))
+        f.write(js_manager.print())
+        f.write(html_snippets.get("ending"))
 
     return 0
 
@@ -133,9 +181,9 @@ def main(config: Config, module_manager: ModuleManager):
     # Linker
     JSManager.register_print(Linker.print_js())
     # ReferenceResolver
-    JSManager.register_file(PurePath(this_file_dir, r"lib\content_manager\ref_resolver.js"))
+    JSManager.register_file(PurePath(this_file_dir, r"snippets\ref_resolver.js"))
     # Modules dependencies
-    JSManager.register_file(PurePath(this_file_dir, r"lib\content_manager\dependencies.js"))
+    JSManager.register_file(PurePath(this_file_dir, r"snippets/js_module_instance.js"))
     # Modules
     ContentManager.queue_module_printing()
     # ContentManager
