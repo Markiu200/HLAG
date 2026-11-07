@@ -1,12 +1,9 @@
 from pathlib import PurePath
 from importlib import import_module
 # Own imports
-# from lib.module_facade import ModuleFacade, Card, InstanceDBEntry, Ref
 from lib.imodule import IModule
 from lib.module_manager import ModuleManager
-from lib.n_config import Config
 from lib.tag_matcher import TagPair
-from lib.registerables import FileRegisterable
 
 
 def register(module_manager: ModuleManager):
@@ -23,14 +20,16 @@ class Raw(IModule):
             "controller": "RawModuleController"
         }
         self.module_manager = module_manager
-        self.config: Config = module_manager.config
-        # Checks
-        self.txt_check = import_module("raw2.txt_check")
-        self.checks = [self.txt_check]
-        # JS
-        self.js = [FileRegisterable(PurePath(self.module_path, "js.js"))]
-        # CSS
-        self.css = [FileRegisterable(PurePath(self.module_path, "raw.js"))]
+        self.config = module_manager.config
+        # Register prints
+        js_path = PurePath(self.module_path, "js.js")
+        controller_path = PurePath(self.module_path, "raw.js")
+        self.module_manager.register_print(self, js_path, "js", is_file=True, is_delayed=False)
+        self.module_manager.register_print(self, controller_path, "js", is_file=True, is_delayed=False)
+        # Register checks
+        txt_check = import_module("raw2.txt_check")
+        self.module_manager.register_check(self, txt_check.TXTCheck())
+
         # Module work related
         self.meta_tags = ("[-[", "]-]")
         self.meta_tags_tagpair = TagPair({self.meta_tags[0]}, {self.meta_tags[1]})
