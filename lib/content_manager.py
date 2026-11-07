@@ -66,7 +66,7 @@ class ContentManager:
                 }
             )
 
-    def nest_ref(self, module_: str, content, metadata: dict):  # Meant to be called by pm_modules themselves
+    def nest_ref(self, module_: str, content, metadata: dict) -> Ref:  # Meant to be called by pm_modules themselves
         # Step 1 - get module
         module = self.pm_modules.get(module_)
         if not module:

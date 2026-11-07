@@ -30,7 +30,7 @@ class ModuleManager:
         #
         self.modules_dir_path = None
         self.registered_modules: dict[str, Module] = dict()
-        self.registered_prints: dict[IModule, list] = dict()
+        self.registered_prints: dict[Module, list] = dict()
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -106,13 +106,20 @@ class ModuleManager:
         #
         self.registered_modules[codename] = new_module
 
-    def register_code(self, pmmodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
+    def register_code(self, imodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
         """Meant to be used by pmmodules in their __init__. 'pmmodule' would be 'self' from their perspective."""
+        pmmodule = self.get_module_by_pm_module_class(imodule)
         if pmmodule not in self.registered_prints:
             self.registered_prints[pmmodule] = []
         self.registered_prints[pmmodule].append(
             (value, code_type, is_file, is_delayed)
         )
+
+    def get_module_by_pm_module_class(self, pm_module_class: IModule) -> Module | None:
+        for registered_module in self.registered_modules.values():
+            if registered_module.module_class is pm_module_class:
+                return registered_module
+        return None
 
     def get_check_list(self):
         priority_check_list = []
@@ -155,3 +162,6 @@ if __name__ == '__main__':
     toolbox_ = Toolbox()
     module_manager_ = ModuleManager(config_, toolbox_)
     module_manager_.initialize()
+    #
+    registered_modules_ = module_manager_.get_all_registered_modules()
+    print(registered_modules_)
