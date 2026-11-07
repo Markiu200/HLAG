@@ -106,7 +106,7 @@ class ModuleManager:
         #
         self.registered_modules[codename] = new_module
 
-    def register_code(self, imodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
+    def register_print(self, imodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
         """Meant to be used by pmmodules in their __init__. 'pmmodule' would be 'self' from their perspective."""
         pmmodule = self.get_module_by_pm_module_class(imodule)
         if pmmodule not in self.registered_prints:
