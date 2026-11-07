@@ -100,7 +100,7 @@ class ContentManager:
         self.tracked_modules_count[module] += 1
         return self.tracked_modules_count[module]
 
-    def get_records(self):
+    def get_records(self) -> list:
         return self.records
 
     #

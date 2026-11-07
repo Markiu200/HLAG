@@ -26,7 +26,7 @@ from assets.html_snippets import html_snippets
 # todo add config for "Home" in outline
 # todo css_manager instantiated early to be able to choose styles
 # todo db_manager gets all dictionaries from structure_scanner
-# todo check if output folder exists
+# todo check of pm modules
 
 def main(config: Config, module_manager: ModuleManager):
     config_ns = config.get_base_config()
@@ -107,6 +107,8 @@ def main(config: Config, module_manager: ModuleManager):
     #
     content_manager = ContentManager(module_manager.get_all_registered_modules())
     content_manager.run(root_node)
+    content_records = json.dumps(content_manager.get_records())
+    js_manager.register(content_records, is_file=False, delayed=True)
 
     #
     # Other parts here
