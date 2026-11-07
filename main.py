@@ -106,6 +106,7 @@ def main(config: Config, module_manager: ModuleManager):
     # ContentManager part
     #
     content_manager = ContentManager(module_manager.get_all_registered_modules())
+    toolbox.content_manager = content_manager
     content_manager.run(root_node)
     content_records = json.dumps(content_manager.get_records())
     js_manager.register(content_records, is_file=False, delayed=True)
