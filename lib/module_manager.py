@@ -7,6 +7,7 @@ from pathlib import PurePath
 if __name__ == '__main__':
     sys_path.append(str(PurePath(__file__).parent.parent))
 from lib.imodule import IModule
+from lib.base_check import BaseCheck
 from lib.n_config import Config
 from lib.toolbox import Toolbox
 
@@ -31,6 +32,7 @@ class ModuleManager:
         self.modules_dir_path = None
         self.registered_modules: dict[str, Module] = dict()
         self.registered_prints: dict[Module, list] = dict()
+        self.registered_checks: dict[Module, list] = dict()
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -107,13 +109,20 @@ class ModuleManager:
         self.registered_modules[codename] = new_module
 
     def register_print(self, imodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
-        """Meant to be used by pmmodules in their __init__. 'pmmodule' would be 'self' from their perspective."""
+        """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
         pmmodule = self.get_module_by_pm_module_class(imodule)
         if pmmodule not in self.registered_prints:
             self.registered_prints[pmmodule] = []
         self.registered_prints[pmmodule].append(
             (value, code_type, is_file, is_delayed)
         )
+
+    def register_check(self, imodule: IModule, check: BaseCheck):
+        """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
+        pmmodule = self.get_module_by_pm_module_class(imodule)
+        if pmmodule not in self.registered_checks:
+            self.registered_checks[pmmodule] = []
+        self.registered_checks[pmmodule].append(check)
 
     def get_module_by_pm_module_class(self, pm_module_class: IModule) -> Module | None:
         for registered_module in self.registered_modules.values():
