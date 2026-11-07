@@ -3,7 +3,7 @@ from importlib import import_module
 # Own imports
 from lib.imodule import IModule
 from lib.module_manager import ModuleManager
-from lib.tag_matcher import TagPair
+from lib.tag_matcher import TagPair, TagMatcher
 
 
 def register(module_manager: ModuleManager):
@@ -40,46 +40,57 @@ class Raw(IModule):
         return ""
 
     def get_metadata(self, value, is_file: bool) -> dict:
-        return dict()
+        if is_file:
+            return self.get_metadata_from_file(value)
+        else:
+            return self.get_metadata_from_data(value)
 
-    def get_metadata_from_file(self, card) -> dict:
-        return dict()
+    def get_metadata_from_data(self, value: str) -> dict:
+        raw_lines = value.splitlines()
+        tag_lines = []
+        metadata = dict()
+        #
+        for line in raw_lines:
+            if self.meta_tags[0] in line:
+                tag_lines.append(line)
+            else:
+                break
+        #
+        items = TagMatcher.match("".join(tag_lines), [self.meta_tags_tagpair]).get_tree()
+        for item in items:
+            if item.is_tag():
+                parts = item.get_inner().split("=", 1)
+                if len(parts) == 2:
+                    metadata[parts[0]] = parts[1]
+            else:
+                if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                    break
+        return metadata
 
-# def get_metadata_from_file(self, card: Card) -> dict:
-#         tag_lines = []
-#         metadata = dict()
-#         #
-#         with open(card.node.path, "r") as f:
-#             while True:
-#                 line = f.readline()
-#                 if not line:
-#                     break
-#                 if self.meta_tags[0] in line:
-#                     tag_lines.append(line)
-#                 else:
-#                     break
-#         #
-#         items = TagMatcher.match("".join(tag_lines), [self.meta_tags_tagpair]).get_tree()
-#         for item in items:
-#             if item.is_tag():
-#                 parts = item.get_inner().split("=", 1)
-#                 if len(parts) == 2:
-#                     metadata[parts[0]] = parts[1]
-#             else:
-#                 if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
-#                     break
-#         return metadata
-#
-
-    def get_metadata_from_data(self, card) -> dict:
-        return dict()
-
-#     def get_metadata_from_data(self, card: Card) -> dict:
-#         return dict()  # turns out this method is never used in practice, unless other modules would like to use it
-#
-
-    def parse_file(self, card):
-        pass
+    def get_metadata_from_file(self, value) -> dict:
+        tag_lines = []
+        metadata = dict()
+        #
+        with open(str(value), "r") as f:
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                if self.meta_tags[0] in line:
+                    tag_lines.append(line)
+                else:
+                    break
+        #
+        items = TagMatcher.match("".join(tag_lines), [self.meta_tags_tagpair]).get_tree()
+        for item in items:
+            if item.is_tag():
+                parts = item.get_inner().split("=", 1)
+                if len(parts) == 2:
+                    metadata[parts[0]] = parts[1]
+            else:
+                if len(item.tag.strip()) > 0:  # Check if it's any sort of blank line or characters
+                    break
+        return metadata
 
     def parse_data(self, card):
         pass
