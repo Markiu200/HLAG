@@ -5,7 +5,6 @@ import re
 from lib.imodule import IModule
 from lib.module_manager import ModuleManager
 from lib.tag_matcher import TagPair, TagMatcher, Part, RightPart, Middle
-from lib.models.dn_ref import Ref
 
 
 def register(module_manager: ModuleManager):
@@ -13,7 +12,7 @@ def register(module_manager: ModuleManager):
 
 
 class Raw(IModule):
-    def __init__(self, module_manager: ModuleManager):
+    def __init__(self, module_manager: ModuleManager | None):
         super().__init__()
         self.module_path = PurePath(__file__).parent
         self.info = {
@@ -22,15 +21,22 @@ class Raw(IModule):
             "controller": "RawModuleController"
         }
         self.module_manager = module_manager
-        self.config = module_manager.config
-        # Register prints
-        js_path = PurePath(self.module_path, "js.js")
-        controller_path = PurePath(self.module_path, "raw.js")
-        self.module_manager.register_print(self, js_path, "js", is_file=True, is_delayed=False)
-        self.module_manager.register_print(self, controller_path, "js", is_file=True, is_delayed=False)
-        # Register checks
-        txt_check = import_module("raw2.txt_check")
-        self.module_manager.register_check(self, txt_check.TXTCheck())
+        if self.module_manager:
+            self.config = module_manager.config
+            # Register prints
+            js_path = PurePath(self.module_path, "js.js")
+            controller_path = PurePath(self.module_path, "raw.js")
+            self.module_manager.register_print(self, js_path, "js", is_file=True, is_delayed=False)
+            self.module_manager.register_print(self, controller_path, "js", is_file=True, is_delayed=False)
+            # Register checks
+            txt_check = import_module("raw2.txt_check")
+            self.module_manager.register_check(self, txt_check.TXTCheck())
+            # Fetch config data
+            self.jsref_open = self.config.get_base_config().get("jstag_open")
+            self.jsref_close = self.config.get_base_config().get("jstag_close")
+        else:
+            self.jsref_open = "[&_JSREF("
+            self.jsref_close = ")_&]"
 
         # Module work related
         self.meta_tags = ("[-[", "]-]")
@@ -129,7 +135,7 @@ class Raw(IModule):
             content = "".join(after_ignoring)
 
         if enable_references:
-            pattern = rf'({re.escape(Ref.start_tag)}.*?{re.escape(Ref.end_tag)})'
+            pattern = rf'({re.escape(self.jsref_open)}.*?{re.escape(self.jsref_close)})'
             parts = re.split(pattern, content)
             even = True
             for part in parts:
