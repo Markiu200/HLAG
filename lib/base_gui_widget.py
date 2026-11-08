@@ -104,6 +104,28 @@ class BaseConfigWidget(ttk.Labelframe):
             initial_combo="DEBUG"
         )
 
+        # JSREF opening tag
+        self.jsref_open_widget = NamingEntry(
+            config_item="jstag_open",
+            config_ns=self.base_config,
+            parent=self,
+            label='JSREF opening tag:',
+            input_width=self.entry_width,
+            initial_input=self.base_config.get("jstag_open"),
+            focus_callback=self.gui.focus_track
+        )
+
+        # JSREF closing tag
+        self.jsref_close_widget = NamingEntry(
+            config_item="jstag_close",
+            config_ns=self.base_config,
+            parent=self,
+            label='JSREF closing tag:',
+            input_width=self.entry_width,
+            initial_input=self.base_config.get("jstag_close"),
+            focus_callback=self.gui.focus_track
+        )
+
     def load(self, config: ConfigNamespace):
         if config.get("target_path"):
             self.target_config_widget.combobox.set(config.get("target_path"))
@@ -122,6 +144,10 @@ class BaseConfigWidget(ttk.Labelframe):
             self.output_title_config_widget.entry_var.set(config.get("output_title"))
         if config.get("logger_level"):
             self.logger_level_config_widget.set_level(config.get("logger_level"))
+        if config.get("jstag_open"):
+            self.jsref_open_widget.entry_var.set(config.get("jstag_open"))
+        if config.get("jstag_close"):
+            self.jsref_close_widget.entry_var.set(config.get("jstag_close"))
 
     def persistent_load(self, config: ConfigNamespace):
         if config.get("target_dropdown"):

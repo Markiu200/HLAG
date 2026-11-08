@@ -14,36 +14,40 @@ from lib.assets_manager import AssetsManager
 from lib.code_block import CodeBlock
 from lib.content_manager import ContentManager
 from assets.html_snippets import html_snippets
-# from lib.snippet_provider import yield_snippet, yield_snippet_with_args
-# from lib.snippets import ContentManager
 # from lib.linker import Linker
-# from lib.printer.printer import Printer
 
 
-# todo asset manager doesn't create assets folder if not needed
 # todo output directory created if doesn't exist
 # todo documentation on usage of modules
 # todo add config for "Home" in outline
 # todo css_manager instantiated early to be able to choose styles
 # todo db_manager gets all dictionaries from structure_scanner
 # todo check of pm modules
+# todo jsref tags as config thing
+# todo make Tagmatcher as some sort of utility
 
 def main(config: Config, module_manager: ModuleManager):
     config_ns = config.get_base_config()
     toolbox = module_manager.toolbox
     assets_dir = PurePath(PurePath(__file__).parent, "assets")
 
+    #
     # Pre-checks
+    #
     ## Check if output directory in config:output_path exists (required in printing step)
     if not os_path.isdir(str(config_ns.get("output_path"))):
         raise NotADirectoryError(f"Output directory {str(config_ns.get('output_path'))} doesn't exist.")
 
+    #
     # Set up logger
+    #
     logger = None
     if config_ns.get("logger_name"):
         logger = logging.getLogger(config.get_base_config().get("logger_name"))
 
+    #
     # Set up root node
+    #
     try:
         if not os_path.isdir(str(config_ns.get("target_path"))):
             raise NotADirectoryError()
@@ -59,7 +63,9 @@ def main(config: Config, module_manager: ModuleManager):
             logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
         raise e
 
+    #
     # Structure scanner part
+    #
     try:
         if root_node:
             structure_scanner = StructureScanner(root_node)
@@ -70,7 +76,9 @@ def main(config: Config, module_manager: ModuleManager):
             logger.critical(f"Source path {config_ns.get('target_path')} is not an directory")
         raise e
 
+    #
     # Assets manager part
+    #
     try:
         if not os_path.isdir(config_ns.get('output_path')):
             raise NotADirectoryError(f"Output path {config_ns.get('output_path')} is not an directory")
@@ -123,7 +131,7 @@ def main(config: Config, module_manager: ModuleManager):
     #    a. Assets directory may not exist, it may not be needed - AssetsManager will create one if needed
     # 2. Open file in config:output_path with name of config:output_name.
     # 3. Write in all the static code and code received from all other classes.
-    #    a. By this time, JSManager and CSSManager should have all the code registered in them.
+    #    a. By this time, all CodeBlocks should have all the code registered in them.
     # 4. Done.
     #
     file_name = str(PurePath(config_ns.get("output_path"), config_ns.get("output_name")))

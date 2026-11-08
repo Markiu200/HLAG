@@ -22,6 +22,8 @@ def init_config(base_path: PurePath) -> Config:
     base_config.set("assets_dir_name", "assets")
     base_config.set("output_name", "output.html")
     base_config.set("output_title", "Pagemaker")
+    base_config.set("jstag_open", "[&_JSREF(")
+    base_config.set("jstag_close", ")_&]")
     base_config.set("logger_name", __name__)
     base_config.set("logger_level", logging.DEBUG)
     #
