@@ -23,6 +23,17 @@ class Raw(IModule):
         self.module_manager = module_manager
         if self.module_manager:
             self.config = module_manager.config
+
+        # Module work related
+        self.jsref_open = "[&_JSREF("
+        self.jsref_close = ")_&]"
+        self.meta_tags = ("[-[", "]-]")
+        self.meta_tags_tagpair = TagPair({self.meta_tags[0]}, {self.meta_tags[1]})
+        self.order_tags = ("[%>mod:", "<%]")
+        self.order_tags_tagpair = TagPair({self.order_tags[0]}, {self.order_tags[1]})
+
+    def pm_init(self):
+        if self.module_manager:
             # Register prints
             js_path = PurePath(self.module_path, "js.js")
             controller_path = PurePath(self.module_path, "raw.js")
@@ -34,15 +45,6 @@ class Raw(IModule):
             # Fetch config data
             self.jsref_open = self.config.get_base_config().get("jstag_open")
             self.jsref_close = self.config.get_base_config().get("jstag_close")
-        else:
-            self.jsref_open = "[&_JSREF("
-            self.jsref_close = ")_&]"
-
-        # Module work related
-        self.meta_tags = ("[-[", "]-]")
-        self.meta_tags_tagpair = TagPair({self.meta_tags[0]}, {self.meta_tags[1]})
-        self.order_tags = ("[%>mod:", "<%]")
-        self.order_tags_tagpair = TagPair({self.order_tags[0]}, {self.order_tags[1]})
 
     def get_metadata(self, value, is_file: bool) -> dict:
         if is_file:

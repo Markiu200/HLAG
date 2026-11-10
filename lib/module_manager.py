@@ -42,6 +42,10 @@ class ModuleManager:
             self.modules_dir_path = modules_path
             sys_path.append(modules_path)
             self._fetch_modules()
+            # Initialize modules
+            for module in self.registered_modules.values():
+                module.module_instance.pm_init()
+
         else:
             if self.logger:
                 self.logger.critical(f"User module directory {modules_path} not found.")
