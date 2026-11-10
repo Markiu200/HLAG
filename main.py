@@ -70,6 +70,11 @@ def main(config: Config, module_manager: ModuleManager):
     try:
         if root_node:
             structure_scanner = StructureScanner(root_node)
+            ## Register checks
+            checks_list = module_manager.get_checks_list()
+            checks_list.sort(key=lambda chck: chck.check_priority)
+            for check in checks_list:
+                structure_scanner.register_check(check.check, check.check_type)
             structure_scanner.scan()
             toolbox.structure_scanner = structure_scanner
     except NotADirectoryError as e:

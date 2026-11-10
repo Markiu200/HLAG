@@ -20,6 +20,14 @@ class Module:
         self.codename = codename
 
 
+class RegisteredCheck:
+    def __init__(self, codename: str, check: BaseCheck, check_type: str):
+        self.codename = codename
+        self.check = check
+        self.check_priority = check.check_priority
+        self.check_type = check_type
+
+
 class ModuleManager:
     def __init__(self, config: Config, toolbox: Toolbox):
         self.config = config
@@ -32,7 +40,7 @@ class ModuleManager:
         self.modules_dir_path = None
         self.registered_modules: list[Module] = []
         self.registered_prints: list[tuple] = []
-        self.registered_checks: list[tuple] = []
+        self.registered_checks: list[RegisteredCheck] = []
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -119,7 +127,7 @@ class ModuleManager:
 
     def register_check(self, codename: str, check: BaseCheck, check_type: str):
         """Meant to be used by pmmodules in their __init__. 'codename' would be their codename."""
-        self.registered_checks.append((codename, check, check_type))
+        self.registered_checks.append(RegisteredCheck(codename, check, check_type))
 
     ###########
     # Getters #
@@ -134,16 +142,8 @@ class ModuleManager:
             keyed[module.codename] = module
         return keyed
 
-    def get_check_list(self):
-        priority_check_list = []
-        sorted_check_list = []
-        for registered_module in self.registered_modules.values():
-            for check in registered_module.module_instance.checks:
-                priority_check_list.append((registered_module.module_info.get("priority"), check))
-        priority_check_list.sort(key=lambda pair: pair[0])
-        for check_pair in priority_check_list:
-            sorted_check_list.append(check_pair[1])
-        return sorted_check_list
+    def get_checks_list(self):
+        return self.registered_checks
 
     def get_gui_widgets(self):
         widget_list = []
@@ -154,12 +154,6 @@ class ModuleManager:
                 if widget:
                     widget_list.append(widget)
         return widget_list
-
-    def get_module_object(self, codename: str) -> IModule:
-        return self.registered_modules.get(codename).module_instance
-
-    def get_registered_module(self, codename: str) -> Module:
-        return self.registered_modules.get(codename)
 
 
 __all__ = [ModuleManager, Module]
