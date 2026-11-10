@@ -20,6 +20,18 @@ class StructureScanner:
         for check in checks:
             check.check(node)
 
+    def register_check(self, check: BaseCheck, check_type: str) -> bool:
+        if check_type == "pre":
+            self.add_pre_directory_check(check)
+            return True
+        elif check_type == "mid":
+            self.add_node_check(check)
+            return True
+        elif check_type == "post":
+            self.add_post_directory_check(check)
+            return True
+        return False
+
     def add_pre_directory_check(self, check: BaseCheck):
         self.pre_dir_checks.append(check)
 
@@ -59,3 +71,11 @@ __all__ = [StructureScanner]
 
 if __name__ == '__main__':
     DocumentNode.set_root_path(PurePath(PurePath(__file__).parent.parent, "inputs"))
+    root_node_ = DocumentNode(PurePath(PurePath(__file__).parent.parent, "inputs"), is_file=True)
+    from lib.dummy_check import DummyCheck
+    check1_ = DummyCheck()
+    check1_.set_codename("test1")
+    structure_scanner_ = StructureScanner(root_node_)
+    structure_scanner_.register_check(check1_, "mid")
+    structure_scanner_.scan()
+    print("Finished - set breakpoint here")
