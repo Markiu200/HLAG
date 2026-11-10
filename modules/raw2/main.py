@@ -12,7 +12,7 @@ def register(module_manager: ModuleManager):
 
 
 class Raw(IModule):
-    def __init__(self, module_manager: ModuleManager | None):
+    def __init__(self, module_manager: ModuleManager | None = None):
         super().__init__()
         self.module_path = PurePath(__file__).parent
         self.info = {
@@ -190,9 +190,12 @@ class Raw(IModule):
                 #     content=content
                 # )
                 # jsref = ModuleFacade.snippets.get_ref(order_card).as_string()
-                jsref = self.module_manager.toolbox.content_manager.nest_ref(
-                    parts[0], parts[1], new_meta
-                )
+                if self.module_manager:
+                    jsref = self.module_manager.toolbox.content_manager.nest_ref(
+                        parts[0], parts[1], new_meta
+                    )
+                else:
+                    jsref = "[&_JSREF(REPL:X)_&]"
                 new_content = "".join([new_content, jsref])
             else:
                 new_content = "".join([new_content, item.tag])
@@ -259,4 +262,10 @@ class Order(Element):
 _all_ = [Raw]
 
 if __name__ == '__main__':
-    pass
+    pmmodule_ = Raw()
+    ml_ = pmmodule_.meta_tags[0]
+    mr_ = pmmodule_.meta_tags[1]
+    text1_ = f"""{ml_}ignore-lines=---{mr_}Post meta;
+Hello world! {pmmodule_.order_tags[0]}raw=This is the nested tag{pmmodule_.order_tags[1]}. Post nest."""
+    print(pmmodule_.get_metadata(text1_, is_file=False))
+    print(pmmodule_.parse(text1_, dict(), is_file=False))
