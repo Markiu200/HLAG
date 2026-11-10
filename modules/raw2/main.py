@@ -30,7 +30,7 @@ class Raw(IModule):
             self.module_manager.register_print(self, controller_path, "js", is_file=True, is_delayed=False)
             # Register checks
             txt_check = import_module("raw2.txt_check")
-            self.module_manager.register_check(self, txt_check.TXTCheck())
+            self.module_manager.register_check(self, txt_check.TXTCheck(), "mid")
             # Fetch config data
             self.jsref_open = self.config.get_base_config().get("jstag_open")
             self.jsref_close = self.config.get_base_config().get("jstag_close")

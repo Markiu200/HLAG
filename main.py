@@ -22,8 +22,9 @@ from assets.html_snippets import html_snippets
 # todo add config for "Home" in outline
 # todo css_manager instantiated early to be able to choose styles
 # todo db_manager gets all dictionaries from structure_scanner
-# todo check of pm modules
-# todo jsref tags as config thing
+#
+# todo checks registration for pm modules
+# todo gui registration for pm modules
 # todo make Tagmatcher as some sort of utility
 
 def main(config: Config, module_manager: ModuleManager):

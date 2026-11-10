@@ -117,12 +117,12 @@ class ModuleManager:
             (value, code_type, is_file, is_delayed)
         )
 
-    def register_check(self, imodule: IModule, check: BaseCheck):
+    def register_check(self, imodule: IModule, check: BaseCheck, check_type: str):
         """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
         pmmodule = self.get_module_by_pm_module_class(imodule)
         if pmmodule not in self.registered_checks:
             self.registered_checks[pmmodule] = []
-        self.registered_checks[pmmodule].append(check)
+        self.registered_checks[pmmodule].append((check, check_type))
 
     def get_module_by_pm_module_class(self, pm_module_class: IModule) -> Module | None:
         for registered_module in self.registered_modules.values():
