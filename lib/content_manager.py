@@ -242,6 +242,7 @@ if __name__ == '__main__':
     # Initialize dummy module dictionary
     from lib.module_manager import Module
     module_a = Module(
+        module_class=type(Module),
         module_instance=pm_module_a,
         codename="moda",
         module_info={
@@ -251,6 +252,7 @@ if __name__ == '__main__':
         }
     )
     module_b = Module(
+        module_class=type(Module),
         module_instance=pm_module_b,
         codename="modb",
         module_info={
