@@ -13,11 +13,12 @@ from lib.toolbox import Toolbox
 
 
 class Module:
-    def __init__(self, module_instance: IModule, codename: str, module_info: dict):
+    def __init__(self, module_class: type, module_instance: IModule, module_info: dict, codename: str, priority: int):
+        self.module_class = module_class
         self.module_instance = module_instance
-        self.module_class = None
-        self.codename = codename
         self.module_info = module_info
+        self.codename = codename
+        self.priority = priority
 
 
 class ModuleManager:
@@ -86,6 +87,8 @@ class ModuleManager:
 
     def register_module(self, module: IModule, fallback_name: str = None):
         module_instance = module
+        module_class = type(module)
+        module_info = module.info
         codename = module.info.get("codename")
         if not codename:
             if not fallback_name:
@@ -96,19 +99,20 @@ class ModuleManager:
                 codename = fallback_name
                 if self.logger:
                     self.logger.warning(f"Module {fallback_name} fallback name used - no codename specified")
-        module_info = module.info
-        #
-        new_module = Module(
-            module_instance=module_instance,
-            codename=codename,
-            module_info=module_info
-        )
-        #
-        if not new_module.module_info.get("priority"):
+        priority = 0
+        if "priority" not in module_info or type(module_info.get("priority")) is not int:
             if self.logger:
                 self.logger.warning(f"Module codename {codename} priority not set - assuming 0")
-            new_module.module_info["priority"] = 0
-        new_module.module_class = type(new_module.module_instance)
+        else:
+            priority = module_info.get("priority")
+        #
+        new_module = Module(
+            module_class=module_class,
+            module_instance=module_instance,
+            module_info=module_info,
+            codename=codename,
+            priority=priority
+        )
         #
         self.registered_modules[codename] = new_module
 
