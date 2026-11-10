@@ -13,12 +13,11 @@ from lib.toolbox import Toolbox
 
 
 class Module:
-    def __init__(self, module_class: type, module_instance: IModule, module_info: dict, codename: str, priority: int):
+    def __init__(self, module_class: type, module_instance: IModule, module_info: dict, codename: str):
         self.module_class = module_class
         self.module_instance = module_instance
         self.module_info = module_info
         self.codename = codename
-        self.priority = priority
 
 
 class ModuleManager:
@@ -85,6 +84,9 @@ class ModuleManager:
                 self.logger.critical(f"Error occurred during user modules import.")
             raise e
 
+    ################
+    # Registration #
+    ################
     def register_module(self, module: IModule, fallback_name: str = None):
         module_instance = module
         module_class = type(module)
@@ -99,25 +101,18 @@ class ModuleManager:
                 codename = fallback_name
                 if self.logger:
                     self.logger.warning(f"Module {fallback_name} fallback name used - no codename specified")
-        priority = 0
-        if "priority" not in module_info or type(module_info.get("priority")) is not int:
-            if self.logger:
-                self.logger.warning(f"Module codename {codename} priority not set - assuming 0")
-        else:
-            priority = module_info.get("priority")
         #
         new_module = Module(
             module_class=module_class,
             module_instance=module_instance,
             module_info=module_info,
-            codename=codename,
-            priority=priority
+            codename=codename
         )
         #
         self.registered_modules[codename] = new_module
 
     def register_print(self, codename: str, value, code_type: str, is_file: bool, is_delayed: bool):
-        """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
+        """Meant to be used by pmmodules in their __init__. 'codename' would be their codename."""
         # is_here = self.get_registered_module(codename)
         # if not is_here:
         #     # todo throw error or warning
@@ -129,7 +124,7 @@ class ModuleManager:
         )
 
     def register_check(self, codename: str, check: BaseCheck, check_type: str):
-        """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
+        """Meant to be used by pmmodules in their __init__. 'codename' would be their codename."""
         # is_here = self.get_registered_module(codename)
         # if not is_here:
         #     # todo throw error or warning
