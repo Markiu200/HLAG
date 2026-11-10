@@ -30,9 +30,9 @@ class ModuleManager:
         self.toolbox = toolbox
         #
         self.modules_dir_path = None
-        self.registered_modules: dict[str, Module] = dict()
-        self.registered_prints: dict[str, list] = dict()
-        self.registered_checks: dict[str, list] = dict()
+        self.registered_modules: list[Module] = []
+        self.registered_prints: list[tuple] = []
+        self.registered_checks: list[tuple] = []
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -43,7 +43,7 @@ class ModuleManager:
             sys_path.append(modules_path)
             self._fetch_modules()
             # Initialize modules
-            for module in self.registered_modules.values():
+            for module in self.registered_modules:
                 module.module_instance.pm_init()
 
         else:
@@ -109,35 +109,30 @@ class ModuleManager:
             codename=codename
         )
         #
-        self.registered_modules[codename] = new_module
+        self.registered_modules.append(new_module)
 
     def register_print(self, codename: str, value, code_type: str, is_file: bool, is_delayed: bool):
         """Meant to be used by pmmodules in their __init__. 'codename' would be their codename."""
-        # is_here = self.get_registered_module(codename)
-        # if not is_here:
-        #     # todo throw error or warning
-        #     return None
-        if codename not in self.registered_prints:
-            self.registered_prints[codename] = []
-        self.registered_prints[codename].append(
+        self.registered_prints.append(
             (value, code_type, is_file, is_delayed)
         )
 
     def register_check(self, codename: str, check: BaseCheck, check_type: str):
         """Meant to be used by pmmodules in their __init__. 'codename' would be their codename."""
-        # is_here = self.get_registered_module(codename)
-        # if not is_here:
-        #     # todo throw error or warning
-        #     return None
-        if codename not in self.registered_checks:
-            self.registered_checks[codename] = []
-        self.registered_checks[codename].append((check, check_type))
+        self.registered_checks.append((codename, check, check_type))
 
-    def get_module_by_pm_module_class(self, pm_module_class: IModule) -> Module | None:
-        for registered_module in self.registered_modules.values():
-            if registered_module.module_class is pm_module_class:
-                return registered_module
-        return None
+    ###########
+    # Getters #
+    ###########
+    # Modules
+    def get_modules_list(self):
+        return self.registered_modules
+
+    def get_modules_dict_by_codename(self):
+        keyed = dict()
+        for module in self.registered_modules:
+            keyed[module.codename] = module
+        return keyed
 
     def get_check_list(self):
         priority_check_list = []
@@ -166,9 +161,6 @@ class ModuleManager:
     def get_registered_module(self, codename: str) -> Module:
         return self.registered_modules.get(codename)
 
-    def get_all_registered_modules(self) -> dict:
-        return self.registered_modules
-
 
 __all__ = [ModuleManager, Module]
 
@@ -181,5 +173,5 @@ if __name__ == '__main__':
     module_manager_ = ModuleManager(config_, toolbox_)
     module_manager_.initialize()
     #
-    registered_modules_ = module_manager_.get_all_registered_modules()
+    registered_modules_ = module_manager_.get_modules_dict_by_codename()
     print("Finished. Set breakpoint here.")

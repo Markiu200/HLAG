@@ -114,7 +114,7 @@ def main(config: Config, module_manager: ModuleManager):
     #
     # ContentManager part
     #
-    content_manager = ContentManager(module_manager.get_all_registered_modules())
+    content_manager = ContentManager(module_manager.get_modules_dict_by_codename())
     toolbox.content_manager = content_manager
     content_manager.run(root_node)
     content_records = json.dumps(content_manager.get_records())
