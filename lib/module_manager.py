@@ -31,8 +31,8 @@ class ModuleManager:
         #
         self.modules_dir_path = None
         self.registered_modules: dict[str, Module] = dict()
-        self.registered_prints: dict[Module, list] = dict()
-        self.registered_checks: dict[Module, list] = dict()
+        self.registered_prints: dict[str, list] = dict()
+        self.registered_checks: dict[str, list] = dict()
 
     def initialize(self):
         modules_path = str(self.config.get_base_config().get("modules_path"))  # neither sys not importlib do PurePaths
@@ -108,21 +108,27 @@ class ModuleManager:
         #
         self.registered_modules[codename] = new_module
 
-    def register_print(self, imodule: IModule, value, code_type: str, is_file: bool, is_delayed: bool):
+    def register_print(self, codename: str, value, code_type: str, is_file: bool, is_delayed: bool):
         """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
-        pmmodule = self.get_module_by_pm_module_class(imodule)
-        if pmmodule not in self.registered_prints:
-            self.registered_prints[pmmodule] = []
-        self.registered_prints[pmmodule].append(
+        # is_here = self.get_registered_module(codename)
+        # if not is_here:
+        #     # todo throw error or warning
+        #     return None
+        if codename not in self.registered_prints:
+            self.registered_prints[codename] = []
+        self.registered_prints[codename].append(
             (value, code_type, is_file, is_delayed)
         )
 
-    def register_check(self, imodule: IModule, check: BaseCheck, check_type: str):
+    def register_check(self, codename: str, check: BaseCheck, check_type: str):
         """Meant to be used by pmmodules in their __init__. 'imodule' would be 'self' from their perspective."""
-        pmmodule = self.get_module_by_pm_module_class(imodule)
-        if pmmodule not in self.registered_checks:
-            self.registered_checks[pmmodule] = []
-        self.registered_checks[pmmodule].append((check, check_type))
+        # is_here = self.get_registered_module(codename)
+        # if not is_here:
+        #     # todo throw error or warning
+        #     return None
+        if codename not in self.registered_checks:
+            self.registered_checks[codename] = []
+        self.registered_checks[codename].append((check, check_type))
 
     def get_module_by_pm_module_class(self, pm_module_class: IModule) -> Module | None:
         for registered_module in self.registered_modules.values():
@@ -173,4 +179,4 @@ if __name__ == '__main__':
     module_manager_.initialize()
     #
     registered_modules_ = module_manager_.get_all_registered_modules()
-    print(registered_modules_)
+    print("Finished. Set breakpoint here.")

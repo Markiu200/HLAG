@@ -26,11 +26,11 @@ class Raw(IModule):
             # Register prints
             js_path = PurePath(self.module_path, "js.js")
             controller_path = PurePath(self.module_path, "raw.js")
-            self.module_manager.register_print(self, js_path, "js", is_file=True, is_delayed=False)
-            self.module_manager.register_print(self, controller_path, "js", is_file=True, is_delayed=False)
+            self.module_manager.register_print(self.info.get("codename"), js_path, "js", is_file=True, is_delayed=False)
+            self.module_manager.register_print(self.info.get("codename"), controller_path, "js", is_file=True, is_delayed=False)
             # Register checks
             txt_check = import_module("raw.txt_check")
-            self.module_manager.register_check(self, txt_check.TXTCheck(), "mid")
+            self.module_manager.register_check(self.info.get("codename"), txt_check.TXTCheck(), "mid")
             # Fetch config data
             self.jsref_open = self.config.get_base_config().get("jstag_open")
             self.jsref_close = self.config.get_base_config().get("jstag_close")
