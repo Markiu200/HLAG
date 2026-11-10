@@ -194,8 +194,9 @@ class Raw(IModule):
                     jsref = self.module_manager.toolbox.content_manager.nest_ref(
                         parts[0], parts[1], new_meta
                     )
+                    jsref = f"{self.jsref_open}{jsref.module},{jsref.ref_id}{self.jsref_close}"
                 else:
-                    jsref = "[&_JSREF(REPL:X)_&]"
+                    jsref = f"{self.jsref_open}REPL,X{self.jsref_close}"
                 new_content = "".join([new_content, jsref])
             else:
                 new_content = "".join([new_content, item.tag])
