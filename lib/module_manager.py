@@ -147,7 +147,7 @@ class ModuleManager:
 
     def get_gui_widgets(self):
         widget_list = []
-        for registered_module in self.registered_modules.values():
+        for registered_module in self.registered_modules:
             module_config = self.config.get_config(registered_module.module_info.get("codename"))
             if module_config:
                 widget = widget_list.append(module_config.get_widget())
