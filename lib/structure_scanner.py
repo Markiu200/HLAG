@@ -74,7 +74,7 @@ if __name__ == '__main__':
     root_node_ = DocumentNode(PurePath(PurePath(__file__).parent.parent, "inputs"), is_file=True)
     from lib.dummy_check import DummyCheck
     check1_ = DummyCheck()
-    check1_.set_codename("test1")
+    check1_.set_codename("test")
     structure_scanner_ = StructureScanner(root_node_)
     structure_scanner_.register_check(check1_, "mid")
     structure_scanner_.scan()

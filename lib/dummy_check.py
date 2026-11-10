@@ -15,7 +15,7 @@ class DummyCheck(BaseCheck):
 
     def check(self, node):
         meta = dict()
-        if node.path.suffix == ".test" or "test" in node.path.name:
+        if node.path.suffix == f".{self.codename}":
             meta = {"module": self.codename}
             node.add_metadata(meta)
         return meta
