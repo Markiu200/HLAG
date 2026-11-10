@@ -3,7 +3,10 @@ from lib.base_check import BaseCheck
 
 
 class TXTCheck(BaseCheck):
-    # def check(self, node: DocumentNode):
+    def __init__(self):
+        super().__init__()
+        self.priority = 5
+
     def check(self, node):
         meta = dict()
         if node.path.suffix == ".txt":
